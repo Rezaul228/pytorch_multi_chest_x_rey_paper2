@@ -10,6 +10,7 @@ import numpy as np
 import torch
 import pandas as pd
 import seaborn as sns
+import textwrap
 from matplotlib.gridspec import GridSpec
 from matplotlib.patches import Rectangle, Patch
 from collections import defaultdict, Counter
@@ -31,7 +32,7 @@ except ImportError:
 # ============================================================================
 
 def visualize_retrieval_examples(model, test_data, num_examples=3, k=3, output_dir=None):
-    """Visualize retrieval examples in both directions - PyTorch version"""
+    """Visualize retrieval examples with Scientific Reports publication standards"""
     if output_dir:
         os.makedirs(output_dir, exist_ok=True)
         
@@ -41,6 +42,26 @@ def visualize_retrieval_examples(model, test_data, num_examples=3, k=3, output_d
                 os.remove(old_file_path)
         
         print(f"Visualizations will be saved to {output_dir}")
+    
+    # Set Scientific Reports font and styling
+    plt.rcParams['font.family'] = 'DejaVu Sans'
+    plt.rcParams['font.size'] = 8
+    plt.rcParams['axes.titlesize'] = 9
+    plt.rcParams['axes.labelsize'] = 8
+    plt.rcParams['xtick.labelsize'] = 7
+    plt.rcParams['ytick.labelsize'] = 7
+    plt.rcParams['legend.fontsize'] = 7
+    
+    # Scientific Reports color palette
+    colors = {
+        'blue': '#1f77b4',
+        'red': '#d62728', 
+        'green': '#2ca02c',
+        'orange': '#ff7f0e',
+        'white': '#ffffff',
+        'black': '#000000',
+        'gray': '#cccccc'
+    }
     
     # Move model to eval mode
     model.eval()
@@ -76,106 +97,233 @@ def visualize_retrieval_examples(model, test_data, num_examples=3, k=3, output_d
     example_indices = random.sample(range(len(test_data['images'])), num_examples)
     
     for idx in example_indices:
-        fig = plt.figure(figsize=(16, 10))
-        plt.suptitle(f"Cross-Modal Retrieval Example (Sample {idx})", fontsize=16, fontweight='bold')
+        # Create figure optimized for single-column width (25% larger)
+        fig = plt.figure(figsize=(9.0, 6.0), facecolor=colors['white'])
         
-        visualize_image_to_text(idx, test_data, i2t_sim, tokenizer, k, fig, row=0)
-        visualize_text_to_image(idx, test_data, t2i_sim, tokenizer, k, fig, row=1)
+        # Create title with Scientific Reports formatting
+        title_ax = fig.add_axes([0.1, 0.92, 0.8, 0.06])
+        title_ax.text(0.5, 0.5, f"Bidirectional Chest X-ray Image–Report Retrieval Results", 
+                     ha='center', va='center', fontsize=9, fontweight='bold',
+                     color=colors['black'],
+                     bbox=dict(boxstyle="round,pad=0.3", facecolor=colors['white'], 
+                             edgecolor=colors['gray'], linewidth=1))
+        title_ax.axis('off')
         
-        plt.tight_layout(rect=[0, 0, 1, 0.95])
+        # Create two horizontal boxes layout with increased height and proper spacing
+        # Top box for Image→Text retrieval (increased height and moved down)
+        top_box_ax = fig.add_axes([0.05, 0.50, 0.9, 0.40])
+        top_box_ax.set_facecolor(colors['white'])
+        top_box_ax.spines['top'].set_visible(True)
+        top_box_ax.spines['bottom'].set_visible(True)
+        top_box_ax.spines['left'].set_visible(True)
+        top_box_ax.spines['right'].set_visible(True)
+        top_box_ax.spines['top'].set_color('#888888')  # Light gray
+        top_box_ax.spines['bottom'].set_color('#888888')  # Light gray
+        top_box_ax.spines['left'].set_color('#888888')  # Light gray
+        top_box_ax.spines['right'].set_color('#888888')  # Light gray
+        top_box_ax.spines['top'].set_linewidth(1.5)  # Thinner lines
+        top_box_ax.spines['bottom'].set_linewidth(1.5)  # Thinner lines
+        top_box_ax.spines['left'].set_linewidth(1.5)  # Thinner lines
+        top_box_ax.spines['right'].set_linewidth(1.5)  # Thinner lines
+        top_box_ax.set_xticks([])
+        top_box_ax.set_yticks([])
         
+        # Bottom box for Text→Image retrieval (increased height and moved up)
+        bottom_box_ax = fig.add_axes([0.05, 0.05, 0.9, 0.40])
+        bottom_box_ax.set_facecolor(colors['white'])
+        bottom_box_ax.spines['top'].set_visible(True)
+        bottom_box_ax.spines['bottom'].set_visible(True)
+        bottom_box_ax.spines['left'].set_visible(True)
+        bottom_box_ax.spines['right'].set_visible(True)
+        bottom_box_ax.spines['top'].set_color('#888888')  # Light gray
+        bottom_box_ax.spines['bottom'].set_color('#888888')  # Light gray
+        bottom_box_ax.spines['left'].set_color('#888888')  # Light gray
+        bottom_box_ax.spines['right'].set_color('#888888')  # Light gray
+        bottom_box_ax.spines['top'].set_linewidth(1.5)  # Thinner lines
+        bottom_box_ax.spines['bottom'].set_linewidth(1.5)  # Thinner lines
+        bottom_box_ax.spines['left'].set_linewidth(1.5)  # Thinner lines
+        bottom_box_ax.spines['right'].set_linewidth(1.5)  # Thinner lines
+        bottom_box_ax.set_xticks([])
+        bottom_box_ax.set_yticks([])
+        
+        # TOP BOX: Query Image + 3 Text Results
+        # Query Image (left side of top box) - moved down and away from right boundary
+        ax_query_img = fig.add_axes([0.08, 0.52, 0.1875, 0.375])
+        query_image = test_data['images'][idx]
+        ax_query_img.imshow(query_image, cmap='gray')
+        ax_query_img.set_title("Query Image", fontsize=6, fontweight='bold', color=colors['black'])
+        ax_query_img.axis('off')
+        ax_query_img.set_aspect('equal')
+        
+        # Add professional border to query image
+        for spine in ax_query_img.spines.values():
+            spine.set_color(colors['black'])
+            spine.set_linewidth(2)
+        
+        # Get text retrieval results
+        sim_scores_i2t = i2t_sim[idx]
+        top_k_indices_i2t = np.argsort(sim_scores_i2t)[::-1][:k]
+        
+        # Rank 1 Text Box (middle of top box) - moved left away from right boundary
+        ax_text1 = fig.add_axes([0.28, 0.55, 0.207, 0.30])
+        ax_text1.axis('off')
+        rank1_caption = decode_caption(test_data['captions'][top_k_indices_i2t[0]], tokenizer)
+        rank1_score = sim_scores_i2t[top_k_indices_i2t[0]]
+        is_correct1 = top_k_indices_i2t[0] == idx
+        
+        # Professional text wrapping
+        import textwrap
+        wrapped_text = textwrap.fill(rank1_caption, width=25)
+        
+        # Rank and score label
+        ax_text1.text(0.5, 0.98, f"Rank 1\nScore: {rank1_score:.2f}",
+                     ha='center', va='top', fontsize=6, fontweight='bold',
+                     color=colors['green'] if is_correct1 else colors['black'],
+                     transform=ax_text1.transAxes)
+        
+        # Text content with professional background
+        text_box_props = dict(boxstyle="round,pad=0.3", 
+                            facecolor=colors['white'], 
+                            edgecolor=colors['gray'], 
+                            linewidth=1, alpha=0.9)
+        ax_text1.text(0.5, 0.5, wrapped_text,
+                     ha='center', va='center', fontsize=7,
+                     bbox=text_box_props,
+                     transform=ax_text1.transAxes, clip_on=True, wrap=True)
+        
+        # Rank 2 Text Box - moved left away from right boundary
+        ax_text2 = fig.add_axes([0.51, 0.55, 0.207, 0.30])
+        ax_text2.axis('off')
+        rank2_caption = decode_caption(test_data['captions'][top_k_indices_i2t[1]], tokenizer)
+        rank2_score = sim_scores_i2t[top_k_indices_i2t[1]]
+        is_correct2 = top_k_indices_i2t[1] == idx
+        
+        wrapped_text = textwrap.fill(rank2_caption, width=25)
+        
+        ax_text2.text(0.5, 0.98, f"Rank 2\nScore: {rank2_score:.2f}",
+                     ha='center', va='top', fontsize=6, fontweight='bold',
+                     color=colors['green'] if is_correct2 else colors['black'],
+                     transform=ax_text2.transAxes)
+        
+        ax_text2.text(0.5, 0.5, wrapped_text,
+                     ha='center', va='center', fontsize=7,
+                     bbox=text_box_props,
+                     transform=ax_text2.transAxes, clip_on=True, wrap=True)
+        
+        # Rank 3 Text Box - moved left away from right boundary
+        ax_text3 = fig.add_axes([0.74, 0.55, 0.207, 0.30])
+        ax_text3.axis('off')
+        rank3_caption = decode_caption(test_data['captions'][top_k_indices_i2t[2]], tokenizer)
+        rank3_score = sim_scores_i2t[top_k_indices_i2t[2]]
+        is_correct3 = top_k_indices_i2t[2] == idx
+        
+        wrapped_text = textwrap.fill(rank3_caption, width=25)
+        
+        ax_text3.text(0.5, 0.98, f"Rank 3\nScore: {rank3_score:.2f}",
+                     ha='center', va='top', fontsize=6, fontweight='bold',
+                     color=colors['green'] if is_correct3 else colors['black'],
+                     transform=ax_text3.transAxes)
+        
+        ax_text3.text(0.5, 0.5, wrapped_text,
+                     ha='center', va='center', fontsize=7,
+                     bbox=text_box_props,
+                     transform=ax_text3.transAxes, clip_on=True, wrap=True)
+        
+        # BOTTOM BOX: Query Text + 3 Image Results
+        # Query Text (left side of bottom box) - moved further left
+        ax_query_text = fig.add_axes([0.05, 0.08, 0.207, 0.30])
+        ax_query_text.axis('off')
+        query_caption = decode_caption(test_data['captions'][idx], tokenizer)
+        wrapped_query = textwrap.fill(query_caption, width=25)
+        
+        # Query Text label
+        ax_query_text.text(0.5, 0.98, "Query Text",
+                          ha='center', va='top', fontsize=6, fontweight='bold',
+                          color=colors['blue'], transform=ax_query_text.transAxes)
+        
+        # Query text content with professional background
+        text_box_props = dict(boxstyle="round,pad=0.3", 
+                            facecolor=colors['white'], 
+                            edgecolor=colors['gray'], 
+                            linewidth=1, alpha=0.9)
+        ax_query_text.text(0.5, 0.5, wrapped_query, 
+                          ha='center', va='center', fontsize=7, bbox=text_box_props,
+                          transform=ax_query_text.transAxes, clip_on=True, wrap=True)
+        
+        # Get image retrieval results
+        sim_scores_t2i = t2i_sim[idx]
+        top_k_indices_t2i = np.argsort(sim_scores_t2i)[::-1][:k]
+        
+        # Rank 1 Image - moved further left
+        ax_img1 = fig.add_axes([0.25, 0.08, 0.2025, 0.3375])
+        rank1_img = test_data['images'][top_k_indices_t2i[0]]
+        rank1_score = sim_scores_t2i[top_k_indices_t2i[0]]
+        is_correct_img1 = top_k_indices_t2i[0] == idx
+        
+        ax_img1.imshow(rank1_img, cmap='gray')
+        ax_img1.set_title(f"Rank 1\nScore: {rank1_score:.2f}", 
+                         fontsize=6, fontweight='bold',
+                         color=colors['green'] if is_correct_img1 else colors['black'])
+        ax_img1.axis('off')
+        ax_img1.set_aspect('equal')
+        
+        # Add professional border to retrieved images
+        for spine in ax_img1.spines.values():
+            spine.set_color(colors['black'])
+            spine.set_linewidth(1)
+        
+        # Rank 2 Image - moved further left
+        ax_img2 = fig.add_axes([0.48, 0.08, 0.2025, 0.3375])
+        rank2_img = test_data['images'][top_k_indices_t2i[1]]
+        rank2_score = sim_scores_t2i[top_k_indices_t2i[1]]
+        is_correct_img2 = top_k_indices_t2i[1] == idx
+        
+        ax_img2.imshow(rank2_img, cmap='gray')
+        ax_img2.set_title(f"Rank 2\nScore: {rank2_score:.2f}", 
+                         fontsize=6, fontweight='bold',
+                         color=colors['green'] if is_correct_img2 else colors['black'])
+        ax_img2.axis('off')
+        ax_img2.set_aspect('equal')
+        
+        # Add professional border to retrieved images
+        for spine in ax_img2.spines.values():
+            spine.set_color(colors['black'])
+            spine.set_linewidth(1)
+        
+        # Rank 3 Image - moved further left
+        ax_img3 = fig.add_axes([0.71, 0.08, 0.2025, 0.3375])
+        rank3_img = test_data['images'][top_k_indices_t2i[2]]
+        rank3_score = sim_scores_t2i[top_k_indices_t2i[2]]
+        is_correct_img3 = top_k_indices_t2i[2] == idx
+        
+        ax_img3.imshow(rank3_img, cmap='gray')
+        ax_img3.set_title(f"Rank 3\nScore: {rank3_score:.2f}", 
+                         fontsize=6, fontweight='bold',
+                         color=colors['green'] if is_correct_img3 else colors['black'])
+        ax_img3.axis('off')
+        ax_img3.set_aspect('equal')
+        
+        # Add professional border to retrieved images
+        for spine in ax_img3.spines.values():
+            spine.set_color(colors['black'])
+            spine.set_linewidth(1)
+        
+
+        
+        # Add global boundary with professional styling
+        fig.patch.set_edgecolor(colors['black'])
+        fig.patch.set_linewidth(1)
+        
+        # Save with Scientific Reports specifications
         if output_dir:
             filename = os.path.join(output_dir, f"retrieval_example_{idx}.png")
-            plt.savefig(filename, dpi=200, bbox_inches='tight')
-            print(f"Saved visualization to {filename}")
+            plt.savefig(filename, dpi=300, bbox_inches='tight', 
+                       facecolor=colors['white'], edgecolor=colors['black'],
+                       format='png', transparent=False)
+            print(f"Saved Scientific Reports compliant visualization to {filename}")
         plt.close()
 
-def visualize_image_to_text(idx, test_data, similarity_matrix, tokenizer=None, k=3, fig=None, row=0):
-    """Visualize Image-to-Text retrieval for a specific example"""
-    query_image = test_data['images'][idx]
-    
-    sim_scores = similarity_matrix[idx]
-    top_k_indices = np.argsort(sim_scores)[::-1][:k]
-    top_k_scores = sim_scores[top_k_indices]
-    
-    correct_rank = np.where(np.argsort(sim_scores)[::-1] == idx)[0][0] + 1
-    
-    gs = GridSpec(2, 2, figure=fig, height_ratios=[1, 1], width_ratios=[1, 2],
-                  hspace=0.3, wspace=0.2)
-    
-    ax_img = fig.add_subplot(gs[row, 0])
-    ax_img.imshow(query_image)
-    ax_img.set_title(f"Query Image\n(Correct rank: {correct_rank})", fontsize=12, fontweight='bold')
-    ax_img.axis('off')
-    
-    ax_text_area = fig.add_subplot(gs[row, 1])
-    ax_text_area.axis('off')
-    
-    for i, (match_idx, score) in enumerate(zip(top_k_indices, top_k_scores)):
-        caption = decode_caption(test_data['captions'][match_idx], tokenizer)
-        
-        wrapped_text = "\n".join([caption[j:j+80] for j in range(0, len(caption), 80)])
-        
-        if match_idx == idx:
-            color = 'lightgreen'
-            title_color = 'green'
-            title_text = f"Rank {i+1} ✓ CORRECT"
-        else:
-            color = 'lightgray'
-            title_color = 'black'
-            title_text = f"Rank {i+1}"
-        
-        y_pos = 0.85 - (i * 0.3)
-        
-        ax_text_area.text(0.05, y_pos + 0.05, f"{title_text} (Score: {score:.4f})", 
-                         transform=ax_text_area.transAxes, fontsize=10, fontweight='bold',
-                         color=title_color)
-        
-        ax_text_area.text(0.05, y_pos - 0.05, wrapped_text, 
-                         transform=ax_text_area.transAxes, fontsize=9, ha='left', va='top',
-                         bbox=dict(boxstyle="round,pad=0.3", facecolor=color, alpha=0.7),
-                         wrap=True)
-
-def visualize_text_to_image(idx, test_data, similarity_matrix, tokenizer=None, k=3, fig=None, row=1):
-    """Visualize Text-to-Image retrieval for a specific example"""
-    query_caption = decode_caption(test_data['captions'][idx], tokenizer)
-    
-    sim_scores = similarity_matrix[idx]
-    top_k_indices = np.argsort(sim_scores)[::-1][:k]
-    top_k_scores = sim_scores[top_k_indices]
-    
-    correct_rank = np.where(np.argsort(sim_scores)[::-1] == idx)[0][0] + 1
-    
-    gs = GridSpec(2, k+1, figure=fig, height_ratios=[1, 1], width_ratios=[1.2] + [1]*k,
-                  hspace=0.3, wspace=0.2)
-    
-    ax_text = fig.add_subplot(gs[row, 0])
-    ax_text.axis('off')
-    
-    wrapped_query = "\n".join([query_caption[j:j+50] for j in range(0, len(query_caption), 50)])
-    
-    ax_text.text(0.5, 0.5, wrapped_query, 
-                transform=ax_text.transAxes, fontsize=10, ha='center', va='center',
-                bbox=dict(boxstyle="round,pad=0.3", facecolor='lightblue', alpha=0.7),
-                fontweight='bold')
-    ax_text.set_title(f"Query Text\n(Correct rank: {correct_rank})", fontsize=12, fontweight='bold')
-    
-    for i, (match_idx, score) in enumerate(zip(top_k_indices, top_k_scores)):
-        ax_img = fig.add_subplot(gs[row, i+1])
-        
-        retrieved_image = test_data['images'][match_idx]
-        ax_img.imshow(retrieved_image)
-        ax_img.axis('off')
-        
-        if match_idx == idx:
-            title_color = 'green'
-            title_text = f"Rank {i+1} ✓"
-        else:
-            title_color = 'red'
-            title_text = f"Rank {i+1}"
-        
-        ax_img.set_title(f"{title_text}\nScore: {score:.4f}", fontsize=10, fontweight='bold',
-                        color=title_color)
+# Removed old helper functions - functionality integrated into main visualize_retrieval_examples function
 
 def decode_caption(caption_seq, tokenizer=None):
     """Decode tokenized caption back to text"""
@@ -188,7 +336,33 @@ def decode_caption(caption_seq, tokenizer=None):
             caption_seq = caption_seq.cpu().numpy()
         
         valid_tokens = caption_seq[caption_seq > 0]
-        reverse_word_index = {v: k for k, v in tokenizer.word_index.items()}
+        
+        # Handle different tokenizer formats
+        reverse_word_index = {}
+        
+        if hasattr(tokenizer, 'word_index'):
+            # Standard Keras tokenizer
+            reverse_word_index = {v: k for k, v in tokenizer.word_index.items()}
+        elif hasattr(tokenizer, 'word2idx'):
+            # Custom tokenizer with word2idx
+            reverse_word_index = {v: k for k, v in tokenizer.word2idx.items()}
+        elif isinstance(tokenizer, dict):
+            # Tokenizer is a dictionary
+            if 'word_index' in tokenizer:
+                reverse_word_index = {v: k for k, v in tokenizer['word_index'].items()}
+            elif 'word2idx' in tokenizer:
+                reverse_word_index = {v: k for k, v in tokenizer['word2idx'].items()}
+            else:
+                # Try to use the dictionary directly as word_index
+                reverse_word_index = {v: k for k, v in tokenizer.items()}
+        else:
+            # Fallback: try to access word_index attribute
+            try:
+                reverse_word_index = {v: k for k, v in tokenizer.word_index.items()}
+            except:
+                return f"TOKENIZER_ERROR: Unsupported tokenizer format"
+        
+        # Add padding token
         reverse_word_index[0] = '<PAD>'
         
         words = []
@@ -288,17 +462,17 @@ class TrainingVisualizer:
         print(f"Training progress saved to: {self.save_dir}/training_progress_{timestamp}.png")
 
     def plot_dual_branch_losses(self):
-        """Plot dual branch losses with simplified comparison"""
+        """Plot synergy loss and orthogonal loss with simplified comparison"""
         if not self.history:
             print("No training history to plot!")
             return
         
-        # Check if we have dual branch loss data
+        # Check if we have the required loss data
         has_synergy = 'synergy_loss' in self.history and len(self.history['synergy_loss']) > 0
-        has_difference = 'difference_loss' in self.history and len(self.history['difference_loss']) > 0
+        has_orthogonal = 'orthogonal_loss' in self.history and len(self.history['orthogonal_loss']) > 0
         
-        if not (has_synergy and has_difference):
-            print("Dual branch loss data not found!")
+        if not (has_synergy and has_orthogonal):
+            print("Required loss data not found!")
             print(f"Available keys: {list(self.history.keys())}")
             return
         
@@ -309,28 +483,21 @@ class TrainingVisualizer:
         # Add main title
         plt.suptitle('Dual Branch Architecture Loss Analysis', fontsize=14, fontweight='bold', y=0.98)
         
-        # Plot 1: Dual Branch Loss Comparison
+        # Plot 1: Synergy Loss
         plt.subplot(1, 2, 1)
         plt.plot(epochs, self.history['synergy_loss'], 'g-', linewidth=2, marker='o', markersize=4, label='Synergy Loss')
-        plt.plot(epochs, self.history['difference_loss'], 'r-', linewidth=2, marker='s', markersize=4, label='Difference Loss')
         plt.xlabel('Epoch', fontsize=12)
         plt.ylabel('Loss', fontsize=12)
-        plt.title('Dual Branch Loss Comparison', fontsize=12, fontweight='bold')
+        plt.title('Synergy Branch Loss', fontsize=12, fontweight='bold')
         plt.grid(True, alpha=0.3)
         plt.legend()
         
-        # Plot 2: Dual Branch Loss and Total Loss Comparison
+        # Plot 2: Orthogonal Loss
         plt.subplot(1, 2, 2)
-        plt.plot(epochs, self.history['synergy_loss'], 'g-', linewidth=2, marker='o', markersize=4, label='Synergy Loss')
-        plt.plot(epochs, self.history['difference_loss'], 'r-', linewidth=2, marker='s', markersize=4, label='Difference Loss')
-        
-        # Add total loss if available
-        if 'total_loss' in self.history and len(self.history['total_loss']) > 0:
-            plt.plot(epochs, self.history['total_loss'], 'b-', linewidth=2, marker='^', markersize=4, label='Total Loss')
-        
+        plt.plot(epochs, self.history['orthogonal_loss'], 'b-', linewidth=2, marker='s', markersize=4, label='Orthogonal Loss')
         plt.xlabel('Epoch', fontsize=12)
         plt.ylabel('Loss', fontsize=12)
-        plt.title('Dual Branch and Total Loss Comparison', fontsize=12, fontweight='bold')
+        plt.title('Orthogonal Regularization Loss', fontsize=12, fontweight='bold')
         plt.grid(True, alpha=0.3)
         plt.legend()
         
@@ -348,7 +515,7 @@ class TrainingVisualizer:
             # Handle PyTorch tensors
             if isinstance(similarity_matrix, torch.Tensor):
                 similarity_matrix = similarity_matrix.cpu().numpy()
-            
+                
             # Ensure similarity_matrix is a numpy array
             if not isinstance(similarity_matrix, np.ndarray):
                 print(f"Error: similarity_matrix must be torch.Tensor or numpy.ndarray, got {type(similarity_matrix)}")
@@ -368,7 +535,7 @@ class TrainingVisualizer:
             if k <= 0:
                 print("Error: k must be positive")
                 return
-                
+            
             sim_subset = similarity_matrix[:k, :k]
             
             timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
@@ -378,38 +545,38 @@ class TrainingVisualizer:
             
             # Add main title
             plt.suptitle('Cross-Modal Similarity Matrix Analysis', fontsize=14, fontweight='bold', y=0.98)
-            
+        
             # Main similarity matrix heatmap
             if seaborn_available:
                 sns.heatmap(sim_subset, annot=False, cmap='viridis', square=True,
-                           cbar_kws={'label': 'Cosine Similarity Score'})
+                                   cbar_kws={'label': 'Cosine Similarity Score'})
             else:
                 im = plt.imshow(sim_subset, cmap='viridis', aspect='auto')
                 plt.colorbar(im, label='Cosine Similarity Score')
-            
+        
             plt.title(f'{title}\n(Matrix Size: {k}x{k})', fontsize=12, fontweight='bold', pad=20)
             plt.xlabel('Text Index', fontsize=12)
             plt.ylabel('Image Index', fontsize=12)
-            
+        
             # Add diagonal markers for correct matches
             for i in range(min(k, sim_subset.shape[0])):
                 plt.plot(i + 0.5, i + 0.5, 'ro', markersize=6, markeredgecolor='white', markeredgewidth=1)
-            
+        
             # Add explanation text
             plt.text(0.02, 0.98, 'Red dots = Correct matches\n'
                     'Yellow = High similarity\n'
                     'Blue = Low similarity',
-                    transform=plt.gca().transAxes, fontsize=10,
+                transform=plt.gca().transAxes, fontsize=10,
                     bbox=dict(boxstyle='round', facecolor='white', alpha=0.9),
-                    verticalalignment='top')
-            
+                verticalalignment='top')
+        
             plt.tight_layout(rect=[0, 0, 1, 0.95])
-            
+        
             plt.savefig(f'{self.save_dir}/{filename}', dpi=200, bbox_inches='tight')
             plt.close()
-            
+        
             print(f"Similarity matrix saved to: {self.save_dir}/{filename}")
-            
+
         except Exception as e:
             print(f"Error plotting similarity matrix: {e}")
             print(f"Matrix shape: {similarity_matrix.shape if hasattr(similarity_matrix, 'shape') else 'unknown'}")
@@ -478,9 +645,9 @@ class TrainingVisualizer:
                 
                 # Compute similarity matrix
                 similarity_matrix = torch.matmul(image_emb, text_emb.transpose(0, 1))
-                
-                print(f"Similarity matrix shape: {similarity_matrix.shape}")
-                print(f"Similarity matrix range: [{similarity_matrix.min():.4f}, {similarity_matrix.max():.4f}]")
+            
+            print(f"Similarity matrix shape: {similarity_matrix.shape}")
+            print(f"Similarity matrix range: [{similarity_matrix.min():.4f}, {similarity_matrix.max():.4f}]")
             
             # Plot similarity matrix
             self.plot_similarity_matrix(similarity_matrix, f"Similarity Matrix - Epoch {epoch}")
@@ -642,13 +809,16 @@ def visualize_image_attention(model, image, text_tokens, sample_idx=0, tokenizer
 
 def create_ablation_performance_comparison(results, save_dir, timestamp):
     """Create performance comparison charts for ablation study"""
-    variants = list(results.keys())
+    # Filter out specific variants to exclude
+    excluded_variants = ['no_local_attention', 'single_coattention_layer']
+    variants = [v for v in results.keys() if v not in excluded_variants]
     
-    metrics = ['avg_mrr', 'avg_recall@1', 'avg_recall@5', 'avg_recall@10']
-    metric_labels = ['Average MRR', 'Recall@1', 'Recall@5', 'Recall@10']
+    # Show Average MRR, Recall@1, and Recall@5
+    metrics = ['avg_mrr', 'avg_recall@1', 'avg_recall@5']
+    metric_labels = ['Average MRR', 'Recall@1', 'Recall@5']
     
-    fig, axes = plt.subplots(2, 2, figsize=(16, 12))
-    axes = axes.flatten()
+    # Create single row with 3 subplots
+    fig, axes = plt.subplots(1, 3, figsize=(24, 8))
     
     colors = plt.cm.Set3(np.linspace(0, 1, len(variants)))
     
@@ -661,26 +831,51 @@ def create_ablation_performance_comparison(results, save_dir, timestamp):
         for variant in variants:
             if metric in results[variant]:
                 values.append(results[variant][metric])
-                labels.append(variant.replace('_', ' ').title())
+                # Create shorter, more readable labels
+                short_label = variant.replace('_', ' ').title()
+                if short_label == 'Full Model':
+                    short_label = 'Full Model'
+                elif 'No ' in short_label:
+                    short_label = short_label.replace('No ', 'No\n')
+                labels.append(short_label)
         
         bars = ax.bar(labels, values, color=colors[:len(values)])
         
-        ax.set_title(label, fontsize=14, fontweight='bold')
-        ax.set_ylabel('Score', fontsize=12)
-        ax.tick_params(axis='x', rotation=45)
+        ax.set_title(label, fontsize=16, fontweight='bold', pad=20)
+        ax.set_ylabel('Score', fontsize=14)
         
+        # Improve x-axis label formatting
+        ax.tick_params(axis='x', rotation=45, labelsize=10)
+        ax.tick_params(axis='y', labelsize=12)
+        
+        # Add value labels on top of bars with better positioning
         for bar, value in zip(bars, values):
             height = bar.get_height()
-            ax.text(bar.get_x() + bar.get_width()/2., height + 0.01,
-                   f'{value:.3f}', ha='center', va='bottom', fontweight='bold')
+            # Position label above the bar with some padding
+            ax.text(bar.get_x() + bar.get_width()/2., height + 0.005,
+                   f'{value:.3f}', ha='center', va='bottom', 
+                   fontweight='bold', fontsize=11, 
+                   bbox=dict(boxstyle='round,pad=0.2', facecolor='white', alpha=0.8))
         
-        ax.set_ylim(0, max(values) * 1.15 if values else 1)
+        # Fix x-axis label positioning to align with bars
+        ax.set_xticks(range(len(labels)))
+        ax.set_xticklabels(labels, ha='right')
+        
+        # Set y-axis limits with some padding
+        max_val = max(values) if values else 1
+        ax.set_ylim(0, max_val * 1.2)
         ax.grid(True, alpha=0.3)
+        
+        # Add subtle borders to bars
+        for bar in bars:
+            bar.set_edgecolor('black')
+            bar.set_linewidth(0.5)
     
-    plt.tight_layout()
+    # Adjust layout to prevent label cutoff
+    plt.tight_layout(pad=3.0)
     
     save_path = os.path.join(save_dir, f'ablation_performance_comparison_{timestamp}.png')
-    plt.savefig(save_path, dpi=200, bbox_inches='tight')
+    plt.savefig(save_path, dpi=300, bbox_inches='tight')
     plt.close()
     
     print(f"Ablation performance comparison saved to: {save_path}")
@@ -711,46 +906,75 @@ def create_ablation_contribution_analysis(results, save_dir, timestamp):
     
     sorted_contributions = sorted(contributions.items(), key=lambda x: abs(x[1]), reverse=True)
     
-    fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(16, 6))
+    fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(20, 8))
     
     # Contribution magnitude plot
     variants, values = zip(*sorted_contributions)
     colors = ['red' if v > 0 else 'blue' for v in values]
     
-    bars = ax1.barh(variants, values, color=colors, alpha=0.7)
-    ax1.set_xlabel('MRR Contribution (Baseline - Ablated Model)', fontsize=12)
-    ax1.set_title('Component Contribution Analysis', fontsize=14, fontweight='bold')
+    # Create shorter, more readable labels for horizontal bar chart
+    short_labels = []
+    for variant in variants:
+        short_label = variant.replace('_', ' ').title()
+        if 'No ' in short_label:
+            short_label = short_label.replace('No ', 'No\n')
+        short_labels.append(short_label)
+    
+    bars = ax1.barh(short_labels, values, color=colors, alpha=0.7)
+    ax1.set_xlabel('MRR Contribution (Baseline - Ablated Model)', fontsize=14)
+    ax1.set_title('Component Contribution Analysis', fontsize=16, fontweight='bold')
     ax1.axvline(x=0, color='black', linestyle='-', alpha=0.5)
     ax1.grid(True, alpha=0.3)
+    ax1.tick_params(axis='both', labelsize=12)
     
     for bar, value in zip(bars, values):
         width = bar.get_width()
         ax1.text(width + (0.001 if width >= 0 else -0.001), bar.get_y() + bar.get_height()/2,
-                f'{value:.4f}', ha='left' if width >= 0 else 'right', va='center', fontweight='bold')
+                f'{value:.4f}', ha='left' if width >= 0 else 'right', va='center', 
+                fontweight='bold', fontsize=11,
+                bbox=dict(boxstyle='round,pad=0.2', facecolor='white', alpha=0.8))
     
     # Performance comparison
     all_variants = [baseline_key] + list(variants)
     all_mrrs = [baseline_mrr] + [results[v]['avg_mrr'] for v in variants]
     
+    # Create shorter labels for vertical bar chart
+    short_all_labels = []
+    for variant in all_variants:
+        short_label = variant.replace('_', ' ').title()
+        if short_label == 'Full Model':
+            short_label = 'Full Model'
+        elif 'No ' in short_label:
+            short_label = short_label.replace('No ', 'No\n')
+        short_all_labels.append(short_label)
+    
     bars2 = ax2.bar(range(len(all_variants)), all_mrrs, 
                    color=['green'] + ['lightcoral'] * (len(all_variants) - 1))
     
-    ax2.set_xlabel('Model Variant', fontsize=12)
-    ax2.set_ylabel('Average MRR', fontsize=12)
-    ax2.set_title('Performance Comparison', fontsize=14, fontweight='bold')
+    ax2.set_xlabel('Model Variant', fontsize=14)
+    ax2.set_ylabel('Average MRR', fontsize=14)
+    ax2.set_title('Performance Comparison', fontsize=16, fontweight='bold')
     ax2.set_xticks(range(len(all_variants)))
-    ax2.set_xticklabels([v.replace('_', ' ').title() for v in all_variants], rotation=45)
+    ax2.set_xticklabels(short_all_labels, rotation=45, ha='right')
     ax2.grid(True, alpha=0.3)
+    ax2.tick_params(axis='both', labelsize=12)
     
     for bar, value in zip(bars2, all_mrrs):
         height = bar.get_height()
         ax2.text(bar.get_x() + bar.get_width()/2., height + 0.005,
-                f'{value:.3f}', ha='center', va='bottom', fontweight='bold')
+                f'{value:.3f}', ha='center', va='bottom', 
+                fontweight='bold', fontsize=11,
+                bbox=dict(boxstyle='round,pad=0.2', facecolor='white', alpha=0.8))
     
-    plt.tight_layout()
+    # Add subtle borders to bars
+    for bar in bars2:
+        bar.set_edgecolor('black')
+        bar.set_linewidth(0.5)
+    
+    plt.tight_layout(pad=3.0)
     
     save_path = os.path.join(save_dir, f'ablation_contribution_analysis_{timestamp}.png')
-    plt.savefig(save_path, dpi=200, bbox_inches='tight')
+    plt.savefig(save_path, dpi=300, bbox_inches='tight')
     plt.close()
     
     print(f"Ablation contribution analysis saved to: {save_path}")

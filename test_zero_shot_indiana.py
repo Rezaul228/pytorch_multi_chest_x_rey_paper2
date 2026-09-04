@@ -25,8 +25,7 @@ from train_test_cross_modal_evaluation_v1 import evaluate_cross_modal_retrieval_
 SOURCE_DATASET = "mimic_shards"
 TARGET_DATASET = "indiana_shards"
 MODEL_PATH = (
-    "/home/abedin/Developments/pytorch_multi_chest_x_ray1/"
-    "saved_models/mimic_origi_vocab10805_to128_lr1e-4_b128_ep45_dualbr_v3/export/model_weights.pth"
+    "/home/abedin/Developments/pytorch_multi_chest_x_rey_paper2/saved_models/mimic_shards_hybrid_full_orl_vo10805_to128_lr5e-5_b256_ep50_dualbr_sy065_main_loss20_ortho15__branch_v2/export/model_weights.pth"
 )
 
 
@@ -140,7 +139,7 @@ def print_results(results, label):
 
 
 def test_zero_shot_indiana():
-    print("Zero-shot test: MIMIC-trained model -> Indiana test set")
+    print("Zero-shot test: MIMIC-trained model -> Indiana train set")
     print("=" * 60)
 
     # Model architecture must match SOURCE (MIMIC) training config
@@ -181,25 +180,26 @@ def test_zero_shot_indiana():
     )
     data_loader.tokenizer = target_tokenizer
     data_loader.load_data(max_samples=None, skip_processing=True)
-    base_test = data_loader.get_test_data(num_samples=None)
-    print(f"Indiana test samples: {len(base_test)}")
+    # Use Indiana train split for a larger eval set (test has only ~723 samples)
+    base_eval = data_loader.get_data(max_samples=None)
+    print(f"Indiana train samples: {len(base_eval)}")
 
-    remapped_test = ZeroShotRemappedDataset(
-        base_dataset=base_test,
+    remapped_eval = ZeroShotRemappedDataset(
+        base_dataset=base_eval,
         target_tokenizer=target_tokenizer,
         source_tokenizer=source_tokenizer,
         source_maxlen=source_maxlen,
     )
-    test_loader = DataLoader(remapped_test, batch_size=32, shuffle=False, num_workers=0)
+    eval_loader = DataLoader(remapped_eval, batch_size=32, shuffle=False, num_workers=0)
 
-    print("\nRunning zero-shot cross-modal evaluation...")
+    print("\nRunning zero-shot cross-modal evaluation on Indiana TRAIN...")
     print(f"  Captions remapped Indiana -> MIMIC tokenizer (maxlen={source_maxlen})")
-    out_dir = "outputs/zero_shot_mimic_to_indiana/"
+    out_dir = "outputs/zero_shot_mimic_to_indiana_train/"
     os.makedirs(out_dir, exist_ok=True)
 
     results = evaluate_cross_modal_retrieval_streaming(
         model=model,
-        test_dataset=test_loader,
+        test_dataset=eval_loader,
         k_values=[1, 5, 10],
         batch_size=32,
         visualize=False,  # avoid CHW imshow crash; metrics-only
@@ -208,10 +208,10 @@ def test_zero_shot_indiana():
     )
 
     print(
-        f"\nRemap stats: {remapped_test._remap_stats['total']} captions, "
-        f"{remapped_test._remap_stats['empty_decode']} empty after decode"
+        f"\nRemap stats: {remapped_eval._remap_stats['total']} captions, "
+        f"{remapped_eval._remap_stats['empty_decode']} empty after decode"
     )
-    print_results(results, "MIMIC model on indiana_shards")
+    print_results(results, "MIMIC model on indiana_shards TRAIN")
     return results
 
 

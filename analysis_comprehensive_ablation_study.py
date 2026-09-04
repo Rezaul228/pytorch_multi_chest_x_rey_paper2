@@ -15,7 +15,7 @@ import os
 from base_models_refactored_v1 import MultimodalFusion
 from data_loader_v1 import IndianaDataLoader
 from train_test_cross_modal_evaluation_v1 import evaluate_cross_modal_retrieval_streaming
-from all_visualization_v1 import (
+from analysis_all_visualization_v1 import (
     create_ablation_performance_comparison,
     create_ablation_contribution_analysis
 )
@@ -86,8 +86,24 @@ class ComprehensiveAblatedModel(MultimodalFusion):
             final_img_emb = difference_img_emb
             final_txt_emb = difference_txt_emb
         else:
-            final_img_emb = synergy_img_emb + difference_img_emb
-            final_txt_emb = synergy_txt_emb + difference_txt_emb
+            # Fix: Use same combination as original model
+            import torch.nn.functional as F
+            final_img_emb = F.normalize((synergy_img_emb + difference_img_emb) / 2, p=2, dim=-1)
+            final_txt_emb = F.normalize((synergy_txt_emb + difference_txt_emb) / 2, p=2, dim=-1)
+            
+            # Debug: Print branch magnitudes for first few samples
+            if self.ablation_type == "full_model":
+                print(f"\n🔍 BRANCH MAGNITUDE ANALYSIS:")
+                print(f"Synergy img norm: {torch.norm(synergy_img_emb[:3], dim=1)}")
+                print(f"Diff img norm: {torch.norm(difference_img_emb[:3], dim=1)}")
+                print(f"Synergy txt norm: {torch.norm(synergy_txt_emb[:3], dim=1)}")
+                print(f"Diff txt norm: {torch.norm(difference_txt_emb[:3], dim=1)}")
+                
+                # Check if branches are orthogonal
+                img_orthogonality = torch.abs(torch.sum(synergy_img_emb * difference_img_emb, dim=1)).mean()
+                txt_orthogonality = torch.abs(torch.sum(synergy_txt_emb * difference_txt_emb, dim=1)).mean()
+                print(f"Img orthogonality: {img_orthogonality:.6f}")
+                print(f"Txt orthogonality: {txt_orthogonality:.6f}")
         
         return final_img_emb, final_txt_emb
 
@@ -152,8 +168,10 @@ class DetailedAblatedModel(MultimodalFusion):
             final_img_emb = synergy_img_emb
             final_txt_emb = synergy_txt_emb
         else:
-            final_img_emb = synergy_img_emb + difference_img_emb
-            final_txt_emb = synergy_txt_emb + difference_txt_emb
+            # Fix: Use same combination as original model
+            import torch.nn.functional as F
+            final_img_emb = F.normalize((synergy_img_emb + difference_img_emb) / 2, p=2, dim=-1)
+            final_txt_emb = F.normalize((synergy_txt_emb + difference_txt_emb) / 2, p=2, dim=-1)
         
         return final_img_emb, final_txt_emb
     
@@ -346,18 +364,18 @@ class DetailedAblatedModel(MultimodalFusion):
         
         return image_tokens, text_tokens
 
-def run_essential_ablation_study():
-    """Run essential ablation study with your actual trained model - focused on most impactful components"""
-    print("🧪 ESSENTIAL ABLATION STUDY WITH YOUR TRAINED MODEL")
-    print("=" * 70)
-    print("🎯 Focused on the most impactful components: attention, gating, feedback, branches, and depth")
-    print("=" * 70)
+def run_difference_branch_analysis():
+    """Run focused analysis on difference branch impact with 2000 test samples"""
+    print("🧪 DIFFERENCE BRANCH IMPACT ANALYSIS")
+    print("=" * 60)
+    print("🎯 Testing if difference branch helps or hurts the model")
+    print("=" * 60)
     
     # Configuration
     config.print_current_config()
     
-    # Load test data
-    print("\n📁 Loading test data...")
+    # Load test data with 2000 samples
+    print("\n📁 Loading test data (2000 samples)...")
     data_loader = IndianaDataLoader(
         batch_size=32, 
         use_shards=True, 
@@ -366,15 +384,149 @@ def run_essential_ablation_study():
     data_loader.tokenizer = load_tokenizer_from_metadata()
     data_loader.load_data(max_samples=None, skip_processing=True)
     
-    # Use smaller test set for faster ablation study
-    test_dataset = data_loader.get_test_data(num_samples=500)
+    # Use 2000 test samples for focused analysis
+    test_dataset = data_loader.get_test_data(num_samples=2000)
     from torch.utils.data import DataLoader
     test_loader = DataLoader(test_dataset, batch_size=32, shuffle=False, num_workers=0)
     
     print(f"✅ Test data loaded: {len(test_dataset)} samples")
     
-    # Load the trained model
-    model_path = '/home/abedin/Developments/pytorch_multi_chest_x_ray1/saved_models/train_mimic_128_1e-04_ep35_full/export/model_weights.pth'
+    # Load your trained model
+    print("\n📁 Loading your trained model...")
+    model_path = '/home/abedin/Developments/pytorch_multi_chest_x_rey_paper2/saved_models/mimic_shards_hybrid_full_orl_vo10805_to128_lr5e-5_b256_ep50_dualbr_sy07_main_loss02_ortho01_branch_v3/export/model_weights.pth'
+    
+    base_model = MultimodalFusion(
+        vocab_size=config.get_vocab_size(),
+        embed_dim=config.get_embed_dim(),
+        num_heads=config.get_current_config()['num_heads'],
+        num_layers=config.get_current_config()['num_layers']
+    )
+    
+    state_dict = torch.load(model_path, map_location='cpu')
+    base_model.load_state_dict(state_dict)
+    base_model.eval()
+    
+    print(f"✅ Model loaded: {sum(p.numel() for p in base_model.parameters()):,} parameters")
+    
+    # Define focused variants for difference branch analysis
+    variants = [
+        ("full_model", "none"),
+        ("no_difference_branch", "no_difference_branch"),
+        ("difference_only", "difference_only"),
+    ]
+    
+    # Store results
+    ablation_results = {}
+    
+    # Evaluate each variant
+    for variant_name, ablation_type in variants:
+        print(f"\n{'='*60}")
+        print(f"🎯 Evaluating: {variant_name}")
+        print(f"{'='*60}")
+        
+        try:
+            if variant_name == "full_model":
+                model_to_test = base_model
+            else:
+                model_to_test = ComprehensiveAblatedModel(base_model, ablation_type)
+                model_to_test.eval()
+            
+            # Run evaluation
+            results = evaluate_cross_modal_retrieval_streaming(
+                model=model_to_test,
+                test_dataset=test_loader,
+                k_values=[1, 5, 10],
+                batch_size=32,
+                visualize=False,
+                num_vis_examples=0
+            )
+            
+            # Store results
+            ablation_results[variant_name] = results
+            
+            print(f"📊 Results for {variant_name}:")
+            print(f"   MRR: {results['avg_mrr']:.4f}")
+            print(f"   Recall@1: {results['avg_recall@1']:.4f}")
+            print(f"   Recall@5: {results['avg_recall@5']:.4f}")
+            print(f"   Recall@10: {results['avg_recall@10']:.4f}")
+            
+        except Exception as e:
+            print(f"❌ Error evaluating {variant_name}: {e}")
+            ablation_results[variant_name] = {
+                'avg_mrr': 0.0,
+                'avg_recall@1': 0.0,
+                'avg_recall@5': 0.0,
+                'avg_recall@10': 0.0
+            }
+    
+    # Generate focused visualization
+    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+    print(f"\n📊 Generating difference branch analysis visualization...")
+    
+    # Create performance comparison chart
+    create_ablation_performance_comparison(
+        results=ablation_results,
+        save_dir="comprehensive_ablation_results",
+        timestamp=timestamp
+    )
+    
+    # Analysis summary
+    print(f"\n{'='*60}")
+    print("📊 DIFFERENCE BRANCH ANALYSIS SUMMARY")
+    print(f"{'='*60}")
+    
+    full_model_mrr = ablation_results.get('full_model', {}).get('avg_mrr', 0)
+    no_diff_mrr = ablation_results.get('no_difference_branch', {}).get('avg_mrr', 0)
+    diff_only_mrr = ablation_results.get('difference_only', {}).get('avg_mrr', 0)
+    
+    print(f"Full Model MRR: {full_model_mrr:.4f}")
+    print(f"No Difference Branch MRR: {no_diff_mrr:.4f}")
+    print(f"Difference Only MRR: {diff_only_mrr:.4f}")
+    
+    if full_model_mrr > 0 and no_diff_mrr > 0:
+        performance_change = no_diff_mrr - full_model_mrr
+        if performance_change > 0:
+            print(f"🎯 RESULT: Difference branch HURTS performance by {performance_change:.4f}")
+        elif performance_change < 0:
+            print(f"🎯 RESULT: Difference branch HELPS performance by {abs(performance_change):.4f}")
+        else:
+            print(f"🎯 RESULT: Difference branch has NO EFFECT")
+    
+    print(f"📁 Results saved to: comprehensive_ablation_results/difference_branch_analysis_{timestamp}.png")
+    print("✅ Difference branch analysis completed!")
+
+
+def run_essential_ablation_study():
+    """Run essential ablation study with your actual trained model - focused on most impactful components"""
+    print("🧪 ESSENTIAL ABLATION STUDY WITH YOUR TRAINED MODEL")
+    print("=" * 70)
+    print("🎯 Focused on the most impactful components: attention, gating, feedback, branches, and depth")
+    print("🎯 Using 2000 test samples for faster evaluation")
+    print("=" * 70)
+    
+    # Configuration
+    config.print_current_config()
+    
+    # Load test data
+    print("\n📁 Loading test data (2000 samples)...")
+    data_loader = IndianaDataLoader(
+        batch_size=32, 
+        use_shards=True, 
+        shard_subfolder=config.DATASET_MODE
+    )
+    data_loader.tokenizer = load_tokenizer_from_metadata()
+    data_loader.load_data(max_samples=None, skip_processing=True)
+    
+    # Use 2000 test samples for faster evaluation
+    test_dataset = data_loader.get_test_data(num_samples=2000)
+    from torch.utils.data import DataLoader
+    test_loader = DataLoader(test_dataset, batch_size=32, shuffle=False, num_workers=0)
+    
+    print(f"✅ Test data loaded: {len(test_dataset)} samples")
+    
+    # Load your trained model
+    print("\n📁 Loading your trained model...")
+    model_path = '/home/abedin/Developments/pytorch_multi_chest_x_rey_paper2/saved_models/mimic_shards_hybrid_full_orl_vo10805_to128_lr5e-5_b256_ep50_dualbr_sy07_main_loss02_ortho01_branch_v3/export/model_weights.pth'
     
     base_model = MultimodalFusion(
         vocab_size=config.get_vocab_size(),
@@ -518,4 +670,5 @@ def run_essential_ablation_study():
     return ablation_results
 
 if __name__ == "__main__":
-    results = run_essential_ablation_study() 
+    # Run the comprehensive ablation study (original version)
+    run_essential_ablation_study() 

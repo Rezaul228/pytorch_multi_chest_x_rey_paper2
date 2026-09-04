@@ -16,7 +16,7 @@ import gc
 import pickle
 from tqdm import tqdm
 from base_models_refactored_v1 import MultimodalFusion, ContrastiveLoss, SynergyLoss, DifferenceLoss
-from all_visualization_v1 import TrainingVisualizer
+from analysis_all_visualization_v1 import TrainingVisualizer
 from data_loader_v1 import IndianaDataLoader
 from train_test_cross_modal_evaluation_v1 import evaluate_cross_modal_retrieval
 import paths
@@ -233,16 +233,41 @@ class EnhancedRetrievalTrainer:
         synergy_weight = synergy_weight / weight_sum * 2.0
         diff_weight = diff_weight / weight_sum * 2.0
         
-        # Combined loss: balanced task-specific losses
-        total_loss = synergy_weight * synergy_loss + diff_weight * difference_loss
+        # Combined loss: balanced task-specific losses (ADAPTIVE WEIGHTING)
+        # total_loss = synergy_weight * synergy_loss + diff_weight * difference_loss
+        
+        # FIXED RATIO LOSS (Alternative approach)
+        # Give difference branch much less weight to prevent it from dominating
+        # total_loss = synergy_loss + 0.1 * difference_loss  # Too small - difference branch not learning
+        
+        # Try higher weight to give difference branch more training signal
+        # total_loss = synergy_loss + 0.3 * difference_loss  # Increased from 0.1 to 0.3
+        
+        # ORTHOGONAL REGULARIZATION APPROACH
+        # Force branches to learn different but complementary features
+        # Remove the conflicting difference_loss entirely
+        # Calculate orthogonal loss for both image and text embeddings
+        img_orthogonal_loss = torch.abs(torch.sum(synergy_img_emb * diff_img_emb, dim=1)).mean()
+        txt_orthogonal_loss = torch.abs(torch.sum(synergy_txt_emb * diff_txt_emb, dim=1)).mean()
+        orthogonal_loss = (img_orthogonal_loss + txt_orthogonal_loss) / 2
+        
+        # CURRENT APPROACH (COMMENTED OUT)
+        # total_loss = synergy_loss + 0.25* orthogonal_loss
+        
+        # NEW APPROACH: ALL 3 LOSSES WITH 70/20/10 SPLIT
+        # Research-valid multi-task learning approach
+        # 70% synergy_loss: Primary contrastive learning for synergy branch
+        # 20% main_loss: Overall cross-modal retrieval performance
+        # 10% orthogonal_loss: Regularization to ensure branch complementarity
+        total_loss = 0.65 * synergy_loss + 0.2 * main_loss + 0.15 * orthogonal_loss
         
         # Backward pass
         self.optimizer.zero_grad()
-        main_loss.backward()
-        #total_loss.backward()
+        #main_loss.backward()
+        total_loss.backward()
         self.optimizer.step()
         
-        return total_loss.item(), synergy_loss.item(), difference_loss.item()
+        return total_loss.item(), synergy_loss.item(), difference_loss.item(), orthogonal_loss.item(), main_loss.item()
     
     def verify_branch_specialization(self, batch):
         """Verify that branches are learning different tasks"""
@@ -404,7 +429,7 @@ class EnhancedRetrievalTrainer:
             'epochs': [],
             'total_loss': [],
             'synergy_loss': [],
-            'difference_loss': [],
+            'orthogonal_loss': [],
             'loss_ratio': [],
             'recall@1': [],
             'recall@5': [],
@@ -421,6 +446,8 @@ class EnhancedRetrievalTrainer:
             epoch_total_losses = []
             epoch_synergy_losses = []
             epoch_difference_losses = []
+            epoch_orthogonal_losses = []
+            epoch_main_losses = []
             
             pbar = tqdm(enumerate(train_loader), 
                        total=min(steps_per_epoch, len(train_loader)),
@@ -438,7 +465,7 @@ class EnhancedRetrievalTrainer:
                 texts = texts.to(self.device)
                 
                 # Forward pass
-                total_loss, synergy_loss, difference_loss = self.train_step(
+                total_loss, synergy_loss, difference_loss, orthogonal_loss, main_loss = self.train_step(
                     (images, texts)
                 )
                 
@@ -446,17 +473,21 @@ class EnhancedRetrievalTrainer:
                 epoch_total_losses.append(total_loss)
                 epoch_synergy_losses.append(synergy_loss)
                 epoch_difference_losses.append(difference_loss)
+                epoch_orthogonal_losses.append(orthogonal_loss)
+                epoch_main_losses.append(main_loss)
                 
                 # Update progress bar
                 pbar.set_description(
-                    f"Total: {total_loss:.4f}, Syn: {synergy_loss:.4f}, Diff: {difference_loss:.4f}"
+                    f"Total: {total_loss:.4f}, Syn: {synergy_loss:.4f}, Main: {main_loss:.4f}, Ortho: {orthogonal_loss:.4f}"
                 )
             
             # Compute epoch metrics
             epoch_total_loss = np.mean(epoch_total_losses)
             epoch_synergy_loss = np.mean(epoch_synergy_losses)
             epoch_difference_loss = np.mean(epoch_difference_losses)
-            loss_ratio = epoch_synergy_loss / epoch_difference_loss
+            epoch_orthogonal_loss = np.mean(epoch_orthogonal_losses)
+            epoch_main_loss = np.mean(epoch_main_losses)
+            loss_ratio = epoch_synergy_loss / epoch_orthogonal_loss
             
             # Validation
             recalls = {}
@@ -468,6 +499,8 @@ class EnhancedRetrievalTrainer:
             print(f"\nEpoch {epoch+1} Results:")
             print(f"   Total Loss:      {epoch_total_loss:.6f}")
             print(f"   Synergy Loss:    {epoch_synergy_loss:.6f}")
+            print(f"   Main Loss:       {epoch_main_loss:.6f}")
+            print(f"   Orthogonal Loss: {epoch_orthogonal_loss:.6f}")
             print(f"   Difference Loss: {epoch_difference_loss:.6f}")
             print(f"   Loss Ratio:      {loss_ratio:.3f}")
             
@@ -494,7 +527,7 @@ class EnhancedRetrievalTrainer:
             viz_metrics = {
                 'total_loss': epoch_total_loss,
                 'synergy_loss': epoch_synergy_loss,
-                'difference_loss': epoch_difference_loss,
+                'orthogonal_loss': epoch_orthogonal_loss,
                 'loss_ratio': loss_ratio,
                 **recalls
             }
@@ -504,10 +537,14 @@ class EnhancedRetrievalTrainer:
             self.history['epochs'].append(epoch + 1)
             self.history['total_loss'].append(epoch_total_loss)
             self.history['synergy_loss'].append(epoch_synergy_loss)
-            self.history['difference_loss'].append(epoch_difference_loss)
+            self.history['orthogonal_loss'].append(epoch_orthogonal_loss)
             self.history['loss_ratio'].append(loss_ratio)
             for k, v in recalls.items():
                 self.history[k].append(v)
+            
+            # Calculate MRR
+            mrr = recalls['mrr']
+            self.history['mrr'].append(mrr)
         
         if val_loader is not None:
             print("\nFINAL COMPREHENSIVE VALIDATION ON ALL DATA...")
@@ -528,11 +565,11 @@ class EnhancedRetrievalTrainer:
             print("Final Losses:")
             print(f"   Total: {epoch_total_loss:.6f}")
             print(f"   Synergy: {epoch_synergy_loss:.6f}")
-            print(f"   Difference: {epoch_difference_loss:.6f}")
+            print(f"   Orthogonal: {epoch_orthogonal_loss:.6f}")
             
             print("\nDual Branch Verification:")
             print(f"   Synergy learning: {'YES' if epoch_synergy_loss < 3.5 else 'NO'}")
-            print(f"   Difference learning: {'YES' if epoch_difference_loss < 3.5 else 'NO'}")
+            print(f"   Orthogonal learning: {'YES' if epoch_orthogonal_loss < 0.3 else 'NO'}")
             
             # Save model
             try:
@@ -542,7 +579,7 @@ class EnhancedRetrievalTrainer:
                 print(f"\nError saving model: {str(e)}")
                 print("Model saving verification failed!")
         
-        return epoch_total_loss, epoch_synergy_loss, epoch_difference_loss
+        return epoch_total_loss, epoch_synergy_loss, epoch_orthogonal_loss
     
     def save_model(self):
         """Save model"""
@@ -631,10 +668,27 @@ def main():
                       help='Number of validation samples to use (None = use all)')
     parser.add_argument('--device', type=str, choices=['cpu', 'cuda'], default='cpu',
                       help='Device to use for computation (default: cpu)')
+    parser.add_argument('--seed', type=int, default=42,
+                      help='Random seed for reproducibility (default: 42)')
     args = parser.parse_args()
     
     # Set device
     device = torch.device(args.device)
+    
+    # Set random seeds for reproducibility
+    print(f"Setting random seed: {args.seed}")
+    torch.manual_seed(args.seed)
+    torch.cuda.manual_seed(args.seed)
+    torch.cuda.manual_seed_all(args.seed)
+    np.random.seed(args.seed)
+    import random
+    random.seed(args.seed)
+    
+    # For complete reproducibility
+    torch.backends.cudnn.deterministic = True
+    torch.backends.cudnn.benchmark = False
+    
+    print("✅ Random seeds set for reproducible results")
     
     # Get parameters from config or command line
     batch_size = args.batch_size if args.batch_size is not None else config.get_default_batch_size()
@@ -682,7 +736,7 @@ def main():
     
     # Create PyTorch DataLoaders
     train_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True, num_workers=0)
-    val_loader = DataLoader(val_dataset, batch_size=batch_size, shuffle=False, num_workers=0)
+    val_loader = DataLoader(val_dataset, batch_size=batch_size, shuffle=True, num_workers=0)
     
     print(f"Data loaded: {len(train_dataset)} train, {len(val_dataset)} val, vocab: {VOCAB_SIZE}")
     

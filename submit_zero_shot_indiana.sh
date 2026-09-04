@@ -11,10 +11,10 @@
 source /opt/conda/etc/profile.d/conda.sh
 conda activate multi_pytorch
 
-cd /home/abedin/Developments/pytorch_multi_chest_x_ray1
+cd /home/abedin/Developments/pytorch_multi_chest_x_rey_paper2
 mkdir -p logs
 
-echo "Zero-shot: MIMIC-trained model -> Indiana test set"
+echo "Zero-shot: MIMIC-trained model -> Indiana train set"
 echo "Job ID: $SLURM_JOB_ID"
 echo "Node: $SLURM_NODELIST"
 echo "Time: $(date)"

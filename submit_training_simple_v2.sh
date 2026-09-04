@@ -38,13 +38,15 @@ cat > /tmp/simple_training_job_$$.sh << EOF
 #SBATCH --gres=gpu:1
 #SBATCH --mem=16G
 #SBATCH --partition=volta
+#SBATCH --qos=normal
+#SBATCH --priority=TOP
 
 # Load conda environment
 source /opt/conda/etc/profile.d/conda.sh
 conda activate multi_pytorch
 
 # Set working directory
-cd /home/abedin/Developments/pytorch_multi_chest_x_ray1
+cd /home/abedin/Developments/pytorch_multi_chest_x_rey_paper2
 
 # Print job information
 echo "=========================================="
@@ -54,13 +56,14 @@ echo "=========================================="
 
 # Show current configuration
 echo "📋 Current Configuration:"
-python -c "import config; config.print_current_config()"
+python3 -c "import config; config.print_current_config()"
 
 # Run the training script with only experiment_name and device
 # All other parameters come from config.py
-python train_retrieval_v2.py \\
+python3 train_retrieval_v2.py \\
     --experiment_name $EXPERIMENT_NAME \\
-    --device $DEVICE
+    --device $DEVICE \\
+    --seed 42
 
 echo "Training completed!"
 EOF
@@ -95,4 +98,4 @@ rm -f /tmp/simple_training_job_$$.sh
 echo ""
 echo "🎯 Training job submitted!"
 echo "   All parameters loaded from config.py"
-echo "   Check the output file for detailed configuration information" 
+echo "   Check logs/training_${JOB_ID}.out for configuration details" 

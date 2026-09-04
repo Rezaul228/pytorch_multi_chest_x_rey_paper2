@@ -5,13 +5,115 @@ import matplotlib.pyplot as plt
 import os
 
 try:
-    from all_visualization_v1 import visualize_retrieval_examples
+    from analysis_all_visualization_v1 import visualize_retrieval_examples
     visualization_available = True
 except ImportError:
     visualization_available = False
     print("Visualization module not available. Install matplotlib for visualization features.")
 
-def evaluate_cross_modal_retrieval(model, test_data, k_values=[1, 5, 10], visualize=False, num_vis_examples=3, output_dir=None):
+def create_rank_distribution_plots(i2t_ranks, t2i_ranks, results, output_dir="evaluation_plots"):
+    """Create comprehensive rank distribution plots for evaluation results"""
+    print("📊 Creating rank distribution plots...")
+    
+    # Create output directory
+    os.makedirs(output_dir, exist_ok=True)
+    
+    # Create rank distribution plots
+    fig, axes = plt.subplots(2, 2, figsize=(15, 12))
+    fig.suptitle('Rank Distribution Analysis', fontsize=16, fontweight='bold')
+    
+    # Plot 1: Rank histograms
+    axes[0, 0].hist(i2t_ranks, bins=50, alpha=0.7, label='Image→Text', color='blue', density=True)
+    axes[0, 0].hist(t2i_ranks, bins=50, alpha=0.7, label='Text→Image', color='red', density=True)
+    axes[0, 0].set_xlabel('Rank')
+    axes[0, 0].set_ylabel('Density')
+    axes[0, 0].set_title('Rank Distribution Histogram')
+    axes[0, 0].legend()
+    axes[0, 0].grid(True, alpha=0.3)
+    
+    # Plot 2: Cumulative rank distribution
+    max_rank = int(max(max(i2t_ranks), max(t2i_ranks)))
+    rank_range = range(1, min(max_rank + 1, 101))
+    
+    # Convert ranks to integers for bincount
+    i2t_ranks_int = i2t_ranks.astype(int)
+    t2i_ranks_int = t2i_ranks.astype(int)
+    
+    # Ensure max_rank is an integer
+    max_rank = int(max_rank)
+    
+    i2t_cumulative = np.cumsum(np.bincount(i2t_ranks_int, minlength=max_rank+1)[1:]) / len(i2t_ranks)
+    t2i_cumulative = np.cumsum(np.bincount(t2i_ranks_int, minlength=max_rank+1)[1:]) / len(t2i_ranks)
+    
+    # Truncate to reasonable range
+    plot_range = min(len(rank_range), len(i2t_cumulative), len(t2i_cumulative))
+    rank_range = rank_range[:plot_range]
+    i2t_cumulative = i2t_cumulative[:plot_range]
+    t2i_cumulative = t2i_cumulative[:plot_range]
+    
+    axes[0, 1].plot(rank_range, i2t_cumulative, label='Image→Text', color='blue', linewidth=2)
+    axes[0, 1].plot(rank_range, t2i_cumulative, label='Text→Image', color='red', linewidth=2)
+    axes[0, 1].set_xlabel('Rank')
+    axes[0, 1].set_ylabel('Cumulative Probability')
+    axes[0, 1].set_title('Cumulative Rank Distribution')
+    axes[0, 1].legend()
+    axes[0, 1].grid(True, alpha=0.3)
+    axes[0, 1].set_xlim(1, min(50, max_rank))  # Focus on first 50 ranks
+    
+    # Plot 3: Log-scale rank distribution
+    axes[1, 0].hist(i2t_ranks, bins=50, alpha=0.7, label='Image→Text', color='blue', density=True)
+    axes[1, 0].hist(t2i_ranks, bins=50, alpha=0.7, label='Text→Image', color='red', density=True)
+    axes[1, 0].set_xlabel('Rank')
+    axes[1, 0].set_ylabel('Density')
+    axes[1, 0].set_title('Rank Distribution (Log Scale)')
+    axes[1, 0].set_yscale('log')
+    axes[1, 0].legend()
+    axes[1, 0].grid(True, alpha=0.3)
+    
+    # Plot 4: Performance comparison
+    metrics = ['R@1', 'R@5', 'R@10', 'MRR']
+    i2t_values = [results.get('i2t_recall@1', 0), results.get('i2t_recall@5', 0), 
+                  results.get('i2t_recall@10', 0), results.get('i2t_mrr', 0)]
+    t2i_values = [results.get('t2i_recall@1', 0), results.get('t2i_recall@5', 0), 
+                  results.get('t2i_recall@10', 0), results.get('t2i_mrr', 0)]
+    
+    x = np.arange(len(metrics))
+    width = 0.35
+    
+    axes[1, 1].bar(x - width/2, i2t_values, width, label='Image→Text', color='blue', alpha=0.7)
+    axes[1, 1].bar(x + width/2, t2i_values, width, label='Text→Image', color='red', alpha=0.7)
+    axes[1, 1].set_xlabel('Metrics')
+    axes[1, 1].set_ylabel('Score')
+    axes[1, 1].set_title('Performance Comparison')
+    axes[1, 1].set_xticks(x)
+    axes[1, 1].set_xticklabels(metrics)
+    axes[1, 1].legend()
+    axes[1, 1].grid(True, alpha=0.3)
+    
+    # Add text annotations with statistics
+    stats_text = f"""
+    Image→Text:
+    Mean Rank: {results.get('i2t_mean_rank', 0):.2f}
+    Median Rank: {results.get('i2t_median_rank', 0):.2f}
+    
+    Text→Image:
+    Mean Rank: {results.get('t2i_mean_rank', 0):.2f}
+    Median Rank: {results.get('t2i_median_rank', 0):.2f}
+    """
+    
+    fig.text(0.02, 0.02, stats_text, fontsize=10, verticalalignment='bottom',
+             bbox=dict(boxstyle='round', facecolor='wheat', alpha=0.8))
+    
+    plt.tight_layout()
+    
+    # Save the plot
+    plot_path = os.path.join(output_dir, 'rank_distribution_analysis.png')
+    plt.savefig(plot_path, dpi=300, bbox_inches='tight')
+    print(f"✅ Rank distribution plot saved to: {plot_path}")
+    
+    return plot_path
+
+def evaluate_cross_modal_retrieval(model, test_data, k_values=[1, 5, 10], visualize=False, num_vis_examples=3, output_dir=None, create_rank_plots=False):
     """Evaluate cross-modal retrieval performance - PyTorch version"""
     print("Evaluating cross-modal retrieval performance...")
     
@@ -40,6 +142,8 @@ def evaluate_cross_modal_retrieval(model, test_data, k_values=[1, 5, 10], visual
         image_emb, text_emb = model((images, captions), training=False)
     
     results = {}
+    i2t_ranks = []
+    t2i_ranks = []
     
     print("Computing similarity matrices...")
     
@@ -81,6 +185,12 @@ def evaluate_cross_modal_retrieval(model, test_data, k_values=[1, 5, 10], visual
         
         ranks = np.array(ranks)
         
+        # Store ranks for plotting
+        if direction == "i2t":
+            i2t_ranks = ranks
+        else:
+            t2i_ranks = ranks
+        
         # Calculate MRR (Mean Reciprocal Rank)
         mrr = np.mean(1.0 / ranks)
         results[f"{direction}_mrr"] = float(mrr)
@@ -98,7 +208,7 @@ def evaluate_cross_modal_retrieval(model, test_data, k_values=[1, 5, 10], visual
             pct = 100 * np.mean(ranks <= threshold)
             results[f"{direction}_rank<={threshold}"] = float(pct)
             
-        # Calculate Recall@K
+        # Calculate Recall@K and Precision@K
         for k in k_values:
             _, top_k_indices = torch.topk(sim_matrix, k=k, dim=1)
             
@@ -109,6 +219,19 @@ def evaluate_cross_modal_retrieval(model, test_data, k_values=[1, 5, 10], visual
             
             recall = torch.mean(correct_in_topk.float())
             results[f"{direction}_recall@{k}"] = float(recall.cpu())
+            
+            # Calculate Precision@K
+            # For each query, count how many of the top-k results are correct
+            precision_scores = []
+            for i in range(sim_matrix.size(0)):
+                correct_count = torch.sum(
+                    top_k_indices[i] == correct_indices[i]
+                ).float()
+                precision = correct_count / k
+                precision_scores.append(precision)
+            
+            precision = torch.mean(torch.stack(precision_scores))
+            results[f"{direction}_precision@{k}"] = float(precision.cpu())
         
         # Print results for this direction
         print(f"  MRR: {float(mrr):.4f}")
@@ -117,6 +240,7 @@ def evaluate_cross_modal_retrieval(model, test_data, k_values=[1, 5, 10], visual
         
         for k in k_values:
             print(f"  Recall@{k}: {float(results[f'{direction}_recall@{k}']):.4f}")
+            print(f"  Precision@{k}: {float(results[f'{direction}_precision@{k}']):.4f}")
         
         print("  Rank percentages:")
         for threshold in rank_thresholds:
@@ -153,6 +277,11 @@ def evaluate_cross_modal_retrieval(model, test_data, k_values=[1, 5, 10], visual
     
     results["summary"] = summary
     
+    # Create rank distribution plots if requested
+    if create_rank_plots and len(i2t_ranks) > 0 and len(t2i_ranks) > 0:
+        plot_path = create_rank_distribution_plots(i2t_ranks, t2i_ranks, results, output_dir)
+        results["rank_plot_path"] = plot_path
+    
     # Generate visualizations if requested
     if visualize and visualization_available and num_vis_examples > 0:
         # Ensure tokenizer is available
@@ -165,7 +294,7 @@ def evaluate_cross_modal_retrieval(model, test_data, k_values=[1, 5, 10], visual
     
     return results
 
-def evaluate_cross_modal_retrieval_streaming(model, test_dataset, k_values=[1, 5, 10], batch_size=64, visualize=False, num_vis_examples=3, output_dir=None):
+def evaluate_cross_modal_retrieval_streaming(model, test_dataset, k_values=[1, 5, 10], batch_size=64, visualize=False, num_vis_examples=3, output_dir=None, create_rank_plots=False):
     """Evaluate cross-modal retrieval performance on streaming dataset - PyTorch version"""
     print(f"Processing in batches of {batch_size}...")
     
@@ -278,6 +407,8 @@ def evaluate_cross_modal_retrieval_streaming(model, test_dataset, k_values=[1, 5
     t2i_sim = torch.matmul(text_emb_torch, image_emb_torch.transpose(0, 1))
     
     results = {}
+    i2t_ranks = []
+    t2i_ranks = []
     
     print("Calculating metrics...")
     
@@ -306,6 +437,12 @@ def evaluate_cross_modal_retrieval_streaming(model, test_dataset, k_values=[1, 5
         
         ranks = np.array(ranks)
         
+        # Store ranks for plotting
+        if direction == "i2t":
+            i2t_ranks = ranks
+        else:
+            t2i_ranks = ranks
+        
         # Calculate metrics
         mrr = np.mean(1.0 / ranks)
         results[f"{direction}_mrr"] = float(mrr)
@@ -322,7 +459,7 @@ def evaluate_cross_modal_retrieval_streaming(model, test_dataset, k_values=[1, 5
             pct = 100 * np.mean(ranks <= threshold)
             results[f"{direction}_rank<={threshold}"] = float(pct)
             
-        # Recall@K
+        # Recall@K and Precision@K
         for k in k_values:
             _, top_k_indices = torch.topk(sim_matrix, k=k, dim=1)
             
@@ -333,6 +470,18 @@ def evaluate_cross_modal_retrieval_streaming(model, test_dataset, k_values=[1, 5
             
             recall = torch.mean(correct_in_topk.float())
             results[f"{direction}_recall@{k}"] = float(recall.cpu())
+            
+            # Calculate Precision@K
+            precision_scores = []
+            for i in range(sim_matrix.size(0)):
+                correct_count = torch.sum(
+                    top_k_indices[i] == correct_indices[i]
+                ).float()
+                precision = correct_count / k
+                precision_scores.append(precision)
+            
+            precision = torch.mean(torch.stack(precision_scores))
+            results[f"{direction}_precision@{k}"] = float(precision.cpu())
         
         # Print results
         print(f"  MRR: {float(mrr):.4f}")
@@ -341,6 +490,7 @@ def evaluate_cross_modal_retrieval_streaming(model, test_dataset, k_values=[1, 5
         
         for k in k_values:
             print(f"  Recall@{k}: {float(results[f'{direction}_recall@{k}']):.4f}")
+            print(f"  Precision@{k}: {float(results[f'{direction}_precision@{k}']):.4f}")
         
         print("  Rank percentages:")
         for threshold in rank_thresholds:
@@ -365,6 +515,10 @@ def evaluate_cross_modal_retrieval_streaming(model, test_dataset, k_values=[1, 5
         avg_recall = (results[f"i2t_recall@{k}"] + results[f"t2i_recall@{k}"]) / 2
         results[f"avg_recall@{k}"] = avg_recall
         print(f"  Average Recall@{k}: {avg_recall:.4f}")
+        
+        avg_precision = (results[f"i2t_precision@{k}"] + results[f"t2i_precision@{k}"]) / 2
+        results[f"avg_precision@{k}"] = avg_precision
+        print(f"  Average Precision@{k}: {avg_precision:.4f}")
     
     # Create summary
     try:
@@ -376,6 +530,11 @@ def evaluate_cross_modal_retrieval_streaming(model, test_dataset, k_values=[1, 5
         summary = f"Summary generation error: {str(e)}"
     
     results["summary"] = summary
+    
+    # Create rank distribution plots if requested
+    if create_rank_plots and len(i2t_ranks) > 0 and len(t2i_ranks) > 0:
+        plot_path = create_rank_distribution_plots(i2t_ranks, t2i_ranks, results, output_dir)
+        results["rank_plot_path"] = plot_path
     
     # Generate visualizations if requested
     if visualize and visualization_available and num_vis_examples > 0:

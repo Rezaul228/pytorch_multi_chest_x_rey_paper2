@@ -414,21 +414,24 @@ class DifferenceLoss(nn.Module):
         similarity_matrix = torch.matmul(image_embeddings, text_embeddings.t())
         similarity_matrix = similarity_matrix / self.temperature
         
+        
         # For difference branch: we want LOW similarity on diagonal
         # Create "anti-labels" - maximize similarity with WRONG pairs
-        batch_size = image_embeddings.size(0)        
-        # Create anti-labels (shift by 1: Image1 should match Text2, Image2 should match Text3, etc.)
-        anti_labels = torch.arange(1, batch_size + 1, device=image_embeddings.device) % batch_size
-        # Anti-contrastive loss: maximize similarity with wrong pairs
-        loss_i2t = F.cross_entropy(similarity_matrix, anti_labels)
-        loss_t2i = F.cross_entropy(similarity_matrix.t(), anti_labels)
-        
-        #Similar dual branch
         #batch_size = image_embeddings.size(0)
-        #labels = torch.arange(batch_size, device=image_embeddings.device)
         
-        #loss_i2t = F.cross_entropy(similarity_matrix, labels)
-        #loss_t2i = F.cross_entropy(similarity_matrix.t(), labels)
+        # Create anti-labels (shift by 1: Image1 should match Text2, Image2 should match Text3, etc.)
+        #anti_labels = torch.arange(1, batch_size + 1, device=image_embeddings.device) % batch_size
+        
+        # Anti-contrastive loss: maximize similarity with wrong pairs
+        #loss_i2t = F.cross_entropy(similarity_matrix, anti_labels)
+        #loss_t2i = F.cross_entropy(similarity_matrix.t(), anti_labels)
+      
+        batch_size = image_embeddings.size(0)
+        labels = torch.arange(batch_size, device=image_embeddings.device)
+        
+        # Standard contrastive loss (minimize this = maximize similarity)
+        loss_i2t = F.cross_entropy(similarity_matrix, labels)
+        loss_t2i = F.cross_entropy(similarity_matrix.t(), labels)
         
         
         # Average both directions

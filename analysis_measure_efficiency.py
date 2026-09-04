@@ -5,8 +5,8 @@ Setup:
     pip install fvcore torchvision transformers
 
 Run:
-    python measure_efficiency.py              # full table (ours + baselines)
-    python measure_efficiency.py --ours-only    # our model only (faster, no BERT download)
+    python analysis_measure_efficiency.py              # full table (ours + baselines)
+    python analysis_measure_efficiency.py --ours-only    # our model only (faster, no BERT download)
 """
 
 import argparse
