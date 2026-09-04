@@ -1,0 +1,19 @@
+---
+description: Knowledge transfer for paper2 multimodal CXR retrieval — read AGENT_KNOWLEDGE.md; prefer minimal path/import fixes over rewrites.
+alwaysApply: true
+---
+
+# Paper2 project — agent orientation
+
+Before large changes, read **`AGENT_KNOWLEDGE.md`** in the project root.
+
+## Non-negotiables
+
+- This repo was ported from `/home/abedin/Developments/mimic_ori_full_all_data` where the same scripts **already worked**.
+- On failure: **find the problem** (paths, imports after `analysis_`/`test_` renames, hardcoded model folders). Do **not** redesign the model or rewrite pipelines.
+- Prefer the known-good checkpoint:
+  `saved_models/mimic_shards_hybrid_full_orl_vo10805_to128_lr5e-5_b256_ep50_dualbr_sy065_main_loss20_ortho15__branch_v1_seed_42/export/model_weights.pth`
+- Viz import is `analysis_all_visualization_v1` (not `all_visualization_v1`).
+- Project root must be `pytorch_multi_chest_x_rey_paper2` (not `mimic_ori_full_all_data`).
+- Data lives under `chest_x_ray_data_processing/all_processed_data/` via `paths.py` / `config.py`.
+- Keep diffs minimal; compare with the old project when debugging.
