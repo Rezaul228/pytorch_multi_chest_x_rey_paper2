@@ -22,7 +22,7 @@ import paths
 
 def load_tokenizer_from_metadata():
     """Load the tokenizer from metadata based on current dataset mode"""
-    shard_subfolder = "indiana_shards"  # Use the current dataset mode
+    shard_subfolder = "mimic_shards_hybrid_full_ori"  # Match seed_42 MIMIC training/eval
     metadata_path = paths.get_metadata_path(shard_subfolder)
     
     with open(metadata_path, 'rb') as f:
@@ -70,7 +70,7 @@ def load_full_test_data():
     data_loader = IndianaDataLoader(
         batch_size=32, 
         use_shards=True, 
-        shard_subfolder="indiana_shards"
+        shard_subfolder="mimic_shards_hybrid_full_ori"
     )
     
     # Load tokenizer
@@ -92,7 +92,7 @@ def run_full_evaluation():
     print("=" * 70)
     
     # Model path
-    model_path = '/home/abedin/Developments/pytorch_multi_chest_x_rey_paper2/saved_models/mimic_shards_hybrid_full_orl_vo10805_to128_lr5e-5_b256_ep50_dualbr_sy065_main_loss20_ortho15__branch_v2/export/model_weights.pth'
+    model_path = '/home/abedin/Developments/pytorch_multi_chest_x_rey_paper2/saved_models/mimic_shards_hybrid_full_orl_vo10805_to128_lr5e-5_b256_ep50_dualbr_sy065_main_loss20_ortho15__branch_v1_seed_42/export/model_weights.pth'
     
     try:
         # Load trained model

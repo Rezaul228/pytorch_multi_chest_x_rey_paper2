@@ -1,0 +1,19 @@
+FULL EVALUATION RESULTS
+==================================================
+Test samples: 12429
+Model: /home/abedin/Developments/pytorch_multi_chest_x_rey_paper2/saved_models/mimic_shards_hybrid_full_orl_vo10805_to128_lr5e-5_b256_ep50_dualbr_sy065_main_loss20_ortho15__branch_v1_seed_42/export/model_weights.pth
+
+Image→Text R@1: 0.9928
+Image→Text R@5: 0.9987
+Image→Text R@10: 0.9995
+Text→Image R@1: 1.0000
+Text→Image R@5: 1.0000
+Text→Image R@10: 1.0000
+Image→Text MRR: 0.9955
+Text→Image MRR: 1.0000
+Image→Text Mean Rank: 1.0275
+Text→Image Mean Rank: 1.0000
+Average MRR: 0.9977
+Average Mean Rank: 1.0138
+
+Summary: MRR: 0.9977, Mean Rank: 1.0, Median Rank: 1.0, R@1: 0.9964, R@5: 0.9994, R@10: 0.9998

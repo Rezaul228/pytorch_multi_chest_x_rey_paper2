@@ -1,0 +1,78 @@
+
+# Multi-Seed Model Evaluation Results
+Generated on: 2026-09-04 13:47:39
+
+## Individual Seed Results
+ i2t_recall_at_1  i2t_recall_at_5  i2t_recall_at_10  i2t_mrr  i2t_mean_rank  i2t_median_rank  t2i_recall_at_1  t2i_recall_at_5  t2i_recall_at_10  t2i_mrr  t2i_mean_rank  t2i_median_rank  avg_recall_at_1  avg_recall_at_5  avg_recall_at_10  avg_mrr  avg_mean_rank  avg_median_rank seed                                                                                                                                                                                                       model_path
+          0.9935           0.9988            0.9997  0.99597         1.0209              1.0              1.0              1.0               1.0      1.0            1.0              1.0          0.99675           0.9994           0.99985 0.997985        1.01045              1.0   42 /home/abedin/Developments/pytorch_multi_chest_x_rey_paper2/saved_models/mimic_shards_hybrid_full_orl_vo10805_to128_lr5e-5_b256_ep50_dualbr_sy065_main_loss20_ortho15__branch_v1_seed_42/export/model_weights.pth
+
+## Statistical Summary (Mean ± Std)
+
+### Image-to-Text Retrieval
+- Recall@1: 0.9935 ± nan
+- Recall@5: 0.9988 ± nan
+- Recall@10: 0.9997 ± nan
+- MRR: 0.9960 ± nan
+- Mean Rank: 1.02 ± nan
+- Median Rank: 1.00 ± nan
+
+### Text-to-Image Retrieval
+- Recall@1: 1.0000 ± nan
+- Recall@5: 1.0000 ± nan
+- Recall@10: 1.0000 ± nan
+- MRR: 1.0000 ± nan
+- Mean Rank: 1.00 ± nan
+- Median Rank: 1.00 ± nan
+
+### Average Performance (Both Directions)
+- Recall@1: 0.9967 ± nan
+- Recall@5: 0.9994 ± nan
+- Recall@10: 0.9999 ± nan
+- MRR: 0.9980 ± nan
+- Mean Rank: 1.01 ± nan
+- Median Rank: 1.00 ± nan
+
+## Best Performance per Metric
+
+### Image-to-Text
+- Best Recall@1: 0.9935 (Seed: 42)
+- Best Recall@5: 0.9988 (Seed: 42)
+- Best Recall@10: 0.9997 (Seed: 42)
+- Best MRR: 0.9960 (Seed: 42)
+
+### Text-to-Image
+- Best Recall@1: 1.0000 (Seed: 42)
+- Best Recall@5: 1.0000 (Seed: 42)
+- Best Recall@10: 1.0000 (Seed: 42)
+- Best MRR: 1.0000 (Seed: 42)
+
+## Reproducibility Analysis
+- Standard Deviation of Average Recall@1: nan
+- Coefficient of Variation (Average Recall@1): nan%
+- Model Stability: Low
+
+## Paper-Ready Results
+For your research paper, you can report:
+
+**Primary Results (Mean ± Standard Deviation):**
+
+### Image-to-Text Retrieval
+- Recall@1: 0.9935 ± nan
+- Recall@5: 0.9988 ± nan
+- Recall@10: 0.9997 ± nan
+- Mean Reciprocal Rank (MRR): 0.9960 ± nan
+
+### Text-to-Image Retrieval
+- Recall@1: 1.0000 ± nan
+- Recall@5: 1.0000 ± nan
+- Recall@10: 1.0000 ± nan
+- Mean Reciprocal Rank (MRR): 1.0000 ± nan
+
+### Overall Performance
+- Average Recall@1: 0.9967 ± nan
+- Average Recall@5: 0.9994 ± nan
+- Average Recall@10: 0.9999 ± nan
+- Average MRR: 0.9980 ± nan
+
+**Reproducibility Statement:**
+"We evaluated our model across 1 different random seeds to ensure reproducibility. The standard deviation of our primary metric (Average Recall@1) is nan, indicating low reproducibility."

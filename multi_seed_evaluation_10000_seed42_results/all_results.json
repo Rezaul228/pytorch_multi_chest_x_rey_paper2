@@ -1,0 +1,24 @@
+[
+  {
+    "i2t_recall_at_1": 0.9934999942779541,
+    "i2t_recall_at_5": 0.9987999796867371,
+    "i2t_recall_at_10": 0.9997000098228455,
+    "i2t_mrr": 0.9959696067821069,
+    "i2t_mean_rank": 1.0209,
+    "i2t_median_rank": 1.0,
+    "t2i_recall_at_1": 1.0,
+    "t2i_recall_at_5": 1.0,
+    "t2i_recall_at_10": 1.0,
+    "t2i_mrr": 1.0,
+    "t2i_mean_rank": 1.0,
+    "t2i_median_rank": 1.0,
+    "avg_recall_at_1": 0.996749997138977,
+    "avg_recall_at_5": 0.9993999898433685,
+    "avg_recall_at_10": 0.9998500049114227,
+    "avg_mrr": 0.9979848033910534,
+    "avg_mean_rank": 1.01045,
+    "avg_median_rank": 1.0,
+    "seed": "42",
+    "model_path": "/home/abedin/Developments/pytorch_multi_chest_x_rey_paper2/saved_models/mimic_shards_hybrid_full_orl_vo10805_to128_lr5e-5_b256_ep50_dualbr_sy065_main_loss20_ortho15__branch_v1_seed_42/export/model_weights.pth"
+  }
+]

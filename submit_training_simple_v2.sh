@@ -39,6 +39,7 @@ cat > /tmp/simple_training_job_$$.sh << EOF
 #SBATCH --mem=16G
 #SBATCH --partition=volta
 #SBATCH --qos=normal
+#SBATCH --nice=-1000
 #SBATCH --priority=TOP
 
 # Load conda environment

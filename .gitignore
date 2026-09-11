@@ -27,3 +27,8 @@ wandb/
 .DS_Store
 .vscode/
 *.swp
+
+# Per-patient MIMIC-CXR derived labels (PhysioNet DUA: credentialed-access only, not for public redistribution)
+test_labels_chexpert.csv
+test_labels_chexpert_binary.csv
+test_labels_negbio.csv
