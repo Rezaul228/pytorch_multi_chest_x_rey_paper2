@@ -1,0 +1,7 @@
+finding,direction,n_queries,mean_confusion_at_10,base_rate,ratio
+Pleural Effusion,RIGHT-query,774,0.065504,0.055439,1.1815
+Pleural Effusion,LEFT-query,689,0.070247,0.062279,1.1279
+Atelectasis,RIGHT-query,439,0.060364,0.049726,1.2139
+Atelectasis,LEFT-query,618,0.033657,0.035323,0.9528
+Lung Opacity,RIGHT-query,631,0.045483,0.042726,1.0645
+Lung Opacity,LEFT-query,531,0.053861,0.050772,1.0608

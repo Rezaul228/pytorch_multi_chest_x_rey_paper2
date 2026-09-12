@@ -172,7 +172,11 @@ class HierarchicalCoAttention(nn.Module):
         self.local_text_gate_weights = nn.Parameter(torch.randn(embed_dim))
         self.global_image_gate_weights = nn.Parameter(torch.randn(embed_dim))
         self.global_text_gate_weights = nn.Parameter(torch.randn(embed_dim))
-        
+
+        # NEW (paper2, section-aware feedback -- not wired into forward() yet)
+        self.section_find_gate_weights = nn.Parameter(torch.randn(embed_dim))
+        self.section_imp_gate_weights = nn.Parameter(torch.randn(embed_dim))
+
         # Multi-head attention layers
         self.cross_attention1 = nn.MultiheadAttention(embed_dim, num_heads, batch_first=True)
         self.cross_attention2 = nn.MultiheadAttention(embed_dim, num_heads, batch_first=True)
@@ -212,7 +216,30 @@ class HierarchicalCoAttention(nn.Module):
             nn.Linear(embed_dim * 4, embed_dim)
         )
     
-    def forward(self, image_tokens, text_tokens):
+    def forward(self, image_tokens, text_tokens, findings_token_count=None, has_find=None, has_imp=None,
+                token_ids=None, debug=False):
+        # NEW (paper2) optional args, all default None -> when findings_token_count
+        # is None (Paper 1's original call signature: forward(image_tokens, text_tokens)),
+        # the code below runs the ORIGINAL path, completely unchanged. token_ids is
+        # also new/required alongside findings_token_count/has_find/has_imp: the three
+        # already-verified helper methods this branches into
+        # (compute_section_pools/compute_section_global_attention/section_aware_feedback)
+        # need the raw token ids to detect padding (text_tokens itself is continuous
+        # post-LSTM/LayerNorm and its padded positions aren't reliably zero), and
+        # compute_section_pools's signature -- verified in the previous step --
+        # takes token_ids as a required positional argument.
+        if debug:
+            # TEMPORARY debug print for this verification step only -- confirms section
+            # info actually reaches this specific layer instance, rather than inferring
+            # it indirectly from output differences.
+            print(f"[DEBUG] HierarchicalCoAttention({self.instance_name}): "
+                  f"findings_token_count is not None = {findings_token_count is not None}")
+
+        if findings_token_count is not None:
+            assert has_find is not None and has_imp is not None and token_ids is not None, (
+                "has_find, has_imp, and token_ids must all be provided together with findings_token_count"
+            )
+
         # Local cross-attention: Image -> Text
         attended_image, _ = self.cross_attention1(
             query=image_tokens,
@@ -274,10 +301,246 @@ class HierarchicalCoAttention(nn.Module):
         global_text_token = self.global_norm4(global_text_token + self.global_ffn2(global_text_token))
         
         # Combine local and global features (broadcast global to all positions)
+        # Image-side feedback is COMPLETELY unchanged in both cases.
         image_tokens = image_tokens + global_image_token.expand(-1, image_tokens.size(1), -1)
-        text_tokens = text_tokens + global_text_token.expand(-1, text_tokens.size(1), -1)
-        
+
+        if findings_token_count is None:
+            # ORIGINAL path -- byte-for-byte unchanged (critical safety fallback).
+            text_tokens = text_tokens + global_text_token.expand(-1, text_tokens.size(1), -1)
+        else:
+            # NEW (paper2) section-aware path.
+            section_pools = self.compute_section_pools(text_tokens, token_ids, findings_token_count)
+            G_find, G_imp, G_report = self.compute_section_global_attention(section_pools, image_tokens)
+            real_length = (token_ids != 0).sum(dim=1)
+            text_tokens, _, _ = self.section_aware_feedback(
+                text_tokens, G_find, G_imp, G_report, findings_token_count, real_length, has_find, has_imp
+            )
+
         return image_tokens, text_tokens
+
+    def compute_section_pools(self, text_tokens, token_ids, findings_token_count, pad_token_id=0):
+        """
+        NOT wired into forward() yet. Computes three separate mean-pooled
+        global text vectors from the same per-position text_tokens that
+        forward() operates on, splitting each sample's real (non-padded)
+        tokens into a Findings span and an Impression span:
+
+          - global_text_find:   mean over text_tokens[:findings_token_count]
+          - global_text_imp:    mean over text_tokens[findings_token_count:real_length]
+          - global_text_report: torch.mean(text_tokens, dim=1, keepdim=True) --
+            EXACTLY the old, unmasked behavior (averages over all seq_len
+            positions, padding included). This is the "whole report"
+            fallback and is kept bit-identical to Paper 1's original
+            computation on purpose, unlike global_text_find/global_text_imp
+            which are masked to real tokens only.
+
+        A section with zero real tokens (e.g. findings_token_count == 0, or
+        real_length <= findings_token_count meaning no room left for an
+        Impression span after truncation) gets a zero vector for that pool,
+        and its has_find / has_imp flag is False.
+
+        Args:
+            text_tokens: (B, L, D) float tensor -- same tensor forward() uses
+                for global_text_token (i.e. after the local text->image
+                cross-attention step).
+            token_ids: (B, L) long tensor of the ORIGINAL raw token ids for
+                this batch (before embedding). Needed because text_tokens
+                itself is continuous (post-LSTM/LayerNorm) and its padded
+                positions are not reliably zero, so padding must be detected
+                from the raw ids, using pad_token_id (0, matching
+                pad_sequences' default pad value) as the pad marker.
+            findings_token_count: (B,) int tensor, one value per sample --
+                from section_boundaries_test_paper2.csv, already capped to
+                the sequence length used when the shards were built.
+            pad_token_id: token id used for padding (default 0).
+
+        Returns:
+            dict with keys:
+              'global_text_find':   (B, 1, D) float tensor
+              'global_text_imp':    (B, 1, D) float tensor
+              'global_text_report': (B, 1, D) float tensor
+              'has_find': (B,) bool tensor
+              'has_imp':  (B,) bool tensor
+        """
+        batch_size, seq_len, _ = text_tokens.shape
+        device = text_tokens.device
+
+        findings_token_count = findings_token_count.to(device=device, dtype=torch.long).clamp(min=0, max=seq_len)
+        real_length = (token_ids.to(device) != pad_token_id).sum(dim=1).to(torch.long).clamp(max=seq_len)
+
+        positions = torch.arange(seq_len, device=device).unsqueeze(0).expand(batch_size, seq_len)
+
+        find_mask = positions < findings_token_count.unsqueeze(1)
+        imp_mask = (positions >= findings_token_count.unsqueeze(1)) & (positions < real_length.unsqueeze(1))
+
+        has_find = findings_token_count > 0
+        has_imp = (real_length - findings_token_count) > 0
+
+        def masked_mean(mask):
+            mask_f = mask.unsqueeze(-1).to(text_tokens.dtype)  # (B, L, 1)
+            summed = (text_tokens * mask_f).sum(dim=1)  # (B, D)
+            counts = mask.sum(dim=1).clamp(min=1).unsqueeze(-1).to(text_tokens.dtype)  # avoid div-by-zero
+            return (summed / counts).unsqueeze(1)  # (B, 1, D)
+
+        return {
+            'global_text_find': masked_mean(find_mask),
+            'global_text_imp': masked_mean(imp_mask),
+            'global_text_report': torch.mean(text_tokens, dim=1, keepdim=True),
+            'has_find': has_find,
+            'has_imp': has_imp,
+        }
+
+    def _global_text_attend_to_image(self, query, image_tokens):
+        """
+        Exactly the "Global Text -> Image" block from forward() (the
+        global_cross_attention2 / global_text_gate_weights / global_norm3 /
+        global_norm4 / global_ffn2 sequence), factored out unchanged so it
+        can be reused for global_text_find / global_text_imp /
+        global_text_report without duplicating logic or creating new layers.
+
+        Args:
+            query: (N, 1, D) -- N may be the full batch or a subset of it.
+            image_tokens: (N, L_img, D) -- same N as query.
+        Returns:
+            (N, 1, D)
+        """
+        attended_global_text, _ = self.global_cross_attention2(
+            query=query,
+            key=image_tokens,
+            value=image_tokens
+        )
+
+        global_text_gate = torch.sigmoid(self.global_text_gate_weights).view(1, 1, self.embed_dim)
+        gated_global_text = global_text_gate * attended_global_text + (1 - global_text_gate) * query
+
+        out = self.global_norm3(query + gated_global_text)
+        out = self.global_norm4(out + self.global_ffn2(out))
+        return out
+
+    def compute_section_global_attention(self, section_pools, image_tokens):
+        """
+        NOT wired into forward() yet. Runs the same "Global Text -> Image"
+        attention block (global_cross_attention2 + global_text_gate_weights +
+        global_norm3/4 + global_ffn2 -- all reused, no new layers) separately
+        for each of the three pooled vectors from compute_section_pools().
+
+        Samples with has_find=False (or has_imp=False) skip attention
+        entirely for that section -- their query is a meaningless zero
+        vector, so running it through attention/gates would produce a
+        non-zero but meaningless value. Those rows are left as exact zeros
+        instead, computed only for the valid subset of the batch.
+
+        global_text_report has no such validity flag (the whole-report
+        fallback is always defined), so it is always computed on the full
+        batch -- and since global_text_report is bit-identical to the old
+        unmasked torch.mean(text_tokens, dim=1), and _global_text_attend_to_image
+        reuses the exact same layers/equations as forward()'s original
+        "Global Text -> Image" block, G_report is bit-identical to what
+        forward() would have produced for global_text_token at that step.
+
+        Args:
+            section_pools: dict returned by compute_section_pools() --
+                needs 'global_text_find', 'global_text_imp',
+                'global_text_report', 'has_find', 'has_imp'.
+            image_tokens: (B, L_img, D) -- same image_tokens forward() uses
+                for global_cross_attention2 (i.e. after the local
+                image<->text cross-attention step).
+
+        Returns:
+            (G_find, G_imp, G_report), each (B, 1, D).
+        """
+        global_text_find = section_pools['global_text_find']
+        global_text_imp = section_pools['global_text_imp']
+        global_text_report = section_pools['global_text_report']
+        has_find = section_pools['has_find']
+        has_imp = section_pools['has_imp']
+
+        G_find = torch.zeros_like(global_text_find)
+        find_idx = has_find.nonzero(as_tuple=True)[0]
+        if find_idx.numel() > 0:
+            G_find[find_idx] = self._global_text_attend_to_image(
+                global_text_find[find_idx], image_tokens[find_idx]
+            )
+
+        G_imp = torch.zeros_like(global_text_imp)
+        imp_idx = has_imp.nonzero(as_tuple=True)[0]
+        if imp_idx.numel() > 0:
+            G_imp[imp_idx] = self._global_text_attend_to_image(
+                global_text_imp[imp_idx], image_tokens[imp_idx]
+            )
+
+        # No validity flag for the whole-report fallback -- always computed on the full batch.
+        G_report = self._global_text_attend_to_image(global_text_report, image_tokens)
+
+        return G_find, G_imp, G_report
+
+    def section_aware_feedback(self, text_tokens, G_find, G_imp, G_report,
+                                findings_token_count, real_length, has_find, has_imp):
+        """
+        NOT wired into forward() yet. Per-sample, per-position j:
+
+            mask_find(j) = 1 if (j < findings_token_count AND has_find) else 0
+            mask_imp(j)  = 1 if (findings_token_count <= j < real_length AND has_imp) else 0
+
+            output[j] = text_tokens[j] + G_report
+                        + mask_find(j) * sigmoid(section_find_gate_weights)  * G_find
+                        + mask_imp(j)  * sigmoid(section_imp_gate_weights)   * G_imp
+
+        Positions with j >= real_length (padding) get only "+ G_report" --
+        mask_find/mask_imp are zero there by construction (real_length is
+        the upper bound for both masks), so this matches Paper 1's original
+        feedback broadcast exactly at padded positions too.
+
+        Backward-compatibility guarantee: if has_find and has_imp are both
+        all-False (i.e. "no section info available"), mask_find and
+        mask_imp are zero for every position regardless of
+        findings_token_count/real_length, and this reduces EXACTLY to
+        Paper 1's original text_tokens + global_text_token.expand(...)
+        (since G_report is bit-identical to the old global_text_token at
+        this point in the pipeline) -- see test_section_aware_feedback_paper2.py.
+
+        Args:
+            text_tokens: (B, L, D)
+            G_find, G_imp, G_report: (B, 1, D) each
+            findings_token_count: (B,) long
+            real_length: (B,) long
+            has_find, has_imp: (B,) bool
+
+        Returns:
+            (output, mask_find, mask_imp) where output is (B, L, D) and
+            mask_find/mask_imp are (B, L) bool (returned for inspection/testing).
+        """
+        batch_size, seq_len, embed_dim = text_tokens.shape
+        device = text_tokens.device
+
+        findings_token_count = findings_token_count.to(device=device, dtype=torch.long).clamp(min=0, max=seq_len)
+        real_length = real_length.to(device=device, dtype=torch.long).clamp(min=0, max=seq_len)
+        has_find = has_find.to(device=device)
+        has_imp = has_imp.to(device=device)
+
+        positions = torch.arange(seq_len, device=device).unsqueeze(0).expand(batch_size, seq_len)  # (B, L)
+
+        mask_find = (positions < findings_token_count.unsqueeze(1)) & has_find.view(-1, 1)
+        mask_imp = (
+            (positions >= findings_token_count.unsqueeze(1))
+            & (positions < real_length.unsqueeze(1))
+            & has_imp.view(-1, 1)
+        )
+
+        mask_find_f = mask_find.unsqueeze(-1).to(text_tokens.dtype)  # (B, L, 1)
+        mask_imp_f = mask_imp.unsqueeze(-1).to(text_tokens.dtype)
+
+        find_gate = torch.sigmoid(self.section_find_gate_weights).view(1, 1, embed_dim)
+        imp_gate = torch.sigmoid(self.section_imp_gate_weights).view(1, 1, embed_dim)
+
+        output = (
+            text_tokens
+            + G_report.expand(-1, seq_len, -1)
+            + mask_find_f * find_gate * G_find.expand(-1, seq_len, -1)
+            + mask_imp_f * imp_gate * G_imp.expand(-1, seq_len, -1)
+        )
+
+        return output, mask_find, mask_imp
 
 
 class BranchEncoder(nn.Module):
@@ -301,11 +564,17 @@ class BranchEncoder(nn.Module):
             nn.LayerNorm(embed_dim)
         )
     
-    def forward(self, image_tokens, text_tokens):
-        # Process through co-attention layers
+    def forward(self, image_tokens, text_tokens, findings_token_count=None, has_find=None, has_imp=None,
+                token_ids=None, debug=False):
+        # Process through co-attention layers -- new (paper2) optional args passed through unchanged
+        # to every layer; all default None, so an unmodified call behaves exactly as before.
         for layer in self.co_attn_layers:
-            image_tokens, text_tokens = layer(image_tokens, text_tokens)
-        
+            image_tokens, text_tokens = layer(
+                image_tokens, text_tokens,
+                findings_token_count=findings_token_count, has_find=has_find, has_imp=has_imp,
+                token_ids=token_ids, debug=debug,
+            )
+
         # Global pooling (mean reduction)
         image_emb = torch.mean(image_tokens, dim=1)
         text_emb = torch.mean(text_tokens, dim=1)
@@ -313,8 +582,25 @@ class BranchEncoder(nn.Module):
         # Final projections
         image_emb = self.image_proj(image_emb)
         text_emb = self.text_proj(text_emb)
-        
-        return image_emb, text_emb
+
+        if findings_token_count is None:
+            # ORIGINAL path -- byte-for-byte unchanged (backward compatible: same 2-tuple return).
+            return image_emb, text_emb
+
+        # NEW (paper2): pool Findings/Impression from the FINAL text_tokens (post all
+        # co_attn_layers blocks), reusing the already-verified compute_section_pools logic.
+        # compute_section_pools doesn't reference any layer-specific weights, so it's
+        # safe/equivalent to call it via any one of this branch's co-attention layer
+        # instances -- no new pooling logic, no new weights.
+        section_pools = self.co_attn_layers[0].compute_section_pools(text_tokens, token_ids, findings_token_count)
+        h_find_pooled = section_pools['global_text_find'].squeeze(1)  # (B, D)
+        h_imp_pooled = section_pools['global_text_imp'].squeeze(1)    # (B, D)
+
+        # SAME text_proj used for the normal branch text embedding above -- no new projection weights.
+        h_find_pooled_proj = self.text_proj(h_find_pooled)
+        h_imp_pooled_proj = self.text_proj(h_imp_pooled)
+
+        return image_emb, text_emb, h_find_pooled_proj, h_imp_pooled_proj
 
 
 class ContrastiveLoss(nn.Module):
@@ -436,8 +722,81 @@ class DifferenceLoss(nn.Module):
         
         # Average both directions
         total_loss = (loss_i2t + loss_t2i) / 2
-        
+
         return total_loss
+
+
+def _infonce_on_subset(z_img, z_text, mask, temperature):
+    """
+    Same InfoNCE logic as ContrastiveLoss/SynergyLoss/DifferenceLoss above
+    (L2-normalize, similarity_matrix / temperature, symmetric cross-entropy
+    with in-batch diagonal positives), restricted to the sub-batch selected
+    by `mask`. Returns (loss_or_None, n_selected) -- None if fewer than 2
+    samples are selected (in-batch negatives need >=2 samples to be meaningful).
+    """
+    idx = mask.nonzero(as_tuple=True)[0]
+    n = idx.numel()
+    if n < 2:
+        return None, n
+
+    img_sub = F.normalize(z_img[idx], p=2, dim=1)
+    text_sub = F.normalize(z_text[idx], p=2, dim=1)
+
+    similarity_matrix = torch.matmul(img_sub, text_sub.t()) / temperature
+    labels = torch.arange(n, device=z_img.device)
+
+    loss_i2t = F.cross_entropy(similarity_matrix, labels)
+    loss_t2i = F.cross_entropy(similarity_matrix.t(), labels)
+
+    return (loss_i2t + loss_t2i) / 2, n
+
+
+def compute_granularity_loss(z_img, h_find_pooled_proj, h_imp_pooled_proj, has_find, has_imp, temperature=0.07):
+    """
+    NEW (paper2) standalone loss, NOT wired into the main training loop yet.
+
+    Same InfoNCE logic used by ContrastiveLoss/SynergyLoss/DifferenceLoss
+    (temperature=0.07 default, in-batch negatives), computed as two separate
+    terms:
+      - find_loss: InfoNCE(z_img, h_find_pooled_proj), restricted to the
+        sub-batch where has_find=True.
+      - imp_loss:  InfoNCE(z_img, h_imp_pooled_proj), restricted to the
+        sub-batch where has_imp=True.
+
+    If a sub-batch has fewer than 2 samples, that term is skipped (0.0
+    contribution) rather than computed on a meaningless 0- or 1-sample
+    in-batch-negatives matrix.
+
+    Args:
+        z_img: (B, D) image embedding (any consistent image embedding the
+            caller wants to align these pooled text vectors against --
+            e.g. final_image_emb).
+        h_find_pooled_proj: (B, D) projected Findings-pooled text embedding
+            (from BranchEncoder.forward()'s new return value).
+        h_imp_pooled_proj: (B, D) projected Impression-pooled text embedding.
+        has_find, has_imp: (B,) bool tensors.
+        temperature: same default as the other losses in this file.
+
+    Returns:
+        L_gran (scalar tensor), find_loss (scalar tensor or 0.0),
+        imp_loss (scalar tensor or 0.0), n_find (int), n_imp (int)
+    """
+    find_loss, n_find = _infonce_on_subset(z_img, h_find_pooled_proj, has_find, temperature)
+    imp_loss, n_imp = _infonce_on_subset(z_img, h_imp_pooled_proj, has_imp, temperature)
+
+    L_gran = z_img.new_tensor(0.0)
+    if find_loss is not None:
+        L_gran = L_gran + find_loss
+    if imp_loss is not None:
+        L_gran = L_gran + imp_loss
+
+    return (
+        L_gran,
+        find_loss if find_loss is not None else 0.0,
+        imp_loss if imp_loss is not None else 0.0,
+        n_find,
+        n_imp,
+    )
 
 
 class MultimodalFusion(nn.Module):
@@ -458,22 +817,47 @@ class MultimodalFusion(nn.Module):
         self.synergy_branch = BranchEncoder(embed_dim, num_heads, num_layers, name="synergy")
         self.difference_branch = BranchEncoder(embed_dim, num_heads, num_layers, name="difference")
     
-    def forward(self, inputs, training=False, verbose=False, return_branch_embeddings=False):
+    def forward(self, inputs, training=False, verbose=False, return_branch_embeddings=False,
+                findings_token_count=None, has_find=None, has_imp=None, token_ids=None, debug=False):
         images, texts = inputs
-        
+
         # Get token embeddings from encoders
         image_tokens = self.image_encoder(images, training=training, verbose=verbose)
         text_tokens = self.text_encoder(texts, training=training, verbose=verbose)
-        
-        # Process through dual branches
-        synergy_img_emb, synergy_txt_emb = self.synergy_branch(image_tokens, text_tokens)
+
+        # NEW (paper2): section args go to the SYNERGY branch only. The Difference
+        # branch's call is left completely unaffected by these new args (always the
+        # original 2-arg call), per instructions.
+        if findings_token_count is not None:
+            synergy_img_emb, synergy_txt_emb, h_find_pooled_proj, h_imp_pooled_proj = self.synergy_branch(
+                image_tokens, text_tokens,
+                findings_token_count=findings_token_count, has_find=has_find, has_imp=has_imp,
+                token_ids=token_ids, debug=debug,
+            )
+        else:
+            synergy_img_emb, synergy_txt_emb = self.synergy_branch(image_tokens, text_tokens)
+            h_find_pooled_proj, h_imp_pooled_proj = None, None
+
         diff_img_emb, diff_txt_emb = self.difference_branch(image_tokens, text_tokens)
-        
+
         # Average and L2 normalize final embeddings (matching TensorFlow exactly)
         final_image_emb = F.normalize((synergy_img_emb + diff_img_emb) / 2, p=2, dim=-1)
         final_text_emb = F.normalize((synergy_txt_emb + diff_txt_emb) / 2, p=2, dim=-1)
-        
+
+        if findings_token_count is None:
+            # ORIGINAL path -- byte-for-byte unchanged (backward compatible: same return arity).
+            if return_branch_embeddings:
+                return final_image_emb, final_text_emb, synergy_img_emb, synergy_txt_emb, diff_img_emb, diff_txt_emb
+            else:
+                return final_image_emb, final_text_emb
+
+        # NEW (paper2): section info was provided -- L2-normalize the pooled
+        # Findings/Impression projections the same way final_image_emb/final_text_emb are.
+        z_find = F.normalize(h_find_pooled_proj, p=2, dim=-1)
+        z_imp = F.normalize(h_imp_pooled_proj, p=2, dim=-1)
+
         if return_branch_embeddings:
-            return final_image_emb, final_text_emb, synergy_img_emb, synergy_txt_emb, diff_img_emb, diff_txt_emb
+            return (final_image_emb, final_text_emb, synergy_img_emb, synergy_txt_emb,
+                    diff_img_emb, diff_txt_emb, z_find, z_imp)
         else:
-            return final_image_emb, final_text_emb 
+            return final_image_emb, final_text_emb, z_find, z_imp
