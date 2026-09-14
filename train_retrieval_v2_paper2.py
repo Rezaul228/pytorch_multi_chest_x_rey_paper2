@@ -358,29 +358,51 @@ class EnhancedRetrievalTrainer:
         for batch in data_loader:
             if max_samples and total_processed >= max_samples:
                 break
-            
-            # Handle dictionary format from IndianaDataset
+
+            # Handle dictionary format from IndianaDataset -- NEW (paper2): mirrors
+            # train_step()'s unpacking exactly, so validation uses the IDENTICAL
+            # forward path as training (same section-aware call when available).
             if isinstance(batch, dict):
                 batch_images = batch['images']
                 batch_texts = batch['captions']
+                findings_token_count = batch.get('findings_token_count')
+                has_find = batch.get('has_find')
+                has_imp = batch.get('has_imp')
             else:
                 batch_images, batch_texts = batch
-            
+                findings_token_count, has_find, has_imp = None, None, None
+
             # Convert images to BCHW format
             if batch_images.shape[1] != 3:  # If not already in BCHW format
                 batch_images = batch_images.permute(0, 3, 1, 2)  # NHWC -> NCHW
-            
+
             # Move to device
             batch_images = batch_images.to(self.device)
             batch_texts = batch_texts.to(self.device)
-            
+            has_section_info = findings_token_count is not None
+            if has_section_info:
+                findings_token_count = findings_token_count.to(self.device)
+                has_find = has_find.to(self.device)
+                has_imp = has_imp.to(self.device)
+
             with torch.no_grad():
-                # Get embeddings
-                img_emb, txt_emb = self.model(
-                    (batch_images, batch_texts),
-                    training=False
-                )
-                
+                # Get embeddings -- same has_section_info branch as train_step().
+                if has_section_info:
+                    model_output = self.model(
+                        (batch_images, batch_texts),
+                        training=False,
+                        findings_token_count=findings_token_count,
+                        has_find=has_find,
+                        has_imp=has_imp,
+                        token_ids=batch_texts,  # same captions tensor -- not duplicated
+                    )
+                    img_emb, txt_emb = model_output[0], model_output[1]
+                else:
+                    img_emb, txt_emb = self.model(
+                        (batch_images, batch_texts),
+                        training=False
+                    )
+
                 # Store embeddings
                 all_image_emb.append(img_emb.cpu())
                 all_text_emb.append(txt_emb.cpu())

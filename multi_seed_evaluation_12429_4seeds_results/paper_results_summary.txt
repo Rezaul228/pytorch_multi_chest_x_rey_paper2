@@ -1,0 +1,81 @@
+
+# Multi-Seed Model Evaluation Results
+Generated on: 2026-09-13 04:41:35
+
+## Individual Seed Results
+ i2t_recall_at_1  i2t_recall_at_5  i2t_recall_at_10  i2t_mrr  i2t_mean_rank  i2t_median_rank  t2i_recall_at_1  t2i_recall_at_5  t2i_recall_at_10  t2i_mrr  t2i_mean_rank  t2i_median_rank  avg_recall_at_1  avg_recall_at_5  avg_recall_at_10  avg_mrr  avg_mean_rank  avg_median_rank seed                                                                                                                                                                                                         model_path
+        0.990989         0.999759          1.000000 0.994982       1.013557              1.0         0.994207              1.0               1.0 0.997015       1.006195              1.0         0.992598         0.999879          1.000000 0.995998       1.009876              1.0   17   /home/abedin/Developments/pytorch_multi_chest_x_rey_paper2/saved_models/mimic_shards_hybrid_full_orl_vo10805_to128_lr5e-5_b256_ep50_dualbr_sy065_main_loss20_ortho15__branch_v1_seed_17/export/model_weights.pth
+        0.992759         0.998713          0.999517 0.995500       1.027516              1.0         1.000000              1.0               1.0 1.000000       1.000000              1.0         0.996379         0.999356          0.999759 0.997750       1.013758              1.0   42   /home/abedin/Developments/pytorch_multi_chest_x_rey_paper2/saved_models/mimic_shards_hybrid_full_orl_vo10805_to128_lr5e-5_b256_ep50_dualbr_sy065_main_loss20_ortho15__branch_v1_seed_42/export/model_weights.pth
+        0.971920         0.995655          0.997747 0.982671       1.116904              1.0         0.999115              1.0               1.0 0.999557       1.000885              1.0         0.985518         0.997828          0.998874 0.991114       1.058895              1.0  123  /home/abedin/Developments/pytorch_multi_chest_x_rey_paper2/saved_models/mimic_shards_hybrid_full_orl_vo10805_to128_lr5e-5_b256_ep50_dualbr_sy065_main_loss20_ortho15__branch_v1_seed_123/export/model_weights.pth
+        0.971920         0.995655          0.997747 0.982671       1.116904              1.0         0.999115              1.0               1.0 0.999557       1.000885              1.0         0.985518         0.997828          0.998874 0.991114       1.058895              1.0 2021 /home/abedin/Developments/pytorch_multi_chest_x_rey_paper2/saved_models/mimic_shards_hybrid_full_orl_vo10805_to128_lr5e-5_b256_ep50_dualbr_sy065_main_loss20_ortho15__branch_v1_seed_2021/export/model_weights.pth
+
+## Statistical Summary (Mean ± Std)
+
+### Image-to-Text Retrieval
+- Recall@1: 0.9819 ± 0.0115
+- Recall@5: 0.9974 ± 0.0021
+- Recall@10: 0.9988 ± 0.0012
+- MRR: 0.9890 ± 0.0073
+- Mean Rank: 1.07 ± 0.06
+- Median Rank: 1.00 ± 0.00
+
+### Text-to-Image Retrieval
+- Recall@1: 0.9981 ± 0.0026
+- Recall@5: 1.0000 ± 0.0000
+- Recall@10: 1.0000 ± 0.0000
+- MRR: 0.9990 ± 0.0014
+- Mean Rank: 1.00 ± 0.00
+- Median Rank: 1.00 ± 0.00
+
+### Average Performance (Both Directions)
+- Recall@1: 0.9900 ± 0.0054
+- Recall@5: 0.9987 ± 0.0011
+- Recall@10: 0.9994 ± 0.0006
+- MRR: 0.9940 ± 0.0034
+- Mean Rank: 1.04 ± 0.03
+- Median Rank: 1.00 ± 0.00
+
+## Best Performance per Metric
+
+### Image-to-Text
+- Best Recall@1: 0.9928 (Seed: 42)
+- Best Recall@5: 0.9998 (Seed: 17)
+- Best Recall@10: 1.0000 (Seed: 17)
+- Best MRR: 0.9955 (Seed: 42)
+
+### Text-to-Image
+- Best Recall@1: 1.0000 (Seed: 42)
+- Best Recall@5: 1.0000 (Seed: 17)
+- Best Recall@10: 1.0000 (Seed: 17)
+- Best MRR: 1.0000 (Seed: 42)
+
+## Reproducibility Analysis
+- Standard Deviation of Average Recall@1: 0.0054
+- Coefficient of Variation (Average Recall@1): 0.55%
+- Model Stability: High
+
+## Paper-Ready Results
+For your research paper, you can report:
+
+**Primary Results (Mean ± Standard Deviation):**
+
+### Image-to-Text Retrieval
+- Recall@1: 0.9819 ± 0.0115
+- Recall@5: 0.9974 ± 0.0021
+- Recall@10: 0.9988 ± 0.0012
+- Mean Reciprocal Rank (MRR): 0.9890 ± 0.0073
+
+### Text-to-Image Retrieval
+- Recall@1: 0.9981 ± 0.0026
+- Recall@5: 1.0000 ± 0.0000
+- Recall@10: 1.0000 ± 0.0000
+- Mean Reciprocal Rank (MRR): 0.9990 ± 0.0014
+
+### Overall Performance
+- Average Recall@1: 0.9900 ± 0.0054
+- Average Recall@5: 0.9987 ± 0.0011
+- Average Recall@10: 0.9994 ± 0.0006
+- Average MRR: 0.9940 ± 0.0034
+
+**Reproducibility Statement:**
+"We evaluated our model across 4 different random seeds to ensure reproducibility. The standard deviation of our primary metric (Average Recall@1) is 0.0054, indicating high reproducibility."

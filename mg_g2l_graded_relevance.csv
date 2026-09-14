@@ -1,0 +1,9 @@
+metric,direction,full_corpus_value,full_corpus_n,restricted_subset_value,restricted_subset_n
+nDCG@5,Image->Text,0.349,12429,0.4837,8968
+nDCG@5,Text->Image,0.3695,12429,0.5121,8968
+nDCG@10,Image->Text,0.2809,12429,0.3893,8968
+nDCG@10,Text->Image,0.3034,12429,0.4205,8968
+mAP@10,Image->Text,0.3066,12429,0.425,8968
+mAP@10,Text->Image,0.3486,12429,0.4831,8968
+Precision@5,Image->Text,0.417,12429,0.5779,8968
+Precision@5,Text->Image,0.4554,12429,0.6312,8968

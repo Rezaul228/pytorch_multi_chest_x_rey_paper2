@@ -332,26 +332,50 @@ def evaluate_cross_modal_retrieval_streaming(model, test_dataset, k_values=[1, 5
                 batch_images = batch['images']
                 batch_captions = batch['captions']
                 batch_study_ids = batch['study_ids']
+                # NEW (paper2): mirrors train_step()'s unpacking exactly, so this
+                # evaluation uses the IDENTICAL forward path as training when
+                # section info is available. Falls back to None (original,
+                # backward-compatible call) otherwise.
+                findings_token_count = batch.get('findings_token_count')
+                has_find = batch.get('has_find')
+                has_imp = batch.get('has_imp')
             else:
                 # Tuple format
                 batch_images, batch_captions, batch_study_ids = batch
-            
+                findings_token_count, has_find, has_imp = None, None, None
+
             # Convert to PyTorch tensors if needed
             if not isinstance(batch_images, torch.Tensor):
                 batch_images = torch.FloatTensor(batch_images)
             if not isinstance(batch_captions, torch.Tensor):
                 batch_captions = torch.LongTensor(batch_captions)
-            
+
             # Handle image tensor format conversion
             if len(batch_images.shape) == 4 and batch_images.shape[-1] == 3:
                 batch_images = batch_images.permute(0, 3, 1, 2)  # Convert to (B, C, H, W)
-            
+
             # Move to device
             batch_images = batch_images.to(device)
             batch_captions = batch_captions.to(device)
-            
+            has_section_info = findings_token_count is not None
+            if has_section_info:
+                findings_token_count = findings_token_count.to(device)
+                has_find = has_find.to(device)
+                has_imp = has_imp.to(device)
+
             # Get embeddings
-            batch_image_emb, batch_text_emb = model((batch_images, batch_captions), training=False)
+            if has_section_info:
+                model_output = model(
+                    (batch_images, batch_captions),
+                    training=False,
+                    findings_token_count=findings_token_count,
+                    has_find=has_find,
+                    has_imp=has_imp,
+                    token_ids=batch_captions,  # same captions tensor -- not duplicated
+                )
+                batch_image_emb, batch_text_emb = model_output[0], model_output[1]
+            else:
+                batch_image_emb, batch_text_emb = model((batch_images, batch_captions), training=False)
             
             # Store embeddings
             all_image_embeddings.append(batch_image_emb.cpu().numpy())
