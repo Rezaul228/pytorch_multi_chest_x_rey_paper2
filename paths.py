@@ -28,7 +28,7 @@ def repo_root():
 CENTRALIZED_DATA_BASE_PATH = "/home/abedin/Developments/chest_x_ray_data_processing/all_processed_data/"
 
 # Available shard subfolders
-AVAILABLE_SHARD_SUBFOLDERS = ["mimic_shards_voc-2007","indiana_shards", "mimic_shards", "mimic_shards_hybrid_full_ori", "mimic_shards_hufc4446-to128", "indiana_shards2559-64"]
+AVAILABLE_SHARD_SUBFOLDERS = ["mimic_shards_voc-2007","indiana_shards", "mimic_shards", "mimic_shards_hybrid_full_ori", "mimic_shards_hufc4446-to128", "indiana_shards2559-64", "aug_indiana_extended"]
 
 # Default subfolder selection
 DEFAULT_SHARD_SUBFOLDER = "indiana_shards"

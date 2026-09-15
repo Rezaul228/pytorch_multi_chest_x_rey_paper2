@@ -47,6 +47,24 @@ DATASET_CONFIGS = {
         "val_samples": None,          # Number of validation samples (None = use ALL available)
         "data_path": "/home/abedin/Developments/chest_x_ray_data_processing/all_processed_data/indiana_shards"
     },
+
+    "aug_indiana_extended": {
+        "vocab_size": 10870,          # Verified: len(tokenizer.word_index)+1 in metadata.pkl, matches all 5 baseline checkpoints' text_encoder.embedding.weight.shape[0]
+        "max_token_length": 128,      # Verified: caption_seq length in test shards
+        "embed_dim": 256,             # Embedding dimension
+        "num_heads": 8,               # Number of attention heads
+        "num_layers": 2,              # Number of co-attention layers (confirmed via co_attn_layers.{0,1} keys in checkpoint state_dict)
+        "temperature": 0.07,          # Contrastive loss temperature
+        "batch_size": 128,            # Verified from baseline folder name (lr1e-4_..._b128_ep50)
+        "learning_rate": 1e-4,        # Verified from folder name AND optimizer_state_dict inside each checkpoint's export/model.pth
+        "epochs": 50,                 # Verified from baseline folder name
+        "shard_size": 100,            # Number of samples per shard file (for memory management)
+        "train_samples": None,        # Number of training samples (None = use ALL available)
+        "val_samples": None,          # Number of validation samples (None = use ALL available)
+        # NOT aug_indiana_extended_vocab_10805 -- that is a separate, retokenized copy
+        # (matching MIMIC's vocab) that the 5 baseline checkpoints were NOT trained on.
+        "data_path": "/home/abedin/Developments/chest_x_ray_data_processing/all_processed_data/aug_indiana_extended"
+    },
     
     "augmented_data": {
         "vocab_size": 2552,           # Vocabulary size from tokenizer (same as mimic_shards)
