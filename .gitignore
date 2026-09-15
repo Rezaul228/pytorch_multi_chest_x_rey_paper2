@@ -36,3 +36,9 @@ hard_negative_tags_test_paper2.csv
 section_boundaries_train_paper2.csv
 section_boundaries_val_paper2.csv
 section_boundaries_test_paper2.csv
+
+# Per-query result files keyed by raw MIMIC-CXR study_id (PhysioNet DUA: the
+# identifier itself is restricted, even without images/report text attached).
+# Purged from git history on 2026-09-15; keep these local-only from now on.
+divergence_scores_test_paper2.csv
+per_query_i2t_metrics_seed_*.csv
