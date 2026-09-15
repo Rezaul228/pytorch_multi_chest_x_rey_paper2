@@ -21,8 +21,9 @@ import sys
 import torch
 from torch.utils.data import DataLoader as TorchDataLoader
 
-PROJECT_DIR = os.path.dirname(os.path.abspath(__file__))
-sys.path.insert(0, PROJECT_DIR)
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
+import paths
+PROJECT_DIR = paths.repo_root()
 
 from base_models_refactored_v1_paper2 import MultimodalFusion
 from data_loader_v1_paper2 import IndianaDataLoader

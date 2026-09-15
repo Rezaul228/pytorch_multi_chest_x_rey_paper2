@@ -16,13 +16,13 @@ import sys
 
 import torch
 
-PROJECT_DIR = os.path.dirname(os.path.abspath(__file__))
-sys.path.insert(0, PROJECT_DIR)
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
+import paths
+PROJECT_DIR = paths.repo_root()
 
 from train_test_cross_modal_evaluation_v1_paper2 import evaluate_cross_modal_retrieval_streaming
 from base_models_refactored_v1_paper2 import MultimodalFusion
 from data_loader_v1_paper2 import IndianaDataLoader
-import paths
 import config
 import pickle
 

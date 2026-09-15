@@ -27,8 +27,10 @@ import pandas as pd
 import torch
 from torch.utils.data import DataLoader
 
-PROJECT_DIR = os.path.dirname(os.path.abspath(__file__))
-sys.path.insert(0, PROJECT_DIR)
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
+import paths
+PROJECT_DIR = paths.repo_root()
+MIMIC_RESULTS_DIR = os.path.join(PROJECT_DIR, "mimic", "results")
 
 from train_test_cross_modal_evaluation_v1 import evaluate_cross_modal_retrieval_streaming
 import paper2_graded_relevance_eval as scoring  # reused, unchanged
@@ -51,9 +53,9 @@ MGG2L_KNOWN_RESULTS = {
     "t2i_recall@1": 1.0000, "t2i_recall@5": 1.0000, "t2i_recall@10": 1.0000, "t2i_mrr": 1.0000,
 }
 
-MULTISEED_PAPER1_CSV = os.path.join(PROJECT_DIR, "paper1_baseline_graded_relevance_multiseed.csv")
-MULTISEED_MGG2L_CSV = os.path.join(PROJECT_DIR, "mg_g2l_graded_relevance_multiseed.csv")
-PER_QUERY_CACHE_PATH = os.path.join(PROJECT_DIR, f"per_query_i2t_metrics_seed_{SEED}.csv")
+MULTISEED_PAPER1_CSV = os.path.join(MIMIC_RESULTS_DIR, "paper1_baseline_graded_relevance_multiseed.csv")
+MULTISEED_MGG2L_CSV = os.path.join(MIMIC_RESULTS_DIR, "mg_g2l_graded_relevance_multiseed.csv")
+PER_QUERY_CACHE_PATH = os.path.join(MIMIC_RESULTS_DIR, f"per_query_i2t_metrics_seed_{SEED}.csv")
 
 
 def load_mgg2l_embeddings(checkpoint_path, device):

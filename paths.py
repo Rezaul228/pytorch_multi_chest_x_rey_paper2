@@ -14,6 +14,12 @@ FOR SERVER DEPLOYMENT:
 
 import os
 
+
+def repo_root():
+    """Absolute path to the repository root (this file's directory)."""
+    return os.path.dirname(os.path.abspath(__file__))
+
+
 # ==========================================
 # 🎯 CENTRALIZED DATA CONFIGURATION
 # ==========================================
@@ -65,6 +71,32 @@ def get_test_shards_dir(shard_subfolder=None):
 def get_metadata_path(shard_subfolder=None):
     """Get metadata file path"""
     return os.path.join(get_shard_base_path(shard_subfolder), "metadata.pkl")
+
+
+def get_dataset_area(dataset_mode=None):
+    """Map a config.DATASET_MODE value (or explicit override) to its dataset
+    area folder name ('mimic' or 'openi'), used to locate mimic/ vs openi/
+    dataset-specific data. Raises if the mode can't be classified."""
+    if dataset_mode is None:
+        import config
+        dataset_mode = config.DATASET_MODE
+    mode = dataset_mode.lower()
+    if "indiana" in mode or "openi" in mode:
+        return "openi"
+    if "mimic" in mode:
+        return "mimic"
+    raise ValueError(
+        f"Cannot determine dataset area ('mimic' vs 'openi') from DATASET_MODE={dataset_mode!r}"
+    )
+
+
+def get_section_boundaries_path(split_name, dataset_mode=None):
+    """Dataset-aware location of the section-boundary CSV for a given split.
+    MIMIC resolves to mimic/data/section_boundaries_{split}_paper2.csv;
+    an Open-I dataset_mode resolves to openi/data/section_boundaries_{split}_openi.csv."""
+    area = get_dataset_area(dataset_mode)
+    suffix = "paper2" if area == "mimic" else "openi"
+    return os.path.join(repo_root(), area, "data", f"section_boundaries_{split_name}_{suffix}.csv")
 
 # ==========================================
 # 📁 LEGACY COMPATIBILITY (DEPRECATED)

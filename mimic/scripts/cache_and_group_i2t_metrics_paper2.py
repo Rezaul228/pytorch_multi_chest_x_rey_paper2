@@ -30,13 +30,16 @@ import pandas as pd
 import torch
 from torch.utils.data import DataLoader
 
-PROJECT_DIR = os.path.dirname(os.path.abspath(__file__))
-sys.path.insert(0, PROJECT_DIR)
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
+import paths
+PROJECT_DIR = paths.repo_root()
+MIMIC_DATA_DIR = os.path.join(PROJECT_DIR, "mimic", "data")
+MIMIC_RESULTS_DIR = os.path.join(PROJECT_DIR, "mimic", "results")
 
 import paper2_graded_relevance_eval as scoring  # reused, unchanged
 
 SEEDS = [42, 17, 123]
-SECTION_BOUNDARIES_PATH = os.path.join(PROJECT_DIR, "section_boundaries_test_paper2.csv")
+SECTION_BOUNDARIES_PATH = os.path.join(MIMIC_DATA_DIR, "section_boundaries_test_paper2.csv")
 
 PAPER1_MODEL_PATHS = {
     seed: os.path.join(
@@ -204,7 +207,7 @@ def main():
             "p1_ndcg10": p1_ndcg10, "p1_prec5": p1_prec5,
             "mg_ndcg10": mg_ndcg10, "mg_prec5": mg_prec5,
         })
-        out_path = os.path.join(PROJECT_DIR, f"per_query_i2t_metrics_seed_{seed}.csv")
+        out_path = os.path.join(MIMIC_RESULTS_DIR, f"per_query_i2t_metrics_seed_{seed}.csv")
         per_query_df.to_csv(out_path, index=False)
         print(f"Saved per-query cache: {out_path}")
 

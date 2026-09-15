@@ -23,10 +23,13 @@ import glob
 import gc
 import pickle
 import argparse
+import sys
 
 import pandas as pd
 
-PROJECT_DIR = os.path.dirname(os.path.abspath(__file__))
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
+import paths
+PROJECT_DIR = paths.repo_root()
 
 SHARD_BASE_DIR = "/home/abedin/Developments/chest_x_ray_data_processing/all_processed_data/mimic_shards_hybrid_full_ori"
 METADATA_PKL_PATH = os.path.join(SHARD_BASE_DIR, "metadata.pkl")

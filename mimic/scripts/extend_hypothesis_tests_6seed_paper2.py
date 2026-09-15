@@ -58,27 +58,33 @@ Outputs (new files only -- nothing for seeds 17/42/123/3407 is touched):
 import csv
 import json
 import os
+import sys
 
 import numpy as np
 import pandas as pd
 from scipy.stats import wilcoxon, mannwhitneyu
 
-PROJECT_DIR = os.path.dirname(os.path.abspath(__file__))
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
+import paths
+PROJECT_DIR = paths.repo_root()
+MIMIC_DATA_DIR = os.path.join(PROJECT_DIR, "mimic", "data")
+MIMIC_RESULTS_DIR = os.path.join(PROJECT_DIR, "mimic", "results")
+
 ALL_SEEDS = [17, 42, 123, 3407, 2021, 1337]
 EXISTING_SEEDS = [17, 42, 123, 3407]
 NEW_SEEDS = [2021, 1337]
 
-BINARY_LABELS_PATH = os.path.join(PROJECT_DIR, "test_labels_chexpert_binary.csv")
-SECTION_BOUNDARIES_PATH = os.path.join(PROJECT_DIR, "section_boundaries_test_paper2.csv")
-DIVERGENCE_SCORES_PATH = os.path.join(PROJECT_DIR, "divergence_scores_test_paper2.csv")
-EXISTING_DIVERGENCE_MULTISEED_CSV = os.path.join(PROJECT_DIR, "divergence_group_comparison_multiseed_paper2.csv")
+BINARY_LABELS_PATH = os.path.join(MIMIC_DATA_DIR, "test_labels_chexpert_binary.csv")
+SECTION_BOUNDARIES_PATH = os.path.join(MIMIC_DATA_DIR, "section_boundaries_test_paper2.csv")
+DIVERGENCE_SCORES_PATH = os.path.join(MIMIC_RESULTS_DIR, "divergence_scores_test_paper2.csv")
+EXISTING_DIVERGENCE_MULTISEED_CSV = os.path.join(MIMIC_RESULTS_DIR, "divergence_group_comparison_multiseed_paper2.csv")
 
 EXPECTED_PER_QUERY_COLUMNS = {"study_id", "p1_ndcg10", "p1_prec5", "mg_ndcg10", "mg_prec5"}
 METRICS = [("nDCG@10", "ndcg10"), ("Precision@5", "prec5")]
 
 
 def per_query_path(seed):
-    return os.path.join(PROJECT_DIR, f"per_query_i2t_metrics_seed_{seed}.csv")
+    return os.path.join(MIMIC_RESULTS_DIR, f"per_query_i2t_metrics_seed_{seed}.csv")
 
 
 def load_and_verify_per_query(seed):
@@ -325,17 +331,17 @@ def main():
         print(f"Saved: {path}")
 
     for seed in NEW_SEEDS:
-        path = os.path.join(PROJECT_DIR, f"statistical_tests_i2t_seed_{seed}.csv")
+        path = os.path.join(MIMIC_RESULTS_DIR, f"statistical_tests_i2t_seed_{seed}.csv")
         assert not os.path.exists(path), f"refusing to overwrite: {path}"
         write_stat_csv(path, wilcoxon_rows[seed] + missing_section_rows[seed])
 
     all_stat_rows = []
     for seed in ALL_SEEDS:
         all_stat_rows += wilcoxon_rows[seed] + missing_section_rows[seed]
-    write_stat_csv(os.path.join(PROJECT_DIR, "statistical_tests_i2t_6seed_all_paper2.csv"), all_stat_rows)
+    write_stat_csv(os.path.join(MIMIC_RESULTS_DIR, "statistical_tests_i2t_6seed_all_paper2.csv"), all_stat_rows)
 
     for seed in NEW_SEEDS:
-        path = os.path.join(PROJECT_DIR, f"divergence_group_comparison_seed_{seed}.csv")
+        path = os.path.join(MIMIC_RESULTS_DIR, f"divergence_group_comparison_seed_{seed}.csv")
         assert not os.path.exists(path), f"refusing to overwrite: {path}"
         with open(path, "w", newline="") as f:
             writer = csv.DictWriter(f, fieldnames=["seed", "group", "n", "metric", "paper1", "mgg2l", "delta"])
@@ -351,7 +357,7 @@ def main():
             str(seed): {r["metric"]: r["pvalue"] < 0.05 for r in wilcoxon_rows[seed]} for seed in ALL_SEEDS
         },
     }
-    verdicts_path = os.path.join(PROJECT_DIR, "hypothesis_verdicts_6seed_paper2.json")
+    verdicts_path = os.path.join(MIMIC_RESULTS_DIR, "hypothesis_verdicts_6seed_paper2.json")
     with open(verdicts_path, "w") as f:
         json.dump(verdicts_dump, f, indent=2)
     print(f"Saved: {verdicts_path}")

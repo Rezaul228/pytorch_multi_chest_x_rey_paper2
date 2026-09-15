@@ -22,12 +22,14 @@ import numpy as np
 import pandas as pd
 import torch
 
-PROJECT_DIR = os.path.dirname(os.path.abspath(__file__))
-sys.path.insert(0, PROJECT_DIR)
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
+import paths
+PROJECT_DIR = paths.repo_root()
+MIMIC_RESULTS_DIR = os.path.join(PROJECT_DIR, "mimic", "results")
 
 import paper2_graded_relevance_eval as scoring  # reused, unchanged
 
-DIVERGENCE_CSV_PATH = os.path.join(PROJECT_DIR, "divergence_scores_test_paper2.csv")
+DIVERGENCE_CSV_PATH = os.path.join(MIMIC_RESULTS_DIR, "divergence_scores_test_paper2.csv")
 PAPER1_MODEL_PATH = scoring.DEFAULT_MODEL_PATH  # seed_42 baseline, default in the reused module
 MGG2L_CHECKPOINT_PATH = os.path.join(
     PROJECT_DIR, "saved_models",

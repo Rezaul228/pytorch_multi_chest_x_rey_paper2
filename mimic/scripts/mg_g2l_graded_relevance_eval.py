@@ -29,8 +29,11 @@ import pandas as pd
 import torch
 from torch.utils.data import DataLoader
 
-PROJECT_DIR = os.path.dirname(os.path.abspath(__file__))
-sys.path.insert(0, PROJECT_DIR)
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
+import paths
+PROJECT_DIR = paths.repo_root()
+MIMIC_DATA_DIR = os.path.join(PROJECT_DIR, "mimic", "data")
+MIMIC_RESULTS_DIR = os.path.join(PROJECT_DIR, "mimic", "results")
 
 # Reuse the Paper 1 baseline script's scoring/metric code UNCHANGED.
 import paper2_graded_relevance_eval as baseline
@@ -43,8 +46,8 @@ MGG2L_EXPERIMENT_NAME = "mimic_shards_hybrid_full_orl_vo10805_to128_lr5e-5_b256_
 MGG2L_CHECKPOINT_PATH = os.path.join(
     PROJECT_DIR, "saved_models", MGG2L_EXPERIMENT_NAME, "export", "checkpoint_resume.pth"
 )
-BINARY_LABELS_PATH = os.path.join(PROJECT_DIR, "test_labels_chexpert_binary.csv")
-OUTPUT_CSV_PATH = os.path.join(PROJECT_DIR, "mg_g2l_graded_relevance.csv")
+BINARY_LABELS_PATH = os.path.join(MIMIC_DATA_DIR, "test_labels_chexpert_binary.csv")
+OUTPUT_CSV_PATH = os.path.join(MIMIC_RESULTS_DIR, "mg_g2l_graded_relevance.csv")
 SHARD_SUBFOLDER = "mimic_shards_hybrid_full_ori"
 BATCH_SIZE = baseline.BATCH_SIZE  # same batch size as the baseline script
 TOP_K = baseline.TOP_K
@@ -246,7 +249,7 @@ def main():
     print(f"File size: {os.path.getsize(OUTPUT_CSV_PATH)} bytes")
 
     # ---- Side-by-side comparison against the Paper 1 baseline CSV ----
-    baseline_csv_path = os.path.join(PROJECT_DIR, "paper1_baseline_graded_relevance.csv")
+    baseline_csv_path = os.path.join(MIMIC_RESULTS_DIR, "paper1_baseline_graded_relevance.csv")
     baseline_df = pd.read_csv(baseline_csv_path).set_index(["metric", "direction"])
     mgg2l_df = pd.DataFrame(rows_out).set_index(["metric", "direction"])
 

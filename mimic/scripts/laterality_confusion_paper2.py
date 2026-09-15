@@ -38,22 +38,23 @@ import pandas as pd
 import torch
 from torch.utils.data import DataLoader
 
-PROJECT_DIR = "/home/abedin/Developments/pytorch_multi_chest_x_rey_paper2"
-sys.path.insert(0, PROJECT_DIR)
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
+import paths
+PROJECT_DIR = paths.repo_root()
+MIMIC_DATA_DIR = os.path.join(PROJECT_DIR, "mimic", "data")
 os.chdir(PROJECT_DIR)
 
 from base_models_refactored_v1 import MultimodalFusion
 from data_loader_v1 import IndianaDataLoader
 from config import get_vocab_size, get_embed_dim, get_current_config
-import paths
 
 MODEL_PATH = os.path.join(
     PROJECT_DIR, "saved_models",
     "mimic_shards_hybrid_full_orl_vo10805_to128_lr5e-5_b256_ep50_dualbr_sy065_main_loss20_ortho15__branch_v1_seed_42",
     "export", "model_weights.pth",
 )
-HARD_NEG_TAGS_PATH = os.path.join(PROJECT_DIR, "hard_negative_tags_test_paper2.csv")
-OUTPUT_CSV_PATH = os.path.join(PROJECT_DIR, "laterality_confusion_paper1_baseline.csv")
+HARD_NEG_TAGS_PATH = os.path.join(MIMIC_DATA_DIR, "hard_negative_tags_test_paper2.csv")
+OUTPUT_CSV_PATH = os.path.join(MIMIC_DATA_DIR, "laterality_confusion_paper1_baseline.csv")
 SHARD_SUBFOLDER = "mimic_shards_hybrid_full_ori"
 BATCH_SIZE = 64
 TOP_K_PLUS_SELF = 11  # top-10 EXCLUDING self -> fetch 11 in case self is inside, then drop it

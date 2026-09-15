@@ -36,17 +36,21 @@ import re
 import csv
 import pickle
 import glob
+import sys
 
 import pandas as pd
 
-PROJECT_DIR = os.path.dirname(os.path.abspath(__file__))
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
+import paths
+PROJECT_DIR = paths.repo_root()
+MIMIC_DATA_DIR = os.path.join(PROJECT_DIR, "mimic", "data")
 
 SHARD_TEST_DIR = "/home/abedin/Developments/chest_x_ray_data_processing/all_processed_data/mimic_shards_hybrid_full_ori/test"
 METADATA_PKL_PATH = "/home/abedin/Developments/chest_x_ray_data_processing/all_processed_data/mimic_shards_hybrid_full_ori/metadata.pkl"
 ORIGINAL_METADATA_CSV = "/home/abedin/Developments/mimic_cxr-raw-data/mimic-cxr/organized_data/metadata/processed_metadata_hybrid.csv"
 REPORTS_DIR = "/home/abedin/Developments/mimic_cxr-raw-data/mimic-cxr/organized_data/reports"
 
-OUTPUT_CSV_PATH = os.path.join(PROJECT_DIR, "section_boundaries_test_paper2.csv")
+OUTPUT_CSV_PATH = os.path.join(MIMIC_DATA_DIR, "section_boundaries_test_paper2.csv")
 MAX_SEQUENCE_LENGTH = 128  # matches metadata['max_sequence_length'] for mimic_shards_hybrid_full_ori
 
 MEDICAL_KEEP_WORDS = {

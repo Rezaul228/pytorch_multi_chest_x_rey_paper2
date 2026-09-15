@@ -32,8 +32,11 @@ import os
 import pickle
 import sys
 
-PROJECT_DIR = os.path.dirname(os.path.abspath(__file__))
-sys.path.insert(0, PROJECT_DIR)
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
+import paths
+PROJECT_DIR = paths.repo_root()
+MIMIC_DATA_DIR = os.path.join(PROJECT_DIR, "mimic", "data")
+MIMIC_RESULTS_DIR = os.path.join(PROJECT_DIR, "mimic", "results")
 
 import numpy as np
 import pandas as pd
@@ -43,15 +46,14 @@ from torch.utils.data import DataLoader
 from base_models_refactored_v1 import MultimodalFusion
 from data_loader_v1 import IndianaDataLoader
 from config import get_vocab_size, get_embed_dim, get_current_config
-import paths
 
 DEFAULT_MODEL_PATH = os.path.join(
     PROJECT_DIR, "saved_models",
     "mimic_shards_hybrid_full_orl_vo10805_to128_lr5e-5_b256_ep50_dualbr_sy065_main_loss20_ortho15__branch_v1_seed_42",
     "export", "model_weights.pth",
 )
-DEFAULT_BINARY_LABELS_PATH = os.path.join(PROJECT_DIR, "test_labels_chexpert_binary.csv")
-DEFAULT_OUTPUT_CSV_PATH = os.path.join(PROJECT_DIR, "paper1_baseline_graded_relevance.csv")
+DEFAULT_BINARY_LABELS_PATH = os.path.join(MIMIC_DATA_DIR, "test_labels_chexpert_binary.csv")
+DEFAULT_OUTPUT_CSV_PATH = os.path.join(MIMIC_RESULTS_DIR, "paper1_baseline_graded_relevance.csv")
 DEFAULT_SHARD_SUBFOLDER = "mimic_shards_hybrid_full_ori"
 BATCH_SIZE = 64
 TOP_K = 10

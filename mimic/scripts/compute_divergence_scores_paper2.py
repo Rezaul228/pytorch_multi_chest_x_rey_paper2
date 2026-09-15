@@ -28,16 +28,21 @@ Output: divergence_scores_test_paper2.csv
 import os
 import re
 import csv
+import sys
 
 import pandas as pd
 
-PROJECT_DIR = os.path.dirname(os.path.abspath(__file__))
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
+import paths
+PROJECT_DIR = paths.repo_root()
+MIMIC_DATA_DIR = os.path.join(PROJECT_DIR, "mimic", "data")
+MIMIC_RESULTS_DIR = os.path.join(PROJECT_DIR, "mimic", "results")
 
-BINARY_LABELS_PATH = os.path.join(PROJECT_DIR, "test_labels_chexpert_binary.csv")
-SECTION_BOUNDARIES_PATH = os.path.join(PROJECT_DIR, "section_boundaries_test_paper2.csv")
+BINARY_LABELS_PATH = os.path.join(MIMIC_DATA_DIR, "test_labels_chexpert_binary.csv")
+SECTION_BOUNDARIES_PATH = os.path.join(MIMIC_DATA_DIR, "section_boundaries_test_paper2.csv")
 ORIGINAL_METADATA_CSV = "/home/abedin/Developments/mimic_cxr-raw-data/mimic-cxr/organized_data/metadata/processed_metadata_hybrid.csv"
 REPORTS_DIR = "/home/abedin/Developments/mimic_cxr-raw-data/mimic-cxr/organized_data/reports"
-OUTPUT_CSV_PATH = os.path.join(PROJECT_DIR, "divergence_scores_test_paper2.csv")
+OUTPUT_CSV_PATH = os.path.join(MIMIC_RESULTS_DIR, "divergence_scores_test_paper2.csv")
 
 # Documented keyword mapping for the 13 non-"No Finding" CheXpert categories.
 # Chosen to be sensible/common radiology phrasing for each category; not an

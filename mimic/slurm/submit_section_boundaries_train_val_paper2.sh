@@ -22,15 +22,15 @@ echo "Memory requested: 8GB, CPUs: 1 (single task, no multiprocessing)"
 echo ""
 
 echo "=== TRAIN split (155,800 study_ids) ==="
-python3 -u build_section_boundaries_incremental_paper2.py \
+python3 -u mimic/scripts/build_section_boundaries_incremental_paper2.py \
     --split train \
-    --output section_boundaries_train_paper2.csv
+    --output mimic/data/section_boundaries_train_paper2.csv
 
 echo ""
 echo "=== VAL split (31,900 study_ids) ==="
-python3 -u build_section_boundaries_incremental_paper2.py \
+python3 -u mimic/scripts/build_section_boundaries_incremental_paper2.py \
     --split val \
-    --output section_boundaries_val_paper2.csv
+    --output mimic/data/section_boundaries_val_paper2.csv
 
 echo ""
 echo "Completed at: $(date)"

@@ -12,8 +12,10 @@ import sys
 import numpy as np
 from scipy.stats import mannwhitneyu
 
-PROJECT_DIR = os.path.dirname(os.path.abspath(__file__))
-sys.path.insert(0, PROJECT_DIR)
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
+import paths
+PROJECT_DIR = paths.repo_root()
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))  # sibling scripts in mimic/scripts/
 
 from extend_hypothesis_tests_6seed_paper2 import (  # noqa: E402
     ALL_SEEDS, METRICS, load_and_verify_per_query, get_restricted_ids_and_section_group,

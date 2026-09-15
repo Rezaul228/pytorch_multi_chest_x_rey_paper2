@@ -15,7 +15,7 @@ env/
 *.pth
 *.ckpt
 *.h5
-data/
+/data/
 datasets/
 checkpoints/
 outputs/

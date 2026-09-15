@@ -34,8 +34,10 @@ import pandas as pd
 import torch
 from torch.utils.data import DataLoader
 
-PROJECT_DIR = os.path.dirname(os.path.abspath(__file__))
-sys.path.insert(0, PROJECT_DIR)
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
+import paths
+PROJECT_DIR = paths.repo_root()
+MIMIC_RESULTS_DIR = os.path.join(PROJECT_DIR, "mimic", "results")
 
 from train_test_cross_modal_evaluation_v1 import evaluate_cross_modal_retrieval_streaming as eval_streaming_v1
 from train_test_cross_modal_evaluation_v1_paper2 import evaluate_cross_modal_retrieval_streaming as eval_streaming_paper2
@@ -103,18 +105,18 @@ EXISTING_RK_RESULTS = {
     },
 }
 EXISTING_GRADED_PAPER1_CSVS = [
-    (os.path.join(PROJECT_DIR, "paper1_baseline_graded_relevance.csv"), 42),        # no 'seed' column -> tag as 42
-    (os.path.join(PROJECT_DIR, "paper1_baseline_graded_relevance_multiseed.csv"), None),  # has 'seed' column
+    (os.path.join(MIMIC_RESULTS_DIR, "paper1_baseline_graded_relevance.csv"), 42),        # no 'seed' column -> tag as 42
+    (os.path.join(MIMIC_RESULTS_DIR, "paper1_baseline_graded_relevance_multiseed.csv"), None),  # has 'seed' column
 ]
 EXISTING_GRADED_MGG2L_CSVS = [
-    (os.path.join(PROJECT_DIR, "mg_g2l_graded_relevance.csv"), 42),
-    (os.path.join(PROJECT_DIR, "mg_g2l_graded_relevance_multiseed.csv"), None),
+    (os.path.join(MIMIC_RESULTS_DIR, "mg_g2l_graded_relevance.csv"), 42),
+    (os.path.join(MIMIC_RESULTS_DIR, "mg_g2l_graded_relevance_multiseed.csv"), None),
 ]
 
-OUT_CHECKSUM_JSON = os.path.join(PROJECT_DIR, "checksum_report_seeds_2021_1337_paper2.json")
-OUT_FULL_RESULTS_JSON = os.path.join(PROJECT_DIR, "new_seeds_2021_1337_full_results_paper2.json")
-OUT_PAPER1_GRADED_CSV = os.path.join(PROJECT_DIR, "paper1_baseline_graded_relevance_new_seeds.csv")
-OUT_MGG2L_GRADED_CSV = os.path.join(PROJECT_DIR, "mg_g2l_graded_relevance_new_seeds.csv")
+OUT_CHECKSUM_JSON = os.path.join(MIMIC_RESULTS_DIR, "checksum_report_seeds_2021_1337_paper2.json")
+OUT_FULL_RESULTS_JSON = os.path.join(MIMIC_RESULTS_DIR, "new_seeds_2021_1337_full_results_paper2.json")
+OUT_PAPER1_GRADED_CSV = os.path.join(MIMIC_RESULTS_DIR, "paper1_baseline_graded_relevance_new_seeds.csv")
+OUT_MGG2L_GRADED_CSV = os.path.join(MIMIC_RESULTS_DIR, "mg_g2l_graded_relevance_new_seeds.csv")
 
 
 def sha256sum(path):
@@ -439,7 +441,7 @@ def main():
     # =====================================================================
     print_header("STEP 10: writing new output files")
     for seed, df in per_query_caches.items():
-        out_path = os.path.join(PROJECT_DIR, f"per_query_i2t_metrics_seed_{seed}.csv")
+        out_path = os.path.join(MIMIC_RESULTS_DIR, f"per_query_i2t_metrics_seed_{seed}.csv")
         assert not os.path.exists(out_path), f"refusing to overwrite existing file: {out_path}"
         df.to_csv(out_path, index=False)
         print(f"Saved: {out_path}")

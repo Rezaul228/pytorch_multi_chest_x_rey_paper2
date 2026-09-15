@@ -15,13 +15,14 @@ import json
 
 import torch
 
-PROJECT_DIR = os.path.dirname(os.path.abspath(__file__))
-sys.path.insert(0, PROJECT_DIR)
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
+import paths
+PROJECT_DIR = paths.repo_root()
+MIMIC_RESULTS_DIR = os.path.join(PROJECT_DIR, "mimic", "results")
 
 from train_test_cross_modal_evaluation_v1_paper2 import evaluate_cross_modal_retrieval_streaming
 from base_models_refactored_v1_paper2 import MultimodalFusion
 from data_loader_v1_paper2 import IndianaDataLoader
-import paths
 import config
 
 SHARD_SUBFOLDER = "mimic_shards_hybrid_full_ori"
@@ -37,7 +38,7 @@ CHECKPOINT_PATHS = {
     for seed in SEEDS
 }
 
-OUTPUT_JSON_PATH = os.path.join(PROJECT_DIR, "mgg2l_multiseed_streaming_results.json")
+OUTPUT_JSON_PATH = os.path.join(MIMIC_RESULTS_DIR, "mgg2l_multiseed_streaming_results.json")
 
 
 def load_tokenizer_from_metadata():

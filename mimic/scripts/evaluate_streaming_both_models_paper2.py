@@ -23,11 +23,11 @@ import pickle
 
 import torch
 
-PROJECT_DIR = os.path.dirname(os.path.abspath(__file__))
-sys.path.insert(0, PROJECT_DIR)
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
+import paths
+PROJECT_DIR = paths.repo_root()
 
 from train_test_cross_modal_evaluation_v1_paper2 import evaluate_cross_modal_retrieval_streaming
-import paths
 import config
 
 MGG2L_EXPERIMENT_NAME = "mimic_shards_hybrid_full_orl_vo10805_to128_lr5e-5_b256_ep50_dualbr_sy065_main_loss20_ortho15__branch_MGG2L_paper2_seed_42"

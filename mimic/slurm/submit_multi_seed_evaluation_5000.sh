@@ -32,7 +32,7 @@ python3 test_evaluate_all_seeds.py \
         "/home/abedin/Developments/pytorch_multi_chest_x_rey_paper2/saved_models/mimic_shards_hybrid_full_orl_vo10805_to128_lr5e-5_b256_ep50_dualbr_sy065_main_loss20_ortho15__branch_v1_seed_42/export/model_weights.pth" \
     --seeds "42" \
     --config_name "mimic_shards_hybrid_full_orl_vo10805_to128_lr5e-5_b256_ep50_dualbr_sy065_main_loss20_ortho15__branch_v1" \
-    --output_base_dir "multi_seed_evaluation_10000_seed42_results" \
+    --output_base_dir "mimic/results/multi_seed_evaluation_10000_seed42_results" \
     --num_samples 10000
 
 echo "Seed_42 evaluation with 10000 samples completed!"

@@ -22,7 +22,7 @@ echo "SLURM_NODELIST = $SLURM_NODELIST"
 echo "Start: $(date)"
 echo "=========================================="
 
-python3 verify_and_evaluate_seeds_2021_1337_paper2.py
+python3 mimic/scripts/verify_and_evaluate_seeds_2021_1337_paper2.py
 
 echo "=========================================="
 echo "End: $(date)"

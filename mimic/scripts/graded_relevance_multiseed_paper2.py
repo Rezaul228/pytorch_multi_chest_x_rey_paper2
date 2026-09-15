@@ -30,13 +30,16 @@ import numpy as np
 import torch
 from torch.utils.data import DataLoader
 
-PROJECT_DIR = os.path.dirname(os.path.abspath(__file__))
-sys.path.insert(0, PROJECT_DIR)
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
+import paths
+PROJECT_DIR = paths.repo_root()
+MIMIC_DATA_DIR = os.path.join(PROJECT_DIR, "mimic", "data")
+MIMIC_RESULTS_DIR = os.path.join(PROJECT_DIR, "mimic", "results")
 
 # Reuse the already-verified scoring/metric code UNCHANGED.
 import paper2_graded_relevance_eval as scoring
 
-BINARY_LABELS_PATH = os.path.join(PROJECT_DIR, "test_labels_chexpert_binary.csv")
+BINARY_LABELS_PATH = os.path.join(MIMIC_DATA_DIR, "test_labels_chexpert_binary.csv")
 SHARD_SUBFOLDER = "mimic_shards_hybrid_full_ori"
 BATCH_SIZE = scoring.BATCH_SIZE
 TOP_K = scoring.TOP_K
@@ -59,8 +62,8 @@ MGG2L_CHECKPOINT_PATHS = {
     for seed in SEEDS
 }
 
-PAPER1_OUTPUT_CSV = os.path.join(PROJECT_DIR, "paper1_baseline_graded_relevance_multiseed.csv")
-MGG2L_OUTPUT_CSV = os.path.join(PROJECT_DIR, "mg_g2l_graded_relevance_multiseed.csv")
+PAPER1_OUTPUT_CSV = os.path.join(MIMIC_RESULTS_DIR, "paper1_baseline_graded_relevance_multiseed.csv")
+MGG2L_OUTPUT_CSV = os.path.join(MIMIC_RESULTS_DIR, "mg_g2l_graded_relevance_multiseed.csv")
 
 
 def compute_graded_relevance(image_embeddings, text_embeddings, study_ids, device):

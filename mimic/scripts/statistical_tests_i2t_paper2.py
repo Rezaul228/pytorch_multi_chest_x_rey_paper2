@@ -16,16 +16,21 @@ one-sided (alternative='greater'): are single_section deltas larger?
 """
 
 import os
+import sys
 
 import numpy as np
 import pandas as pd
 from scipy.stats import wilcoxon, mannwhitneyu
 
-PROJECT_DIR = os.path.dirname(os.path.abspath(__file__))
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
+import paths
+PROJECT_DIR = paths.repo_root()
+MIMIC_DATA_DIR = os.path.join(PROJECT_DIR, "mimic", "data")
+MIMIC_RESULTS_DIR = os.path.join(PROJECT_DIR, "mimic", "results")
 SEEDS = [42, 17, 123]
 
-BINARY_LABELS_PATH = os.path.join(PROJECT_DIR, "test_labels_chexpert_binary.csv")
-SECTION_BOUNDARIES_PATH = os.path.join(PROJECT_DIR, "section_boundaries_test_paper2.csv")
+BINARY_LABELS_PATH = os.path.join(MIMIC_DATA_DIR, "test_labels_chexpert_binary.csv")
+SECTION_BOUNDARIES_PATH = os.path.join(MIMIC_DATA_DIR, "section_boundaries_test_paper2.csv")
 
 
 def get_restricted_mask_and_groups():
@@ -59,7 +64,7 @@ def main():
     test2_results = {}
 
     for seed in SEEDS:
-        csv_path = os.path.join(PROJECT_DIR, f"per_query_i2t_metrics_seed_{seed}.csv")
+        csv_path = os.path.join(MIMIC_RESULTS_DIR, f"per_query_i2t_metrics_seed_{seed}.csv")
         df = pd.read_csv(csv_path, dtype={"study_id": str})
         df = df[df["study_id"].isin(restricted_study_ids)].copy()
         assert len(df) == len(restricted_study_ids), f"seed {seed}: expected {len(restricted_study_ids)} rows, got {len(df)}"

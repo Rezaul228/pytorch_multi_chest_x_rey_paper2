@@ -24,7 +24,7 @@ def load_section_boundaries(split_name):
     then hit the safe fallback (has_find=False, has_imp=False) in
     IndianaDataset.__getitem__, rather than crashing.
     """
-    csv_path = os.path.join(PROJECT_DIR, f"section_boundaries_{split_name}_paper2.csv") if split_name else None
+    csv_path = paths.get_section_boundaries_path(split_name) if split_name else None
     section_boundaries = {}
 
     if csv_path is None or not os.path.exists(csv_path):
