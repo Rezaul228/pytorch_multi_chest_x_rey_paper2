@@ -1,9 +1,8 @@
 #!/usr/bin/env python3
 """
-Checksum + clean-load + Open-I test-set evaluation of the 5 newly-added
-aug_indiana_extended (Open-I) Paper-1-baseline checkpoints (seeds
-17/42/123/2021/3407), which live in the sibling repo
-`pytorch_multi_chest_x_ray/saved_models/`.
+Checksum + clean-load + Open-I test-set evaluation of the 5 Paper-1-baseline
+aug_indiana_extended (Open-I) checkpoints (seeds 17/42/123/2021/3407), which
+live in THIS project's saved_models/indiana_trained/.
 
 Does NOT retrain and does NOT modify any model file. Imports the ORIGINAL
 (non-paper2) MultimodalFusion / data_loader / evaluation code as-is.
@@ -16,8 +15,9 @@ import json
 
 import torch
 
-ORIG_REPO = "/home/abedin/Developments/pytorch_multi_chest_x_ray"
-sys.path.insert(0, ORIG_REPO)
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
+import paths
+PROJECT_DIR = paths.repo_root()
 
 from base_models_refactored_v1 import MultimodalFusion  # noqa: E402
 from data_loader_v1 import IndianaDataLoader  # noqa: E402
@@ -29,7 +29,7 @@ DIRNAME_TMPL = (
     "dualbr_sy65_main_loss20_ortho15__branch_seed_{seed}_v1"
 )
 CKPT_TMPL = os.path.join(
-    ORIG_REPO, "saved_models", DIRNAME_TMPL, "export", "model_weights.pth"
+    PROJECT_DIR, "saved_models", "indiana_trained", DIRNAME_TMPL, "export", "model_weights.pth"
 )
 
 EXPECTED_VOCAB_SIZE = 10870
@@ -182,7 +182,7 @@ def main():
         print(row)
 
     out_path = os.path.join(
-        os.path.dirname(os.path.abspath(__file__)),
+        PROJECT_DIR, "openi", "results",
         "openi_baseline_checkpoint_verification_results.json",
     )
     with open(out_path, "w") as f:
