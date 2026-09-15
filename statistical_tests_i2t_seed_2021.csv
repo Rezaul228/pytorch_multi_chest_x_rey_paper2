@@ -1,0 +1,5 @@
+seed,test,metric,statistic,pvalue,n_improved,n_worse,n_tied,median_single,median_both,direction_ok
+2021,wilcoxon_i2t,nDCG@10,12705992.0,9.348623945450587e-144,5349,3279,340,,,
+2021,wilcoxon_i2t,Precision@5,6604070.5,3.906158520434771e-99,3882,2300,2786,,,
+2021,missing_section_i2t,nDCG@10,10280420.0,0.0004620959228116664,5076,3892,,0.02914557510003013,0.01942608679313848,True
+2021,missing_section_i2t,Precision@5,10429620.5,1.933556969552678e-06,5076,3892,,0.0,0.0,False

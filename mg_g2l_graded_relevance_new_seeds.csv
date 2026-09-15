@@ -1,0 +1,17 @@
+seed,metric,direction,full_corpus_value,full_corpus_n,restricted_subset_value,restricted_subset_n
+2021,nDCG@5,Image->Text,0.3519,12429,0.4878,8968
+2021,nDCG@5,Text->Image,0.3489,12429,0.4835,8968
+2021,nDCG@10,Image->Text,0.2824,12429,0.3914,8968
+2021,nDCG@10,Text->Image,0.2778,12429,0.3851,8968
+2021,mAP@10,Image->Text,0.301,12429,0.4171,8968
+2021,mAP@10,Text->Image,0.2918,12429,0.4044,8968
+2021,Precision@5,Image->Text,0.4187,12429,0.5803,8968
+2021,Precision@5,Text->Image,0.4116,12429,0.5704,8968
+1337,nDCG@5,Image->Text,0.3479,12429,0.4822,8968
+1337,nDCG@5,Text->Image,0.3472,12429,0.4812,8968
+1337,nDCG@10,Image->Text,0.2786,12429,0.3862,8968
+1337,nDCG@10,Text->Image,0.2773,12429,0.3843,8968
+1337,mAP@10,Image->Text,0.2856,12429,0.3959,8968
+1337,mAP@10,Text->Image,0.2922,12429,0.405,8968
+1337,Precision@5,Image->Text,0.4037,12429,0.5596,8968
+1337,Precision@5,Text->Image,0.4104,12429,0.5688,8968

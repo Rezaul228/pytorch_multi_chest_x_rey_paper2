@@ -1,0 +1,44 @@
+{
+  "divergence_hypothesis": {
+    "17": "clean",
+    "42": "mixed",
+    "123": "clean",
+    "3407": "reversed",
+    "2021": "clean",
+    "1337": "clean"
+  },
+  "missing_section_hypothesis": {
+    "17": "reversed",
+    "42": "reversed",
+    "123": "reversed",
+    "3407": "reversed",
+    "2021": "reversed",
+    "1337": "reversed"
+  },
+  "wilcoxon_significant_p<0.05": {
+    "17": {
+      "nDCG@10": true,
+      "Precision@5": true
+    },
+    "42": {
+      "nDCG@10": true,
+      "Precision@5": true
+    },
+    "123": {
+      "nDCG@10": true,
+      "Precision@5": true
+    },
+    "3407": {
+      "nDCG@10": true,
+      "Precision@5": true
+    },
+    "2021": {
+      "nDCG@10": true,
+      "Precision@5": true
+    },
+    "1337": {
+      "nDCG@10": true,
+      "Precision@5": true
+    }
+  }
+}
