@@ -28,7 +28,7 @@ def repo_root():
 CENTRALIZED_DATA_BASE_PATH = "/home/abedin/Developments/chest_x_ray_data_processing/all_processed_data/"
 
 # Available shard subfolders
-AVAILABLE_SHARD_SUBFOLDERS = ["mimic_shards_voc-2007","indiana_shards", "mimic_shards", "mimic_shards_hybrid_full_ori", "mimic_shards_hufc4446-to128", "indiana_shards2559-64", "aug_indiana_extended"]
+AVAILABLE_SHARD_SUBFOLDERS = ["mimic_shards_voc-2007","indiana_shards", "mimic_shards", "mimic_shards_hybrid_full_ori", "mimic_shards_hufc4446-to128", "indiana_shards2559-64", "aug_indiana_extended", "openi_sa"]
 
 # Default subfolder selection
 DEFAULT_SHARD_SUBFOLDER = "indiana_shards"
@@ -95,7 +95,13 @@ def get_section_boundaries_path(split_name, dataset_mode=None):
     MIMIC resolves to mimic/data/section_boundaries_{split}_paper2.csv;
     an Open-I dataset_mode resolves to openi/data/section_boundaries_{split}_openi.csv."""
     area = get_dataset_area(dataset_mode)
-    suffix = "paper2" if area == "mimic" else "openi"
+    if dataset_mode is None:
+        import config
+        dataset_mode = config.DATASET_MODE
+    if dataset_mode == "openi_sa":  # section-aware Open-I build has its own boundary files
+        suffix = "openi_sa"
+    else:
+        suffix = "paper2" if area == "mimic" else "openi"
     return os.path.join(repo_root(), area, "data", f"section_boundaries_{split_name}_{suffix}.csv")
 
 # ==========================================

@@ -98,6 +98,24 @@ DATASET_CONFIGS = {
         "data_path": "/home/abedin/Developments/chest_x_ray_data_processing/all_processed_data/mimic_shards_hybrid_full_ori"
     },
     
+    "openi_sa": {
+        "vocab_size": 10805,          # SHARED MIMIC vocabulary: len(word_index)+1, == MIMIC and ReXGradient checkpoints' text embedding rows
+        "max_token_length": 128,      # caption length in shards (findings + impression, post-truncated)
+        "embed_dim": 256,             # placeholder -- training hparams decided later
+        "num_heads": 8,               # placeholder
+        "num_layers": 2,              # placeholder
+        "temperature": 0.07,          # placeholder
+        "batch_size": 128,            # placeholder
+        "learning_rate": 1e-4,        # placeholder
+        "epochs": 50,                 # placeholder
+        "shard_size": 100,            # Number of samples per shard file
+        "train_samples": None,        # None = use ALL available
+        "val_samples": None,          # None = use ALL available
+        # Section-aware Open-I: train augmented (orig + 6 copies), val/test original one row per study;
+        # boundaries in openi/data/section_boundaries_{train,val,test}_openi_sa.csv
+        "data_path": "/home/abedin/Developments/chest_x_ray_data_processing/all_processed_data/openi_sa"
+    },
+
     "mimic_shards_hufc4446-to128": {
         "vocab_size": 4446,            # Vocabulary size from tokenizer (previous working model)
         "max_token_length": 128,       # Maximum sequence length
