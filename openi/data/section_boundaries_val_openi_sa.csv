@@ -104,7 +104,7 @@ study_id,findings_token_count,has_findings,has_impression
 986,15,1,1
 991,25,1,1
 1014,0,0,1
-1035,33,1,1
+1035,31,1,1
 1090,0,0,1
 1098,27,1,1
 1102,24,1,1
@@ -221,7 +221,7 @@ study_id,findings_token_count,has_findings,has_impression
 2304,17,1,1
 2307,15,1,1
 2308,0,0,1
-2314,12,1,1
+2314,11,1,1
 2317,11,1,1
 2322,14,1,1
 2324,11,1,1
@@ -246,7 +246,7 @@ study_id,findings_token_count,has_findings,has_impression
 2573,15,1,1
 2576,18,1,1
 2600,15,1,1
-2616,22,1,1
+2616,21,1,1
 2662,7,1,1
 2689,37,1,1
 2699,23,1,1
@@ -353,7 +353,7 @@ study_id,findings_token_count,has_findings,has_impression
 3830,11,1,1
 3841,21,1,1
 3845,20,1,1
-3877,56,1,1
+3877,55,1,1
 3884,19,1,1
 3891,0,0,1
 3899,45,1,1
