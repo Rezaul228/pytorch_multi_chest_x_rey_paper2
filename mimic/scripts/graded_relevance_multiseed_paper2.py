@@ -22,6 +22,7 @@ Outputs:
   mg_g2l_graded_relevance_multiseed.csv           (seeds 17, 123)
 """
 
+import argparse
 import csv
 import os
 import sys
@@ -39,16 +40,33 @@ MIMIC_RESULTS_DIR = os.path.join(PROJECT_DIR, "mimic", "results")
 # Reuse the already-verified scoring/metric code UNCHANGED.
 import paper2_graded_relevance_eval as scoring
 
-BINARY_LABELS_PATH = os.path.join(MIMIC_DATA_DIR, "test_labels_chexpert_binary.csv")
+DEFAULT_BINARY_LABELS_PATH = os.path.join(MIMIC_DATA_DIR, "test_labels_chexpert_binary.csv")
+DEFAULT_SEEDS = [17, 123]
+DEFAULT_PAPER1_OUTPUT_CSV = os.path.join(MIMIC_RESULTS_DIR, "paper1_baseline_graded_relevance_multiseed.csv")
+DEFAULT_MGG2L_OUTPUT_CSV = os.path.join(MIMIC_RESULTS_DIR, "mg_g2l_graded_relevance_multiseed.csv")
+
+# NEW: overridable via CLI (--binary-labels/--seeds/--paper1-output/--mgg2l-output);
+# default to the exact original hardcoded values so an old invocation with no
+# flags behaves identically to before.
+_parser = argparse.ArgumentParser(add_help=False)
+_parser.add_argument("--binary-labels", default=DEFAULT_BINARY_LABELS_PATH)
+_parser.add_argument("--seeds", default=",".join(str(s) for s in DEFAULT_SEEDS),
+                      help="comma-separated seed list")
+_parser.add_argument("--paper1-output", default=DEFAULT_PAPER1_OUTPUT_CSV)
+_parser.add_argument("--mgg2l-output", default=DEFAULT_MGG2L_OUTPUT_CSV)
+_args, _ = _parser.parse_known_args()
+
+BINARY_LABELS_PATH = _args.binary_labels
 SHARD_SUBFOLDER = "mimic_shards_hybrid_full_ori"
 BATCH_SIZE = scoring.BATCH_SIZE
 TOP_K = scoring.TOP_K
-SEEDS = [17, 123]
+SEEDS = [int(s) for s in _args.seeds.split(",")]
 
 PAPER1_MODEL_PATHS = {
     seed: os.path.join(
         PROJECT_DIR, "saved_models",
-        f"mimic_shards_hybrid_full_orl_vo10805_to128_lr5e-5_b256_ep50_dualbr_sy065_main_loss20_ortho15__branch_v1_seed_{seed}",
+        f"mimic_shards_hybrid_full_orl_vo10805_to128_lr5e-5_b256_ep50_dualbr_sy065_main_loss20_ortho15__branch_v1_seed_{seed}"
+        + ("_rerun" if seed == 2021 else ""),  # v1_seed_2021 is a byte-duplicate of seed_123; the genuine retrain is _rerun
         "export", "model_weights.pth",
     )
     for seed in SEEDS
@@ -62,8 +80,8 @@ MGG2L_CHECKPOINT_PATHS = {
     for seed in SEEDS
 }
 
-PAPER1_OUTPUT_CSV = os.path.join(MIMIC_RESULTS_DIR, "paper1_baseline_graded_relevance_multiseed.csv")
-MGG2L_OUTPUT_CSV = os.path.join(MIMIC_RESULTS_DIR, "mg_g2l_graded_relevance_multiseed.csv")
+PAPER1_OUTPUT_CSV = _args.paper1_output
+MGG2L_OUTPUT_CSV = _args.mgg2l_output
 
 
 def compute_graded_relevance(image_embeddings, text_embeddings, study_ids, device):

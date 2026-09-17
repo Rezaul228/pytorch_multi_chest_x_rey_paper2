@@ -51,3 +51,5 @@ test_labels_chexbert.csv
 test_labels_chexbert_binary.csv
 chexbert_input_test*.csv
 chexbert_out/
+# Diagnostic C: per-query cache under CheXbert labels (study_id-keyed, MIMIC DUA)
+per_query_i2t_metrics_*.csv

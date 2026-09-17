@@ -22,6 +22,7 @@ Outputs:
     for seed in 42, 17, 123
 """
 
+import argparse
 import os
 import sys
 
@@ -38,13 +39,25 @@ MIMIC_RESULTS_DIR = os.path.join(PROJECT_DIR, "mimic", "results")
 
 import paper2_graded_relevance_eval as scoring  # reused, unchanged
 
-SEEDS = [42, 17, 123]
+# NEW: overridable via CLI, default to the exact original hardcoded values so
+# an old invocation with no flags behaves identically to before.
+_parser = argparse.ArgumentParser(add_help=False)
+_parser.add_argument("--binary-labels", default=scoring.DEFAULT_BINARY_LABELS_PATH)
+_parser.add_argument("--seeds", default="42,17,123", help="comma-separated seed list")
+_parser.add_argument("--output-template", default="per_query_i2t_metrics_seed_{seed}.csv",
+                      help="filename template, must contain {seed}")
+_args, _ = _parser.parse_known_args()
+
+SEEDS = [int(s) for s in _args.seeds.split(",")]
+BINARY_LABELS_PATH_OVERRIDE = _args.binary_labels
+OUTPUT_TEMPLATE = _args.output_template
 SECTION_BOUNDARIES_PATH = os.path.join(MIMIC_DATA_DIR, "section_boundaries_test_paper2.csv")
 
 PAPER1_MODEL_PATHS = {
     seed: os.path.join(
         PROJECT_DIR, "saved_models",
-        f"mimic_shards_hybrid_full_orl_vo10805_to128_lr5e-5_b256_ep50_dualbr_sy065_main_loss20_ortho15__branch_v1_seed_{seed}",
+        f"mimic_shards_hybrid_full_orl_vo10805_to128_lr5e-5_b256_ep50_dualbr_sy065_main_loss20_ortho15__branch_v1_seed_{seed}"
+        + ("_rerun" if seed == 2021 else ""),  # v1_seed_2021 is a byte-duplicate of seed_123; the genuine retrain is _rerun
         "export", "model_weights.pth",
     )
     for seed in SEEDS
@@ -128,7 +141,7 @@ def main():
         torch.cuda.empty_cache()
 
     n = len(study_ids)
-    B, _ = scoring.build_binary_matrix(study_ids, scoring.DEFAULT_BINARY_LABELS_PATH)
+    B, _ = scoring.build_binary_matrix(study_ids, BINARY_LABELS_PATH_OVERRIDE)
     B_t = torch.FloatTensor(B).to(device)
     R_full = torch.matmul(B_t, B_t.transpose(0, 1))
     R_full_np = R_full.cpu().numpy().astype(np.int8)
@@ -207,7 +220,7 @@ def main():
             "p1_ndcg10": p1_ndcg10, "p1_prec5": p1_prec5,
             "mg_ndcg10": mg_ndcg10, "mg_prec5": mg_prec5,
         })
-        out_path = os.path.join(MIMIC_RESULTS_DIR, f"per_query_i2t_metrics_seed_{seed}.csv")
+        out_path = os.path.join(MIMIC_RESULTS_DIR, OUTPUT_TEMPLATE.format(seed=seed))
         per_query_df.to_csv(out_path, index=False)
         print(f"Saved per-query cache: {out_path}")
 
