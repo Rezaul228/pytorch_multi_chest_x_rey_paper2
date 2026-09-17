@@ -42,3 +42,12 @@ section_boundaries_test_paper2.csv
 # Purged from git history on 2026-09-15; keep these local-only from now on.
 divergence_scores_test_paper2.csv
 per_query_i2t_metrics_seed_*.csv
+
+# Same caution extended to ReXGradient and Open-I: any per-study-linked file
+# (study_id column) or file containing raw report text, across all three
+# datasets' data/ and results/ subfolders.
+divergence_scores_test_*.csv
+test_labels_chexbert.csv
+test_labels_chexbert_binary.csv
+chexbert_input_test*.csv
+chexbert_out/
