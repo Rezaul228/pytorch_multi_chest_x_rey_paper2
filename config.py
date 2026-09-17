@@ -101,13 +101,13 @@ DATASET_CONFIGS = {
     "openi_sa": {
         "vocab_size": 10805,          # SHARED MIMIC vocabulary: len(word_index)+1, == MIMIC and ReXGradient checkpoints' text embedding rows
         "max_token_length": 128,      # caption length in shards (findings + impression, post-truncated)
-        "embed_dim": 256,             # placeholder -- training hparams decided later
-        "num_heads": 8,               # placeholder
-        "num_layers": 2,              # placeholder
-        "temperature": 0.07,          # placeholder
-        "batch_size": 128,            # placeholder
-        "learning_rate": 1e-4,        # placeholder
-        "epochs": 50,                 # placeholder
+        "embed_dim": 256,             # matches MIMIC/ReXGradient architecture (shared vocab requires matching embedding table)
+        "num_heads": 8,
+        "num_layers": 2,
+        "temperature": 0.07,
+        "batch_size": 128,            # 6-seed Paper1 vs MG-G2L comparison recipe
+        "learning_rate": 1e-4,
+        "epochs": 100,                # --max_epochs 100, early stopping off, --save_best tracks val R@1 avg
         "shard_size": 100,            # Number of samples per shard file
         "train_samples": None,        # None = use ALL available
         "val_samples": None,          # None = use ALL available

@@ -128,12 +128,18 @@ def compute_recall_k(similarity_matrix, k):
 class EnhancedRetrievalTrainer:
     """Enhanced trainer for dual branch architecture - PyTorch version"""
 
-    def __init__(self, model, temperature=None, learning_rate=1e-5, 
+    def __init__(self, model, temperature=None, learning_rate=1e-5,
                  viz_dir='visualizations', model_save_path=None, experiment_name='dual_branch_exp',
-                 device='cuda' if torch.cuda.is_available() else 'cpu'):
+                 device='cuda' if torch.cuda.is_available() else 'cpu',
+                 grad_clip=None, save_best=False):
         self.device = device
         self.model = model.to(device)
-        
+        # NEW (openi_sa recipe): optional gradient clipping (None = old behavior,
+        # no clipping) and optional best-checkpoint tracking on val R@1 average.
+        self.grad_clip = grad_clip
+        self.save_best = save_best
+        self.best_val_r1_avg = -1.0
+
         # Use temperature from config if not specified
         if temperature is None:
             temperature = config.get_current_config()["temperature"]
@@ -302,6 +308,8 @@ class EnhancedRetrievalTrainer:
         self.optimizer.zero_grad()
         #main_loss.backward()
         total_loss.backward()
+        if self.grad_clip is not None:
+            torch.nn.utils.clip_grad_norm_(self.model.parameters(), self.grad_clip)
         self.optimizer.step()
 
         return (total_loss.item(), synergy_loss.item(), difference_loss.item(), orthogonal_loss.item(),
@@ -423,7 +431,9 @@ class EnhancedRetrievalTrainer:
             i2t_recall = compute_recall_k(similarity_matrix, k=k_val)
             t2i_recall = compute_recall_k(similarity_matrix.transpose(0, 1), k=k_val)
             recalls[f'recall@{k_val}'] = (i2t_recall + t2i_recall) / 2
-        
+            recalls[f'i2t_recall@{k_val}'] = i2t_recall
+            recalls[f't2i_recall@{k_val}'] = t2i_recall
+
         # Calculate MRR
         ranks = []
         for i in range(similarity_matrix.size(0)):
@@ -525,6 +535,31 @@ class EnhancedRetrievalTrainer:
         print(f"Found existing checkpoint at: {checkpoint_path}")
         print(f"Resuming from epoch {resume_epoch} (last saved/completed epoch: {saved_epoch})")
         return resume_epoch
+
+    def get_best_checkpoint_path(self):
+        """NEW (openi_sa recipe): fixed path for the best-val-R@1 checkpoint,
+        separate from the resume checkpoint -- only overwritten when a new
+        epoch's val R@1 average (mean of I->T and T->I R@1) is >= the best
+        seen so far (ties go to the later epoch, by using >=)."""
+        if not self.model_save_path:
+            return None
+        base_dir = os.path.dirname(self.model_save_path)
+        export_dir = os.path.join(base_dir, 'export')
+        os.makedirs(export_dir, exist_ok=True)
+        return os.path.join(export_dir, 'checkpoint_best.pth')
+
+    def save_best_checkpoint(self, epoch, val_r1_avg):
+        """NEW (openi_sa recipe): save the current best-val-R@1 checkpoint."""
+        checkpoint_path = self.get_best_checkpoint_path()
+        if checkpoint_path is None:
+            return
+        torch.save({
+            'epoch': epoch,
+            'val_r1_avg': val_r1_avg,
+            'model_state_dict': self.model.state_dict(),
+            'optimizer_state_dict': self.optimizer.state_dict(),
+        }, checkpoint_path)
+        print(f"New best checkpoint (epoch {epoch}, val R@1 avg={val_r1_avg:.4f}) saved to: {checkpoint_path}")
 
     def train(self, train_loader, val_loader, num_epochs):
         """Training with dual branch monitoring"""
@@ -639,12 +674,24 @@ class EnhancedRetrievalTrainer:
                 print("   Validation:")
                 for k, recall in recalls.items():
                     print(f"     {k}: {recall:.4f}")
+                print(f"   Val R@1 I->T: {recalls.get('i2t_recall@1', float('nan')):.4f}  "
+                      f"T->I: {recalls.get('t2i_recall@1', float('nan')):.4f}  "
+                      f"MRR: {recalls['mrr']:.4f}")
 
             # NEW (paper2): checkpoint every 3rd epoch, or the final epoch (so the
             # last epoch's progress is never lost even if num_epochs isn't a
             # multiple of 3). Same fixed filename each time -- overwrite, not append.
             if (epoch + 1) % 3 == 0 or epoch == num_epochs - 1:
                 self.save_checkpoint(epoch)
+
+            # NEW (openi_sa recipe): best-checkpoint tracking on val R@1 average.
+            # Tie-break: later epoch wins (>= , not >).
+            if self.save_best and recalls:
+                val_r1_avg = recalls['recall@1']
+                if val_r1_avg >= self.best_val_r1_avg:
+                    self.best_val_r1_avg = val_r1_avg
+                    self.save_best_checkpoint(epoch, val_r1_avg)
+                    print(f"   Best-so-far epoch: {epoch + 1} (val R@1 avg={val_r1_avg:.4f})")
 
             # Verify branch specialization every 5 epochs
             if (epoch + 1) % 5 == 0 and val_loader is not None:
@@ -678,7 +725,8 @@ class EnhancedRetrievalTrainer:
             self.history['gran_loss'].append(epoch_gran_loss)  # NEW (paper2)
             self.history['loss_ratio'].append(loss_ratio)
             for k, v in recalls.items():
-                self.history[k].append(v)
+                if k in self.history:  # skip i2t_recall@*/t2i_recall@* -- not part of history's fixed schema
+                    self.history[k].append(v)
             
             # Calculate MRR
             mrr = recalls['mrr']
@@ -808,8 +856,25 @@ def main():
                       help='Device to use for computation (default: cpu)')
     parser.add_argument('--seed', type=int, default=42,
                       help='Random seed for reproducibility (default: 42)')
+    parser.add_argument('--dataset_mode', type=str, default=None,
+                      help='Override config.DATASET_MODE for this process only '
+                           '(default: None, keeps whatever config.py currently defaults to)')
+    parser.add_argument('--max_epochs', type=int, default=None,
+                      help='Alias for --epochs, takes precedence if both given (default: None)')
+    parser.add_argument('--resume', action='store_true',
+                      help='Accepted for CLI parity; resume-from-checkpoint is unconditional '
+                           '(see load_checkpoint_if_exists) so this flag does not gate anything')
+    parser.add_argument('--save_best', action='store_true',
+                      help='Track and save a separate best-val-R@1-average checkpoint (default: off)')
+    parser.add_argument('--grad_clip', type=float, default=None,
+                      help='Gradient clipping max-norm; None = no clipping (default: None, old behavior)')
     args = parser.parse_args()
-    
+
+    # NEW (openi_sa recipe): per-process dataset override, applied before any
+    # config.DATASET_MODE/config.get_current_config() reads below.
+    if args.dataset_mode is not None:
+        config.switch_dataset(args.dataset_mode)
+
     # Set device
     device = torch.device(args.device)
     
@@ -831,7 +896,7 @@ def main():
     # Get parameters from config or command line
     batch_size = args.batch_size if args.batch_size is not None else config.get_default_batch_size()
     learning_rate = args.learning_rate if args.learning_rate is not None else config.get_default_learning_rate()
-    epochs = args.epochs if args.epochs is not None else config.get_default_epochs()
+    epochs = args.max_epochs if args.max_epochs is not None else (args.epochs if args.epochs is not None else config.get_default_epochs())
     train_samples = args.train_samples if args.train_samples is not None else config.get_default_train_samples()
     val_samples = args.val_samples if args.val_samples is not None else config.get_default_val_samples()
     
@@ -900,7 +965,9 @@ def main():
         device=device,
         experiment_name=args.experiment_name,
         model_save_path=os.path.join('saved_models', args.experiment_name, f'model_{args.experiment_name}.pth'),
-        viz_dir=viz_dir
+        viz_dir=viz_dir,
+        grad_clip=args.grad_clip,
+        save_best=args.save_best
     )
     
     print("\nStarting Dual Branch Training")
