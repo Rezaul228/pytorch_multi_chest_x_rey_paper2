@@ -1,0 +1,13 @@
+arch,seed,logs,resumed,epochs_completed,global_best_epoch,global_best_val,ondisk_best_epoch,ondisk_best_val,pre_timeout_best,first_post_resume_newbest,resume_line,best_so_far_survived,ondisk_is_global_best,ckpt_epoch_field,ckpt_val_r1_avg,n_tensors,sha12
+Paper1,17,openisa_v1_s17_114769.out;openisa_v1_s17_114831.out,yes,100,99,1.0,99,1.0,ep69=0.9834,ep70=0.7576,RESUMING TRAINING: will run epochs 70 through 100,NO (counter reset),yes,98,1.0,281,4ef688482e04
+Paper1,42,openisa_v1_s42_114770.out;openisa_v1_s42_114832.out,yes,100,99,0.9958,99,0.9958,ep68=0.8795,ep73=0.6482,RESUMING TRAINING: will run epochs 73 through 100,NO (counter reset),yes,98,0.9958448708057404,281,7d6623801104
+Paper1,123,openisa_v1_s123_114771.out;openisa_v1_s123_114833.out,yes,100,88,0.9737,88,0.9737,ep64=0.9501,ep70=0.8033,RESUMING TRAINING: will run epochs 70 through 100,NO (counter reset),yes,87,0.9736842215061188,281,44a310e68e16
+Paper1,1337,openisa_v1_s1337_114772.out;openisa_v1_s1337_114834.out,yes,100,68,0.9972,100,0.9931,ep68=0.9972,ep70=0.9224,RESUMING TRAINING: will run epochs 70 through 100,NO (counter reset),NO (lost ep68=0.9972),99,0.9930748045444489,281,b81ea4a943a4
+Paper1,2021,openisa_v1_s2021_114773.out;openisa_v1_s2021_114835.out,yes,100,96,0.9861,96,0.9861,ep66=0.9751,ep70=0.9114,RESUMING TRAINING: will run epochs 70 through 100,NO (counter reset),yes,95,0.9861495792865753,281,1031d0880f1c
+Paper1,3407,openisa_v1_s3407_114774.out;openisa_v1_s3407_114836.out,yes,100,97,0.9945,97,0.9945,ep69=0.9695,ep70=0.9792,RESUMING TRAINING: will run epochs 70 through 100,yes,yes,96,0.9944598078727722,281,cf77d3491b2f
+MG-G2L,17,openisa_MGG2L_s17_114775.out,no,100,98,0.9958,98,0.9958,-,-,,n/a (no resume),yes,97,0.9958448708057404,289,91fa477b8390
+MG-G2L,42,openisa_MGG2L_s42_114776.out,no,100,96,0.9972,96,0.9972,-,-,,n/a (no resume),yes,95,0.9972299337387085,289,36d8f96d30c5
+MG-G2L,123,openisa_MGG2L_s123_114777.out,no,100,100,0.9986,100,0.9986,-,-,,n/a (no resume),yes,99,0.9986149668693542,289,0668853861cd
+MG-G2L,1337,openisa_MGG2L_s1337_114778.out,no,100,99,1.0,99,1.0,-,-,,n/a (no resume),yes,98,1.0,289,e9689b72830f
+MG-G2L,2021,openisa_MGG2L_s2021_114779.out,no,100,91,0.9945,91,0.9945,-,-,,n/a (no resume),yes,90,0.9944598376750946,289,20ec8bb168a6
+MG-G2L,3407,openisa_MGG2L_s3407_114780.out,no,100,98,1.0,98,1.0,-,-,,n/a (no resume),yes,97,1.0,289,1de560b27d91
