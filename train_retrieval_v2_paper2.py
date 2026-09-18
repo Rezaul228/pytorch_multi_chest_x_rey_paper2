@@ -16,6 +16,14 @@ import gc
 import pickle
 from tqdm import tqdm
 from base_models_refactored_v1_paper2 import MultimodalFusion, ContrastiveLoss, SynergyLoss, DifferenceLoss, compute_granularity_loss
+
+
+# Section-mechanism guards (see section_guard_paper2.py). Paper 1 is unaffected.
+from section_guard_paper2 import (  # noqa: E402
+    SECTION_INERT_CAUSE,
+    assert_section_mechanism_active,
+    assert_section_boundaries_loaded,
+)
 from analysis_all_visualization_v1 import TrainingVisualizer
 from data_loader_v1_paper2 import IndianaDataLoader
 from train_test_cross_modal_evaluation_v1 import evaluate_cross_modal_retrieval
@@ -617,6 +625,7 @@ class EnhancedRetrievalTrainer:
             epoch_orthogonal_losses = []
             epoch_main_losses = []
             epoch_gran_losses = []  # NEW (paper2)
+            self._section_aware_batches_seen = False  # NEW: reset per epoch
 
             pbar = tqdm(enumerate(train_loader),
                        total=min(steps_per_epoch, len(train_loader)),
@@ -650,6 +659,8 @@ class EnhancedRetrievalTrainer:
                 epoch_orthogonal_losses.append(orthogonal_loss)
                 epoch_main_losses.append(main_loss)
                 epoch_gran_losses.append(gran_loss)  # NEW (paper2)
+                if isinstance(step_batch, dict) and step_batch.get('has_find') is not None:
+                    self._section_aware_batches_seen = True
 
                 # Update progress bar
                 pbar.set_description(
@@ -664,6 +675,16 @@ class EnhancedRetrievalTrainer:
             epoch_orthogonal_loss = np.mean(epoch_orthogonal_losses)
             epoch_main_loss = np.mean(epoch_main_losses)
             epoch_gran_loss = np.mean(epoch_gran_losses)  # NEW (paper2)
+
+            # NEW (2026-09-18): fail loudly if the section mechanism was inert for a
+            # whole epoch. A ReXGradient MG-G2L run silently trained with
+            # has_find/has_imp all-False for 100 epochs -- the granularity loss was
+            # exactly 0.000000 on every line and nobody noticed. Only checked on the
+            # section-aware path (the batches carry has_find/has_imp); a batch without
+            # them is the Paper 1-compatible path and is left alone.
+            if epoch_gran_losses and self._section_aware_batches_seen:
+                assert_section_mechanism_active(epoch, epoch_gran_losses)
+
             loss_ratio = epoch_synergy_loss / epoch_orthogonal_loss
             
             # Validation
@@ -955,6 +976,12 @@ def main():
     val_loader = DataLoader(val_dataset, batch_size=batch_size, shuffle=True, num_workers=0)
     
     print(f"Data loaded: {len(train_dataset)} train, {len(val_dataset)} val, vocab: {VOCAB_SIZE}")
+
+    # NEW (2026-09-18): hard gate -- refuse to start a section-aware run whose
+    # boundaries did not load. Warning-only behaviour let a 100-epoch ReXGradient
+    # run finish with the mechanism completely inert.
+    assert_section_boundaries_loaded(train_dataset, 'train')
+    assert_section_boundaries_loaded(val_dataset, 'val')
     
     print(f"Memory [AFTER_DATA_LOADING]: {get_memory_usage()}")
     gc.collect()
