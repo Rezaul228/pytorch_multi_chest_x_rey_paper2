@@ -512,6 +512,11 @@ class EnhancedRetrievalTrainer:
             'epoch': epoch,
             'model_state_dict': self.model.state_dict(),
             'optimizer_state_dict': self.optimizer.state_dict(),
+            # best-val tracking must survive a resume, otherwise the first
+            # post-resume epoch always overwrites checkpoint_best.pth
+            # (found on the openi_sa Paper 1 runs, jobs 114831-114836).
+            'best_val_r1_avg': self.best_val_r1_avg,
+            'best_epoch': getattr(self, 'best_epoch', None),
         }, checkpoint_path)
         print(f"Checkpoint saved (epoch {epoch}) to: {checkpoint_path} (overwritten in place -- same file each time)")
 
@@ -533,6 +538,13 @@ class EnhancedRetrievalTrainer:
         saved_epoch = checkpoint['epoch']
         resume_epoch = saved_epoch + 1
         print(f"Found existing checkpoint at: {checkpoint_path}")
+        if 'best_val_r1_avg' in checkpoint:
+            self.best_val_r1_avg = checkpoint['best_val_r1_avg']
+            self.best_epoch = checkpoint.get('best_epoch')
+            print(f"Restored best-val state: best val R@1 avg {self.best_val_r1_avg:.4f} (epoch {self.best_epoch})")
+        else:
+            print("WARNING: checkpoint has no best-val state (older format) -- best-so-far restarts at -1.0; "
+                  "the first post-resume epoch will be recorded as a new best.")
         print(f"Resuming from epoch {resume_epoch} (last saved/completed epoch: {saved_epoch})")
         return resume_epoch
 
@@ -690,6 +702,7 @@ class EnhancedRetrievalTrainer:
                 val_r1_avg = recalls['recall@1']
                 if val_r1_avg >= self.best_val_r1_avg:
                     self.best_val_r1_avg = val_r1_avg
+                    self.best_epoch = epoch
                     self.save_best_checkpoint(epoch, val_r1_avg)
                     print(f"   Best-so-far epoch: {epoch + 1} (val R@1 avg={val_r1_avg:.4f})")
 
