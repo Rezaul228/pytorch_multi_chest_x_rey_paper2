@@ -17,9 +17,12 @@ import pickle
 import sys
 
 CASES = [
-    ("MIMIC", "train", "section_boundaries_train_paper2.csv",
+    # NOTE: the MIMIC CSVs sat at the repo root when the 2026-09 MG-G2L runs were
+    # trained (that is the path their logs quote); STEP 1 moved them to mimic/data/.
+    # Same files, verified by size/content -- only the location changed.
+    ("MIMIC", "train", "mimic/data/section_boundaries_train_paper2.csv",
      "/home/abedin/Developments/chest_x_ray_data_processing/all_processed_data/mimic_shards_hybrid_full_ori/train"),
-    ("MIMIC", "val", "section_boundaries_val_paper2.csv",
+    ("MIMIC", "val", "mimic/data/section_boundaries_val_paper2.csv",
      "/home/abedin/Developments/chest_x_ray_data_processing/all_processed_data/mimic_shards_hybrid_full_ori/val"),
     ("openi_sa", "train", "openi/data/section_boundaries_train_openi_sa.csv",
      "/home/abedin/Developments/chest_x_ray_data_processing/all_processed_data/openi_sa/train"),
