@@ -240,11 +240,22 @@ def retrieval(sim, gid):
 
 
 # --------------------------------------------------------------------- step 2
+def ids_for_labels(ids):
+    """Open-I study_ids are numeric, so pandas reads the label CSV index as int64
+    while the shards give us strings. build_binary_matrix() indexes with .loc, so
+    cast to the label index's own dtype (ReXGradient ids are alphanumeric and stay
+    object). Scoring code itself is untouched."""
+    idx = pd.read_csv(LABELS, usecols=["study_id"])["study_id"]
+    if pd.api.types.is_integer_dtype(idx):
+        return np.array([int(x) for x in ids])
+    return np.array([str(x) for x in ids], dtype=object)
+
+
 def graded(I, T, ids, device):
     n = len(ids)
     it, tt = torch.FloatTensor(I).to(device), torch.FloatTensor(T).to(device)
     i2t, t2i = torch.matmul(it, tt.T), torch.matmul(tt, it.T)
-    B, cols = scoring.build_binary_matrix(ids, LABELS)
+    B, cols = scoring.build_binary_matrix(ids_for_labels(ids), LABELS)
     Bt = torch.FloatTensor(B).to(device)
     Rm = torch.matmul(Bt, Bt.T).cpu().numpy().astype(np.int8)
     del Bt

@@ -1,0 +1,13 @@
+arch,seed,file,sha12,n_tensors,strict_load,best_epoch,best_val_r1_avg
+Paper1,17,checkpoint_best.pth,0eb75e247f2b,281,OK,98,1.0
+Paper1,42,checkpoint_best.pth,192b4bc23bb7,281,OK,97,0.9847645461559296
+Paper1,123,checkpoint_best.pth,79b9f6a84157,281,OK,92,0.9972299337387085
+Paper1,1337,checkpoint_best.pth,f6c74e92817e,281,OK,40,0.8351800739765167
+Paper1,2021,checkpoint_best.pth,ea51f25ada74,281,OK,86,0.9986149668693542
+Paper1,3407,checkpoint_best.pth,a64afda96d54,281,OK,88,0.9972299039363861
+MG-G2L,17,checkpoint_best.pth,91fa477b8390,289,OK,97,0.9958448708057404
+MG-G2L,42,checkpoint_best.pth,36d8f96d30c5,289,OK,95,0.9972299337387085
+MG-G2L,123,checkpoint_best.pth,0668853861cd,289,OK,99,0.9986149668693542
+MG-G2L,1337,checkpoint_best.pth,e9689b72830f,289,OK,98,1.0
+MG-G2L,2021,checkpoint_best.pth,20ec8bb168a6,289,OK,90,0.9944598376750946
+MG-G2L,3407,checkpoint_best.pth,1de560b27d91,289,OK,97,1.0

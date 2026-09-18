@@ -55,3 +55,5 @@ chexbert_out/
 per_query_i2t_metrics_*.csv
 # Step A2: top-10 whole Impressions per dataset (raw report text)
 impression_top10_*.csv
+# Open-I per-query caches (study_id-keyed; same caution as MIMIC/ReXGradient)
+per_query_metrics_*.csv
