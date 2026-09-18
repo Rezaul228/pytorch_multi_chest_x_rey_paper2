@@ -8,6 +8,11 @@ architecture across multiple seeds on: retrieval metrics (R@K/MRR), CheXpert-bas
 graded relevance (nDCG/mAP/Precision), and sub-group analyses (laterality, section
 availability, Findings/Impression agreement).
 
+**Extended goal:** show the MG-G2L improvement is not MIMIC-specific, by repeating
+the matched-seed comparison on **ReXGradient-160K** and **Open-I (`openi_sa`)**
+under a shared 10,805-token vocabulary. Training for all three datasets is
+complete; test-set evaluation exists for MIMIC only (see §8 and "unfinished work").
+
 ## What's completed
 
 **Architecture (`base_models_refactored_v1_paper2.py`, copy of the original — original untouched):**
@@ -264,6 +269,108 @@ this corrected checkpoint.
 
 ---
 
+## Cross-dataset extension (ReXGradient-160K, Open-I `openi_sa`)
+
+Everything below is **training-stage only** unless a row says otherwise. Both
+non-MIMIC arms now have 6 matched seeds trained; **neither has a test-set
+evaluation yet**, so nothing here supports a generalization claim on its own.
+
+### 8. Training runs completed — 24 checkpoints, 2 datasets, 2 arms, 6 seeds each
+
+| batch | jobs | outcome |
+|---|---|---|
+| ReXGradient Paper 1 | 114734–114738 + 114398 (seed 42) | 6/6 COMPLETED, 100/100 epochs, 6.5–8.5 h |
+| ReXGradient MG-G2L | 114739–114744 | 6/6 COMPLETED, 100/100 epochs, 1.3–8.0 h |
+| openi_sa Paper 1 | 114769–114774 (TIMEOUT @6 h, ep ~69) → 114831–114836 | 6/6 COMPLETED after resume, 100/100 |
+| openi_sa MG-G2L | 114775–114780 | 6/6 COMPLETED, 100/100, 1:26–1:36 |
+
+ReXGradient seed 42 (Paper 1) has **no `fixed100` job** and does not need one: job
+114398 ran under `early_stop_patience=10` but logged all 100 epoch headers — the
+patience rule never fired, so it is protocol-identical to the fixed-100 arm. Noted
+in that run's `model_weights_best.json`.
+
+**Validation R@1 avg (mean of I→T and T→I), best checkpoint vs. epoch 100:**
+
+| dataset | arm | best (mean ± std) | epoch 100 (mean ± std) |
+|---|---|---|---|
+| openi_sa (val n=361) | Paper 1 | 0.9912 ± 0.0098 | 0.9490 ± 0.0513 |
+| openi_sa | MG-G2L | 0.9977 ± 0.0023 | 0.9850 ± 0.0145 |
+| ReXGradient (val n=7,732) | Paper 1 | 0.9964 ± 0.0027 | 0.9945 ± 0.0044 |
+| ReXGradient | MG-G2L | 0.9944 ± 0.0032 | 0.9902 ± 0.0075 |
+
+**Bottom line.** Both datasets are at ceiling on validation R@1, so this metric
+cannot discriminate the arms — the ReXGradient "Paper 1 ahead by 0.002" is noise
+inside a saturated metric and must not be reported as a result. The only
+non-trivial pattern is openi_sa's epoch-100 spread: Paper 1 degrades late on seeds
+123/2021/3407 (0.9086/0.9197/0.8823 vs. 0.9737/0.9861/0.9945 at best) while MG-G2L
+stays flat (5× lower std). Treat that as a stability hint to re-check on test, not
+a claim. `--save_best` + `--resume` verified working: all six openi_sa Paper 1 jobs
+timed out at 6 h and resumed from epoch 69 with no loss.
+
+### 9. DIAGNOSTIC B — Findings/Impression divergence across all three datasets
+Same function + threshold as `mimic/scripts/compute_divergence_scores_paper2.py`
+(label positives + text-keyword XOR; agreement = 0, divergence ≥ 1), restricted
+subsets. MIMIC control reproduced exactly (3,892/3,892).
+
+| dataset | n | mean | median | P90 | % divergent | Findings tok | Impression tok |
+|---|---|---|---|---|---|---|---|
+| MIMIC | 3,892 | 0.306 | 0.0 | 1.0 | 24.0% | 57.6 | 22.9 |
+| ReXGradient | 4,225 | 0.673 | 0.0 | 2.0 | 49.3% | 33.1 | 11.8 |
+| openi_sa | 236 | 0.610 | 1.0 | 1.0 | 50.8% | 31.1 | 8.2 |
+
+Two-sample KS / Mann-Whitney on the score distributions:
+
+| pair | KS D | KS p | MWU p |
+|---|---|---|---|
+| MIMIC vs ReXGradient | 0.253 | 3.5e-114 | 1.3e-131 |
+| MIMIC vs openi_sa | 0.268 | 1.3e-14 | 8.1e-20 |
+| ReXGradient vs openi_sa | 0.062 | 0.347 (n.s.) | 0.614 (n.s.) |
+
+**Bottom line.** MIMIC is the outlier — ~2× the Findings length and **half** the
+section divergence of the other two, which are statistically indistinguishable from
+each other. The phenomenon MG-G2L exploits is therefore *more* present outside
+MIMIC, making the MIMIC result a conservative estimate. This is a property of the
+corpora, model-independent, and safe to state now. It predicts transfer; it does
+not demonstrate it. Files: `{mimic,rexgradient,openi}/results/divergence_scores_test_*.csv`,
+`mimic/results/divergence_dataset_comparison_diagnostic_b.csv`.
+
+### 10. DIAGNOSTIC C — MIMIC graded relevance re-scored under CheXbert labels
+Job 114838 (labeling) + 114839 (scoring). Existing CheXpert result files untouched;
+all outputs written to `mimic/results/*_chexbert_*`.
+
+**Labeler agreement** (12,429 MIMIC test reports): restricted subset grows
+**8,968 → 10,343** (+15.3%), driven almost entirely by CheXbert assigning far fewer
+`No Finding` (1,434 vs. 3,462). Per-finding agreement 82.9–98.9%; κ strong for
+Edema 0.894 / Pleural Effusion 0.857 / Pneumothorax 0.822 / Consolidation 0.816,
+weak only for `No Finding` 0.482 and `Enlarged Cardiomediastinum` 0.426.
+
+**Graded relevance, 6 seeds, restricted subset (n = 10,343):**
+
+| metric | direction | Paper 1 | MG-G2L | Δ CheXbert | Δ CheXpert | seeds MG > P1 |
+|---|---|---|---|---|---|---|
+| nDCG@5 | I→T | 0.4848 ± 0.0079 | 0.4992 ± 0.0044 | +0.0145 | +0.0141 | 6/6 |
+| nDCG@10 | I→T | 0.3906 ± 0.0092 | 0.4063 ± 0.0053 | +0.0157 | +0.0157 | 6/6 |
+| mAP@10 | I→T | 0.4675 ± 0.0175 | 0.4932 ± 0.0151 | +0.0257 | +0.0280 | 6/6 |
+| Precision@5 | I→T | 0.6170 ± 0.0157 | 0.6405 ± 0.0111 | +0.0235 | +0.0252 | 6/6 |
+| nDCG@5 | T→I | 0.5034 ± 0.0057 | 0.5069 ± 0.0103 | +0.0034 | +0.0012 | 4/6 |
+| nDCG@10 | T→I | 0.4121 ± 0.0072 | 0.4147 ± 0.0120 | +0.0026 | +0.0003 | 4/6 |
+| mAP@10 | T→I | 0.5122 ± 0.0186 | 0.5107 ± 0.0266 | −0.0014 | −0.0032 | 3/6 |
+| Precision@5 | T→I | 0.6532 ± 0.0136 | 0.6549 ± 0.0196 | +0.0017 | −0.0014 | 3/6 |
+
+**Paired Wilcoxon, I→T, per seed (n = 10,343):** all 6 seeds favour MG-G2L on both
+nDCG@10 and Precision@5 at p < 0.05. Δ nDCG@10 ranges +0.0051 (seed 42,
+p = 2.4e-08) to +0.0310 (seed 2021, p = 3.2e-140).
+
+**Bottom line.** The MIMIC headline is **label-robust**. Swapping the labeler
+changes the restricted subset by +1,375 queries and every per-query relevance
+judgment, yet the I→T deltas move by < 0.003 (nDCG@10 is +0.0157 under both). The
+T→I null persists identically, so the directional asymmetry is a property of the
+model, not of the labeler. Two honesty caveats for the write-up: there is no gold
+standard here, so this validates *robustness*, not either labeler; and the +15%
+subset growth is a definitional shift in `No Finding`, not new signal.
+
+---
+
 ## Key implementation decisions
 - Every new arg defaults to `None`/unused → old call sites need zero changes;
   backward compatibility verified with `torch.equal`, not just "looks right."
@@ -283,32 +390,43 @@ this corrected checkpoint.
   cancelled/resubmitted.
 
 ## Current problems / unfinished work
-1. **Open-I baseline evaluation — in progress (job 113908, submitted 2026-09-15,
-   `pascal-node11`).** Runs `verify_openi_baseline_checkpoints_paper2.py`: SHA-256
-   checksums for the 5 Open-I (`aug_indiana_extended`) Paper-1-baseline checkpoints
-   (seeds 17/42/123/2021/3407, living in the sibling repo
-   `pytorch_multi_chest_x_ray/saved_models/`), strict-load into the **original**
-   `MultimodalFusion` (vocab_size=10870, embed_dim=256, num_heads=8, num_layers=2 —
-   these are hardcoded in the script rather than read from this project's
-   `config.py`, which has no `aug_indiana_extended` entry), then
-   `evaluate_cross_modal_retrieval_streaming()` on the 5,313-sample Open-I test set,
-   with a loose sanity check of seed_42 against job 10227's ~0.983 validation
-   recall@1. Results not yet in — check job 113908's log
-   (`logs/verify_openi_baseline_*.out`) next session.
-2. Root cause of seed_3407's (and partially seed_42's) divergence from the
+1. **The generalization claim is not yet supported by evidence.** Both non-MIMIC
+   arms are *trained only* (§8). Neither ReXGradient nor openi_sa has a test-set
+   retrieval evaluation, graded-relevance table, or significance test. Validation
+   R@1 is at ceiling (0.99+) on both and cannot substitute. Until those run,
+   "MG-G2L generalizes beyond MIMIC" is a prediction backed by §9, not a result.
+2. **Old Open-I path (`aug_indiana_extended`) is abandoned.** The section-boundary
+   reconstruction failed its ≥99% hard build gate (unresolvable OOV: the pipeline's
+   stored captions *drop* OOV tokens while `texts_to_sequences` emits `oov_index`,
+   and `enhanced_data_loader.py` has only one commit so no earlier version is
+   recoverable) — nothing was written. Job 113908's baseline verification was
+   cancelled (pinned node went DOWN) and was not resubmitted. The replacement
+   dataset `openi_sa` (17,871/361/752, vocab 10,805) was built and verified
+   independently and is what §8–§9 use.
+3. `openi/data/section_boundaries_*_openi_sa.csv` are **committed to git with
+   `study_id` columns** — a pre-existing DUA-style gap, flagged but deliberately not
+   purged without instruction. Open-I is public-access so this is lower risk than
+   the MIMIC equivalents, but it is inconsistent with how MIMIC/ReXGradient are
+   handled.
+4. Root cause of seed_3407's (and partially seed_42's) divergence from the
    "single-section/divergence helps more" patterns not investigated — would need
    branch-specialization inspection to explain mechanistically.
-3. The section-availability 3-way breakdown (§4) has only been run for the original
+5. The section-availability 3-way breakdown (§4) has only been run for the original
    4 seeds — 2021/1337 could be added for completeness, but this is low priority
    given §3's formal Test 2 already supersedes it as the rigorous version.
 
 ## Exact next steps
-1. Read back job 113908's Open-I results once it finishes; report checksum/duplicate
-   status, clean-load status, and the R@K/MRR table for all 5 seeds.
-2. Decide, based on the Open-I sanity check, whether the Open-I baseline numbers are
-   trustworthy enough to use in the paper as a second-dataset comparison (no MG-G2L
-   Open-I model exists yet — this is baseline-only verification for now).
-3. Consider deeper investigation into why seed_3407 breaks the divergence-group /
+1. Run the ReXGradient test-set evaluation in the sibling project
+   `pytorch_multi_chest_x_rey_paper2_rxg` per its self-contained
+   `EVALUATION_INSTRUCTIONS.md` (retrieval R@K/MRR → graded relevance under
+   CheXbert → per-query cache → Wilcoxon), 6 seeds, both arms.
+2. Build the equivalent openi_sa test-set evaluation here (752 test rows, CheXbert
+   labels already generated by job 114837). Note the restricted subset is only
+   n≈236 — decide up front whether that is powered enough for a Wilcoxon, or
+   whether openi_sa should be reported descriptively only.
+3. Only after 1–2: assemble the three-dataset comparison table and decide what
+   generalization claim the data actually licenses.
+4. Consider deeper investigation into why seed_3407 breaks the divergence-group /
    missing-section patterns before stating either as an unqualified paper claim.
 
 ## Reporting convention (going forward)
