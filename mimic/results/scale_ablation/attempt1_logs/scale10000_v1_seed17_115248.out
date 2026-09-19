@@ -1,0 +1,4330 @@
+==========================================
+SLURM_JOB_ID = 115248
+SLURM_NODELIST = pascal-node10.l3s.intra
+==========================================
+SLURM_JOB_ID = 115248   restart count = 0
+SLURM_NODELIST = pascal-node10.l3s.intra
+GIT_HEAD = 289303f
+Start: Sat Sep 19 06:24:09 PM CEST 2026
+Tesla V100-SXM3-32GB, 32768 MiB
+Setting random seed: 17
+✅ Random seeds set for reproducible results
+
+📋 Current Dataset Configuration:
+   Dataset: mimic_shards_hybrid_full_ori
+   Vocab Size: 10805
+   Max Token Length: 128
+   Embedding Dimension: 256
+   Default Batch Size: 256
+   Default Learning Rate: 5e-05
+   Default Epochs: 5
+   Shard Size: 100 (samples per shard file)
+   Train Samples: 1000
+   Val Samples: 200
+   Data Path: /home/abedin/Developments/chest_x_ray_data_processing/all_processed_data/mimic_shards_hybrid_full_ori
+
+🔧 Training Configuration:
+   Weight Decay: 0.0001
+   Gradient Clip: 1.0
+   Early Stopping Patience: 10
+Experiment: mimic_shards_hybrid_full_ori_vo10805_to128_lr1e-4_b128_ep150_dualbr_sy065_main_loss20_ortho15__branch_v1_scale10000_seed_17
+Device: cuda
+Batch Size: 128 (config: 256)
+Learning Rate: 0.0001 (config: 5e-05)
+Epochs: 150 (config: 5)
+📊 Training: Using 200000 samples
+📊 Validation: Using 200000 samples
+Memory [STARTUP]: {'rss_mb': 453.30859375, 'vms_mb': 8190.4609375, 'percent': 0.03514761395140418}
+Memory [BEFORE_DATA_LOADING]: {'rss_mb': 453.31640625, 'vms_mb': 8190.4609375, 'percent': 0.03514821969931582}
+🔄 DATASET MODE: mimic_shards_hybrid_full_ori
+📁 Base path: /home/abedin/Developments/chest_x_ray_data_processing/all_processed_data/mimic_shards_hybrid_full_ori
+🚂 Train: /home/abedin/Developments/chest_x_ray_data_processing/all_processed_data/mimic_shards_hybrid_full_ori/train
+✅ Val: /home/abedin/Developments/chest_x_ray_data_processing/all_processed_data/mimic_shards_hybrid_full_ori/val
+🧪 Test: /home/abedin/Developments/chest_x_ray_data_processing/all_processed_data/mimic_shards_hybrid_full_ori/test
+Shards already exist. Loading from existing shards...
+Successfully loaded existing tokenizer.
+Tokenizer ready. Training data will be loaded by get_data() method.
+Loaded 0 samples from mimic_shards_hybrid_full_ori dataset
+ID FILTER: train_ids=mimic/data/scale_ablation/train_ids_10000.csv (10000)  val_ids=mimic/data/scale_ablation/val_ids_3000.csv (3000)
+Creating PyTorch Dataset from 1558 shards
+   Max samples: 200000
+PyTorch Dataset created with 10000 samples
+   Memory usage: ~50.0 MB (vs ~6000 MB for full loading)
+Creating PyTorch Validation Dataset from 319 shards
+   Max samples: 200000
+PyTorch Validation Dataset created with 3000 samples
+Data loaded: 10000 train, 3000 val, vocab: 10805
+Memory [AFTER_DATA_LOADING]: {'rss_mb': 7937.0, 'vms_mb': 15674.078125, 'percent': 0.6154011103662095}
+Garbage collection: Freed 0.0MB
+Building model with BranchEncoder architecture...
+Optimizer configured with:
+  Learning Rate: 0.0001
+  Weight Decay: 0.0001
+  Temperature: 0.07
+  Task-specific losses: Synergy + Difference
+Building model with BranchEncoder architecture...
+
+Starting Dual Branch Training
+Using BranchEncoder architecture
+150 epochs, 79 steps per epoch
+Device: cuda
+============================================================
+
+
+Starting Dual Branch Training
+Using BranchEncoder architecture
+150 epochs, 79 steps per epoch
+Device: cuda
+============================================================
+No existing checkpoint found -- starting fresh from epoch 0.
+STARTING FRESH: will run epochs 1 through 150
+
+Epoch 1/150
+Processed 3000 validation samples in batches
+
+Processed 3000 validation samples in batches
+Validation on 3000 samples
+
+Epoch 1 Results:
+   Total Loss:      5.369889
+   Synergy Loss:    4.824239
+   Main Loss:       4.825294
+   Orthogonal Loss: 8.460498
+   Difference Loss: 4.826505
+   Loss Ratio:      0.570
+   Validation:
+     recall@1: 0.0005
+     i2t_recall@1: 0.0007
+     t2i_recall@1: 0.0003
+     recall@5: 0.0025
+     i2t_recall@5: 0.0033
+     t2i_recall@5: 0.0017
+     recall@10: 0.0047
+     i2t_recall@10: 0.0060
+     t2i_recall@10: 0.0033
+     mrr: 0.0033
+   Val R@1 I->T: 0.0007  T->I: 0.0003  MRR: 0.0033
+New best checkpoint (epoch 0, val R@1 avg=0.0005) saved to: saved_models/mimic_shards_hybrid_full_ori_vo10805_to128_lr1e-4_b128_ep150_dualbr_sy065_main_loss20_ortho15__branch_v1_scale10000_seed_17/export/checkpoint_best.pth
+   Best-so-far epoch: 1 (val R@1 avg=0.0005)
+
+Epoch 2/150
+Processed 3000 validation samples in batches
+
+Processed 3000 validation samples in batches
+Validation on 3000 samples
+
+Epoch 2 Results:
+   Total Loss:      4.351067
+   Synergy Loss:    4.820924
+   Main Loss:       4.822881
+   Orthogonal Loss: 1.685934
+   Difference Loss: 4.825779
+   Loss Ratio:      2.859
+   Validation:
+     recall@1: 0.0005
+     i2t_recall@1: 0.0007
+     t2i_recall@1: 0.0003
+     recall@5: 0.0027
+     i2t_recall@5: 0.0037
+     t2i_recall@5: 0.0017
+     recall@10: 0.0050
+     i2t_recall@10: 0.0067
+     t2i_recall@10: 0.0033
+     mrr: 0.0036
+   Val R@1 I->T: 0.0007  T->I: 0.0003  MRR: 0.0036
+New best checkpoint (epoch 1, val R@1 avg=0.0005) saved to: saved_models/mimic_shards_hybrid_full_ori_vo10805_to128_lr1e-4_b128_ep150_dualbr_sy065_main_loss20_ortho15__branch_v1_scale10000_seed_17/export/checkpoint_best.pth
+   Best-so-far epoch: 2 (val R@1 avg=0.0005)
+
+Epoch 3/150
+Processed 3000 validation samples in batches
+
+Processed 3000 validation samples in batches
+Validation on 3000 samples
+
+Epoch 3 Results:
+   Total Loss:      4.337351
+   Synergy Loss:    4.802456
+   Main Loss:       4.811873
+   Orthogonal Loss: 1.689202
+   Difference Loss: 4.825220
+   Loss Ratio:      2.843
+   Validation:
+     recall@1: 0.0008
+     i2t_recall@1: 0.0010
+     t2i_recall@1: 0.0007
+     recall@5: 0.0037
+     i2t_recall@5: 0.0040
+     t2i_recall@5: 0.0033
+     recall@10: 0.0072
+     i2t_recall@10: 0.0073
+     t2i_recall@10: 0.0070
+     mrr: 0.0042
+   Val R@1 I->T: 0.0010  T->I: 0.0007  MRR: 0.0042
+Checkpoint saved (epoch 2) to: saved_models/mimic_shards_hybrid_full_ori_vo10805_to128_lr1e-4_b128_ep150_dualbr_sy065_main_loss20_ortho15__branch_v1_scale10000_seed_17/export/checkpoint_resume.pth (overwritten in place -- same file each time)
+New best checkpoint (epoch 2, val R@1 avg=0.0008) saved to: saved_models/mimic_shards_hybrid_full_ori_vo10805_to128_lr1e-4_b128_ep150_dualbr_sy065_main_loss20_ortho15__branch_v1_scale10000_seed_17/export/checkpoint_best.pth
+   Best-so-far epoch: 3 (val R@1 avg=0.0008)
+
+Epoch 4/150
+Processed 3000 validation samples in batches
+
+Processed 3000 validation samples in batches
+Validation on 3000 samples
+
+Epoch 4 Results:
+   Total Loss:      3.696829
+   Synergy Loss:    3.987077
+   Main Loss:       4.163368
+   Orthogonal Loss: 1.817034
+   Difference Loss: 4.823464
+   Loss Ratio:      2.194
+   Validation:
+     recall@1: 0.0057
+     i2t_recall@1: 0.0070
+     t2i_recall@1: 0.0043
+     recall@5: 0.0212
+     i2t_recall@5: 0.0260
+     t2i_recall@5: 0.0163
+     recall@10: 0.0347
+     i2t_recall@10: 0.0433
+     t2i_recall@10: 0.0260
+     mrr: 0.0169
+   Val R@1 I->T: 0.0070  T->I: 0.0043  MRR: 0.0169
+New best checkpoint (epoch 3, val R@1 avg=0.0057) saved to: saved_models/mimic_shards_hybrid_full_ori_vo10805_to128_lr1e-4_b128_ep150_dualbr_sy065_main_loss20_ortho15__branch_v1_scale10000_seed_17/export/checkpoint_best.pth
+   Best-so-far epoch: 4 (val R@1 avg=0.0057)
+
+Epoch 5/150
+Processed 3000 validation samples in batches
+
+Processed 3000 validation samples in batches
+Validation on 3000 samples
+
+Epoch 5 Results:
+   Total Loss:      2.862235
+   Synergy Loss:    3.002143
+   Main Loss:       3.290490
+   Orthogonal Loss: 1.684959
+   Difference Loss: 4.824350
+   Loss Ratio:      1.782
+   Validation:
+     recall@1: 0.0067
+     i2t_recall@1: 0.0060
+     t2i_recall@1: 0.0073
+     recall@5: 0.0248
+     i2t_recall@5: 0.0240
+     t2i_recall@5: 0.0257
+     recall@10: 0.0398
+     i2t_recall@10: 0.0383
+     t2i_recall@10: 0.0413
+     mrr: 0.0205
+   Val R@1 I->T: 0.0060  T->I: 0.0073  MRR: 0.0205
+New best checkpoint (epoch 4, val R@1 avg=0.0067) saved to: saved_models/mimic_shards_hybrid_full_ori_vo10805_to128_lr1e-4_b128_ep150_dualbr_sy065_main_loss20_ortho15__branch_v1_scale10000_seed_17/export/checkpoint_best.pth
+   Best-so-far epoch: 5 (val R@1 avg=0.0067)
+
+Branch Specialization Check:
+  Synergy Branch Similarity: 0.9004
+  Difference Branch Similarity: 0.0265
+  Specialization Gap: 0.8739
+  Branches Specialized: YES
+
+Epoch 6/150
+Processed 3000 validation samples in batches
+
+Processed 3000 validation samples in batches
+Validation on 3000 samples
+
+Epoch 6 Results:
+   Total Loss:      2.544080
+   Synergy Loss:    2.715841
+   Main Loss:       3.032208
+   Orthogonal Loss: 1.148948
+   Difference Loss: 4.824987
+   Loss Ratio:      2.364
+   Validation:
+     recall@1: 0.0067
+     i2t_recall@1: 0.0063
+     t2i_recall@1: 0.0070
+     recall@5: 0.0210
+     i2t_recall@5: 0.0213
+     t2i_recall@5: 0.0207
+     recall@10: 0.0332
+     i2t_recall@10: 0.0347
+     t2i_recall@10: 0.0317
+     mrr: 0.0173
+   Val R@1 I->T: 0.0063  T->I: 0.0070  MRR: 0.0173
+Checkpoint saved (epoch 5) to: saved_models/mimic_shards_hybrid_full_ori_vo10805_to128_lr1e-4_b128_ep150_dualbr_sy065_main_loss20_ortho15__branch_v1_scale10000_seed_17/export/checkpoint_resume.pth (overwritten in place -- same file each time)
+New best checkpoint (epoch 5, val R@1 avg=0.0067) saved to: saved_models/mimic_shards_hybrid_full_ori_vo10805_to128_lr1e-4_b128_ep150_dualbr_sy065_main_loss20_ortho15__branch_v1_scale10000_seed_17/export/checkpoint_best.pth
+   Best-so-far epoch: 6 (val R@1 avg=0.0067)
+
+Epoch 7/150
+Processed 3000 validation samples in batches
+
+Processed 3000 validation samples in batches
+Validation on 3000 samples
+
+Epoch 7 Results:
+   Total Loss:      2.484099
+   Synergy Loss:    2.652012
+   Main Loss:       2.987154
+   Orthogonal Loss: 1.085736
+   Difference Loss: 4.825126
+   Loss Ratio:      2.443
+   Validation:
+     recall@1: 0.0073
+     i2t_recall@1: 0.0070
+     t2i_recall@1: 0.0077
+     recall@5: 0.0242
+     i2t_recall@5: 0.0207
+     t2i_recall@5: 0.0277
+     recall@10: 0.0427
+     i2t_recall@10: 0.0390
+     t2i_recall@10: 0.0463
+     mrr: 0.0218
+   Val R@1 I->T: 0.0070  T->I: 0.0077  MRR: 0.0218
+New best checkpoint (epoch 6, val R@1 avg=0.0073) saved to: saved_models/mimic_shards_hybrid_full_ori_vo10805_to128_lr1e-4_b128_ep150_dualbr_sy065_main_loss20_ortho15__branch_v1_scale10000_seed_17/export/checkpoint_best.pth
+   Best-so-far epoch: 7 (val R@1 avg=0.0073)
+
+Epoch 8/150
+Processed 3000 validation samples in batches
+
+Processed 3000 validation samples in batches
+Validation on 3000 samples
+
+Epoch 8 Results:
+   Total Loss:      2.381768
+   Synergy Loss:    2.556077
+   Main Loss:       2.894991
+   Orthogonal Loss: 0.942134
+   Difference Loss: 4.825217
+   Loss Ratio:      2.713
+   Validation:
+     recall@1: 0.0065
+     i2t_recall@1: 0.0050
+     t2i_recall@1: 0.0080
+     recall@5: 0.0215
+     i2t_recall@5: 0.0160
+     t2i_recall@5: 0.0270
+     recall@10: 0.0383
+     i2t_recall@10: 0.0317
+     t2i_recall@10: 0.0450
+     mrr: 0.0202
+   Val R@1 I->T: 0.0050  T->I: 0.0080  MRR: 0.0202
+
+Epoch 9/150
+Processed 3000 validation samples in batches
+
+Processed 3000 validation samples in batches
+Validation on 3000 samples
+
+Epoch 9 Results:
+   Total Loss:      2.244416
+   Synergy Loss:    2.413422
+   Main Loss:       2.759998
+   Orthogonal Loss: 0.824610
+   Difference Loss: 4.825338
+   Loss Ratio:      2.927
+   Validation:
+     recall@1: 0.0107
+     i2t_recall@1: 0.0123
+     t2i_recall@1: 0.0090
+     recall@5: 0.0357
+     i2t_recall@5: 0.0333
+     t2i_recall@5: 0.0380
+     recall@10: 0.0582
+     i2t_recall@10: 0.0543
+     t2i_recall@10: 0.0620
+     mrr: 0.0289
+   Val R@1 I->T: 0.0123  T->I: 0.0090  MRR: 0.0289
+Checkpoint saved (epoch 8) to: saved_models/mimic_shards_hybrid_full_ori_vo10805_to128_lr1e-4_b128_ep150_dualbr_sy065_main_loss20_ortho15__branch_v1_scale10000_seed_17/export/checkpoint_resume.pth (overwritten in place -- same file each time)
+New best checkpoint (epoch 8, val R@1 avg=0.0107) saved to: saved_models/mimic_shards_hybrid_full_ori_vo10805_to128_lr1e-4_b128_ep150_dualbr_sy065_main_loss20_ortho15__branch_v1_scale10000_seed_17/export/checkpoint_best.pth
+   Best-so-far epoch: 9 (val R@1 avg=0.0107)
+
+Epoch 10/150
+Processed 3000 validation samples in batches
+
+Processed 3000 validation samples in batches
+Validation on 3000 samples
+
+Epoch 10 Results:
+   Total Loss:      2.174150
+   Synergy Loss:    2.345490
+   Main Loss:       2.706111
+   Orthogonal Loss: 0.722394
+   Difference Loss: 4.825353
+   Loss Ratio:      3.247
+   Validation:
+     recall@1: 0.0167
+     i2t_recall@1: 0.0217
+     t2i_recall@1: 0.0117
+     recall@5: 0.0518
+     i2t_recall@5: 0.0657
+     t2i_recall@5: 0.0380
+     recall@10: 0.0828
+     i2t_recall@10: 0.1020
+     t2i_recall@10: 0.0637
+     mrr: 0.0395
+   Val R@1 I->T: 0.0217  T->I: 0.0117  MRR: 0.0395
+New best checkpoint (epoch 9, val R@1 avg=0.0167) saved to: saved_models/mimic_shards_hybrid_full_ori_vo10805_to128_lr1e-4_b128_ep150_dualbr_sy065_main_loss20_ortho15__branch_v1_scale10000_seed_17/export/checkpoint_best.pth
+   Best-so-far epoch: 10 (val R@1 avg=0.0167)
+
+Branch Specialization Check:
+  Synergy Branch Similarity: 0.9507
+  Difference Branch Similarity: 0.0319
+  Specialization Gap: 0.9187
+  Branches Specialized: YES
+
+Epoch 11/150
+Processed 3000 validation samples in batches
+
+Processed 3000 validation samples in batches
+Validation on 3000 samples
+
+Epoch 11 Results:
+   Total Loss:      2.088684
+   Synergy Loss:    2.262011
+   Main Loss:       2.626517
+   Orthogonal Loss: 0.620491
+   Difference Loss: 4.825379
+   Loss Ratio:      3.646
+   Validation:
+     recall@1: 0.0138
+     i2t_recall@1: 0.0167
+     t2i_recall@1: 0.0110
+     recall@5: 0.0473
+     i2t_recall@5: 0.0543
+     t2i_recall@5: 0.0403
+     recall@10: 0.0763
+     i2t_recall@10: 0.0883
+     t2i_recall@10: 0.0643
+     mrr: 0.0376
+   Val R@1 I->T: 0.0167  T->I: 0.0110  MRR: 0.0376
+
+Epoch 12/150
+Processed 3000 validation samples in batches
+
+Processed 3000 validation samples in batches
+Validation on 3000 samples
+
+Epoch 12 Results:
+   Total Loss:      2.016350
+   Synergy Loss:    2.155129
+   Main Loss:       2.531745
+   Orthogonal Loss: 0.727777
+   Difference Loss: 4.825480
+   Loss Ratio:      2.961
+   Validation:
+     recall@1: 0.0092
+     i2t_recall@1: 0.0127
+     t2i_recall@1: 0.0057
+     recall@5: 0.0300
+     i2t_recall@5: 0.0397
+     t2i_recall@5: 0.0203
+     recall@10: 0.0462
+     i2t_recall@10: 0.0607
+     t2i_recall@10: 0.0317
+     mrr: 0.0257
+   Val R@1 I->T: 0.0127  T->I: 0.0057  MRR: 0.0257
+Checkpoint saved (epoch 11) to: saved_models/mimic_shards_hybrid_full_ori_vo10805_to128_lr1e-4_b128_ep150_dualbr_sy065_main_loss20_ortho15__branch_v1_scale10000_seed_17/export/checkpoint_resume.pth (overwritten in place -- same file each time)
+
+Epoch 13/150
+Processed 3000 validation samples in batches
+
+Processed 3000 validation samples in batches
+Validation on 3000 samples
+
+Epoch 13 Results:
+   Total Loss:      1.416540
+   Synergy Loss:    1.420848
+   Main Loss:       2.006301
+   Orthogonal Loss: 0.611519
+   Difference Loss: 4.825584
+   Loss Ratio:      2.323
+   Validation:
+     recall@1: 0.0267
+     i2t_recall@1: 0.0277
+     t2i_recall@1: 0.0257
+     recall@5: 0.0927
+     i2t_recall@5: 0.0990
+     t2i_recall@5: 0.0863
+     recall@10: 0.1490
+     i2t_recall@10: 0.1593
+     t2i_recall@10: 0.1387
+     mrr: 0.0719
+   Val R@1 I->T: 0.0277  T->I: 0.0257  MRR: 0.0719
+New best checkpoint (epoch 12, val R@1 avg=0.0267) saved to: saved_models/mimic_shards_hybrid_full_ori_vo10805_to128_lr1e-4_b128_ep150_dualbr_sy065_main_loss20_ortho15__branch_v1_scale10000_seed_17/export/checkpoint_best.pth
+   Best-so-far epoch: 13 (val R@1 avg=0.0267)
+
+Epoch 14/150
+Processed 3000 validation samples in batches
+
+Processed 3000 validation samples in batches
+Validation on 3000 samples
+
+Epoch 14 Results:
+   Total Loss:      1.302053
+   Synergy Loss:    1.290260
+   Main Loss:       1.907816
+   Orthogonal Loss: 0.545467
+   Difference Loss: 4.825611
+   Loss Ratio:      2.365
+   Validation:
+     recall@1: 0.0100
+     i2t_recall@1: 0.0100
+     t2i_recall@1: 0.0100
+     recall@5: 0.0380
+     i2t_recall@5: 0.0410
+     t2i_recall@5: 0.0350
+     recall@10: 0.0675
+     i2t_recall@10: 0.0733
+     t2i_recall@10: 0.0617
+     mrr: 0.0354
+   Val R@1 I->T: 0.0100  T->I: 0.0100  MRR: 0.0354
+
+Epoch 15/150
+Processed 3000 validation samples in batches
+
+Processed 3000 validation samples in batches
+Validation on 3000 samples
+
+Epoch 15 Results:
+   Total Loss:      1.242142
+   Synergy Loss:    1.232183
+   Main Loss:       1.853986
+   Orthogonal Loss: 0.469502
+   Difference Loss: 4.825634
+   Loss Ratio:      2.624
+   Validation:
+     recall@1: 0.0095
+     i2t_recall@1: 0.0123
+     t2i_recall@1: 0.0067
+     recall@5: 0.0318
+     i2t_recall@5: 0.0397
+     t2i_recall@5: 0.0240
+     recall@10: 0.0488
+     i2t_recall@10: 0.0610
+     t2i_recall@10: 0.0367
+     mrr: 0.0263
+   Val R@1 I->T: 0.0123  T->I: 0.0067  MRR: 0.0263
+Checkpoint saved (epoch 14) to: saved_models/mimic_shards_hybrid_full_ori_vo10805_to128_lr1e-4_b128_ep150_dualbr_sy065_main_loss20_ortho15__branch_v1_scale10000_seed_17/export/checkpoint_resume.pth (overwritten in place -- same file each time)
+
+Branch Specialization Check:
+  Synergy Branch Similarity: 0.9541
+  Difference Branch Similarity: 0.0366
+  Specialization Gap: 0.9174
+  Branches Specialized: YES
+
+Epoch 16/150
+Processed 3000 validation samples in batches
+
+Processed 3000 validation samples in batches
+Validation on 3000 samples
+
+Epoch 16 Results:
+   Total Loss:      1.083203
+   Synergy Loss:    1.037711
+   Main Loss:       1.700352
+   Orthogonal Loss: 0.457469
+   Difference Loss: 4.825756
+   Loss Ratio:      2.268
+   Validation:
+     recall@1: 0.0097
+     i2t_recall@1: 0.0063
+     t2i_recall@1: 0.0130
+     recall@5: 0.0335
+     i2t_recall@5: 0.0193
+     t2i_recall@5: 0.0477
+     recall@10: 0.0547
+     i2t_recall@10: 0.0353
+     t2i_recall@10: 0.0740
+     mrr: 0.0292
+   Val R@1 I->T: 0.0063  T->I: 0.0130  MRR: 0.0292
+
+Epoch 17/150
+Processed 3000 validation samples in batches
+
+Processed 3000 validation samples in batches
+Validation on 3000 samples
+
+Epoch 17 Results:
+   Total Loss:      0.716143
+   Synergy Loss:    0.585141
+   Main Loss:       1.325369
+   Orthogonal Loss: 0.471518
+   Difference Loss: 4.826302
+   Loss Ratio:      1.241
+   Validation:
+     recall@1: 0.0312
+     i2t_recall@1: 0.0370
+     t2i_recall@1: 0.0253
+     recall@5: 0.0985
+     i2t_recall@5: 0.1157
+     t2i_recall@5: 0.0813
+     recall@10: 0.1462
+     i2t_recall@10: 0.1670
+     t2i_recall@10: 0.1253
+     mrr: 0.0726
+   Val R@1 I->T: 0.0370  T->I: 0.0253  MRR: 0.0726
+New best checkpoint (epoch 16, val R@1 avg=0.0312) saved to: saved_models/mimic_shards_hybrid_full_ori_vo10805_to128_lr1e-4_b128_ep150_dualbr_sy065_main_loss20_ortho15__branch_v1_scale10000_seed_17/export/checkpoint_best.pth
+   Best-so-far epoch: 17 (val R@1 avg=0.0312)
+
+Epoch 18/150
+Processed 3000 validation samples in batches
+
+Processed 3000 validation samples in batches
+Validation on 3000 samples
+
+Epoch 18 Results:
+   Total Loss:      0.570794
+   Synergy Loss:    0.422484
+   Main Loss:       1.155839
+   Orthogonal Loss: 0.433409
+   Difference Loss: 4.826444
+   Loss Ratio:      0.975
+   Validation:
+     recall@1: 0.0567
+     i2t_recall@1: 0.0713
+     t2i_recall@1: 0.0420
+     recall@5: 0.1725
+     i2t_recall@5: 0.2103
+     t2i_recall@5: 0.1347
+     recall@10: 0.2387
+     i2t_recall@10: 0.2843
+     t2i_recall@10: 0.1930
+     mrr: 0.1201
+   Val R@1 I->T: 0.0713  T->I: 0.0420  MRR: 0.1201
+Checkpoint saved (epoch 17) to: saved_models/mimic_shards_hybrid_full_ori_vo10805_to128_lr1e-4_b128_ep150_dualbr_sy065_main_loss20_ortho15__branch_v1_scale10000_seed_17/export/checkpoint_resume.pth (overwritten in place -- same file each time)
+New best checkpoint (epoch 17, val R@1 avg=0.0567) saved to: saved_models/mimic_shards_hybrid_full_ori_vo10805_to128_lr1e-4_b128_ep150_dualbr_sy065_main_loss20_ortho15__branch_v1_scale10000_seed_17/export/checkpoint_best.pth
+   Best-so-far epoch: 18 (val R@1 avg=0.0567)
+
+Epoch 19/150
+Processed 3000 validation samples in batches
+
+Processed 3000 validation samples in batches
+Validation on 3000 samples
+
+Epoch 19 Results:
+   Total Loss:      0.531794
+   Synergy Loss:    0.387567
+   Main Loss:       1.112786
+   Orthogonal Loss: 0.382122
+   Difference Loss: 4.826302
+   Loss Ratio:      1.014
+   Validation:
+     recall@1: 0.0402
+     i2t_recall@1: 0.0460
+     t2i_recall@1: 0.0343
+     recall@5: 0.1052
+     i2t_recall@5: 0.1183
+     t2i_recall@5: 0.0920
+     recall@10: 0.1485
+     i2t_recall@10: 0.1573
+     t2i_recall@10: 0.1397
+     mrr: 0.0801
+   Val R@1 I->T: 0.0460  T->I: 0.0343  MRR: 0.0801
+
+Epoch 20/150
+Processed 3000 validation samples in batches
+
+Processed 3000 validation samples in batches
+Validation on 3000 samples
+
+Epoch 20 Results:
+   Total Loss:      0.521103
+   Synergy Loss:    0.374107
+   Main Loss:       1.095918
+   Orthogonal Loss: 0.391664
+   Difference Loss: 4.826215
+   Loss Ratio:      0.955
+   Validation:
+     recall@1: 0.0448
+     i2t_recall@1: 0.0520
+     t2i_recall@1: 0.0377
+     recall@5: 0.1112
+     i2t_recall@5: 0.1313
+     t2i_recall@5: 0.0910
+     recall@10: 0.1497
+     i2t_recall@10: 0.1717
+     t2i_recall@10: 0.1277
+     mrr: 0.0837
+   Val R@1 I->T: 0.0520  T->I: 0.0377  MRR: 0.0837
+
+Branch Specialization Check:
+  Synergy Branch Similarity: 0.9619
+  Difference Branch Similarity: 0.0392
+  Specialization Gap: 0.9228
+  Branches Specialized: YES
+
+Epoch 21/150
+Processed 3000 validation samples in batches
+
+Processed 3000 validation samples in batches
+Validation on 3000 samples
+
+Epoch 21 Results:
+   Total Loss:      0.460988
+   Synergy Loss:    0.315370
+   Main Loss:       1.022096
+   Orthogonal Loss: 0.343858
+   Difference Loss: 4.826243
+   Loss Ratio:      0.917
+   Validation:
+     recall@1: 0.0335
+     i2t_recall@1: 0.0323
+     t2i_recall@1: 0.0347
+     recall@5: 0.0828
+     i2t_recall@5: 0.0857
+     t2i_recall@5: 0.0800
+     recall@10: 0.1183
+     i2t_recall@10: 0.1247
+     t2i_recall@10: 0.1120
+     mrr: 0.0659
+   Val R@1 I->T: 0.0323  T->I: 0.0347  MRR: 0.0659
+Checkpoint saved (epoch 20) to: saved_models/mimic_shards_hybrid_full_ori_vo10805_to128_lr1e-4_b128_ep150_dualbr_sy065_main_loss20_ortho15__branch_v1_scale10000_seed_17/export/checkpoint_resume.pth (overwritten in place -- same file each time)
+
+Epoch 22/150
+Processed 3000 validation samples in batches
+
+Processed 3000 validation samples in batches
+Validation on 3000 samples
+
+Epoch 22 Results:
+   Total Loss:      0.363934
+   Synergy Loss:    0.207882
+   Main Loss:       0.872126
+   Orthogonal Loss: 0.362570
+   Difference Loss: 4.826169
+   Loss Ratio:      0.573
+   Validation:
+     recall@1: 0.0290
+     i2t_recall@1: 0.0290
+     t2i_recall@1: 0.0290
+     recall@5: 0.0657
+     i2t_recall@5: 0.0697
+     t2i_recall@5: 0.0617
+     recall@10: 0.0965
+     i2t_recall@10: 0.0970
+     t2i_recall@10: 0.0960
+     mrr: 0.0554
+   Val R@1 I->T: 0.0290  T->I: 0.0290  MRR: 0.0554
+
+Epoch 23/150
+Processed 3000 validation samples in batches
+
+Processed 3000 validation samples in batches
+Validation on 3000 samples
+
+Epoch 23 Results:
+   Total Loss:      0.331726
+   Synergy Loss:    0.174124
+   Main Loss:       0.813240
+   Orthogonal Loss: 0.372652
+   Difference Loss: 4.826104
+   Loss Ratio:      0.467
+   Validation:
+     recall@1: 0.0697
+     i2t_recall@1: 0.0807
+     t2i_recall@1: 0.0587
+     recall@5: 0.1678
+     i2t_recall@5: 0.1927
+     t2i_recall@5: 0.1430
+     recall@10: 0.2298
+     i2t_recall@10: 0.2577
+     t2i_recall@10: 0.2020
+     mrr: 0.1282
+   Val R@1 I->T: 0.0807  T->I: 0.0587  MRR: 0.1282
+New best checkpoint (epoch 22, val R@1 avg=0.0697) saved to: saved_models/mimic_shards_hybrid_full_ori_vo10805_to128_lr1e-4_b128_ep150_dualbr_sy065_main_loss20_ortho15__branch_v1_scale10000_seed_17/export/checkpoint_best.pth
+   Best-so-far epoch: 23 (val R@1 avg=0.0697)
+
+Epoch 24/150
+Processed 3000 validation samples in batches
+
+Processed 3000 validation samples in batches
+Validation on 3000 samples
+
+Epoch 24 Results:
+   Total Loss:      0.313307
+   Synergy Loss:    0.157219
+   Main Loss:       0.777657
+   Orthogonal Loss: 0.370552
+   Difference Loss: 4.826037
+   Loss Ratio:      0.424
+   Validation:
+     recall@1: 0.1158
+     i2t_recall@1: 0.1393
+     t2i_recall@1: 0.0923
+     recall@5: 0.2477
+     i2t_recall@5: 0.2827
+     t2i_recall@5: 0.2127
+     recall@10: 0.3292
+     i2t_recall@10: 0.3577
+     t2i_recall@10: 0.3007
+     mrr: 0.1888
+   Val R@1 I->T: 0.1393  T->I: 0.0923  MRR: 0.1888
+Checkpoint saved (epoch 23) to: saved_models/mimic_shards_hybrid_full_ori_vo10805_to128_lr1e-4_b128_ep150_dualbr_sy065_main_loss20_ortho15__branch_v1_scale10000_seed_17/export/checkpoint_resume.pth (overwritten in place -- same file each time)
+New best checkpoint (epoch 23, val R@1 avg=0.1158) saved to: saved_models/mimic_shards_hybrid_full_ori_vo10805_to128_lr1e-4_b128_ep150_dualbr_sy065_main_loss20_ortho15__branch_v1_scale10000_seed_17/export/checkpoint_best.pth
+   Best-so-far epoch: 24 (val R@1 avg=0.1158)
+
+Epoch 25/150
+Processed 3000 validation samples in batches
+
+Processed 3000 validation samples in batches
+Validation on 3000 samples
+
+Epoch 25 Results:
+   Total Loss:      0.304497
+   Synergy Loss:    0.153165
+   Main Loss:       0.767514
+   Orthogonal Loss: 0.342910
+   Difference Loss: 4.825964
+   Loss Ratio:      0.447
+   Validation:
+     recall@1: 0.0792
+     i2t_recall@1: 0.0827
+     t2i_recall@1: 0.0757
+     recall@5: 0.1847
+     i2t_recall@5: 0.1980
+     t2i_recall@5: 0.1713
+     recall@10: 0.2540
+     i2t_recall@10: 0.2707
+     t2i_recall@10: 0.2373
+     mrr: 0.1408
+   Val R@1 I->T: 0.0827  T->I: 0.0757  MRR: 0.1408
+
+Branch Specialization Check:
+  Synergy Branch Similarity: 0.9605
+  Difference Branch Similarity: 0.0458
+  Specialization Gap: 0.9147
+  Branches Specialized: YES
+
+Epoch 26/150
+Processed 3000 validation samples in batches
+
+Processed 3000 validation samples in batches
+Validation on 3000 samples
+
+Epoch 26 Results:
+   Total Loss:      0.292949
+   Synergy Loss:    0.148281
+   Main Loss:       0.759261
+   Orthogonal Loss: 0.298094
+   Difference Loss: 4.825926
+   Loss Ratio:      0.497
+   Validation:
+     recall@1: 0.1338
+     i2t_recall@1: 0.1753
+     t2i_recall@1: 0.0923
+     recall@5: 0.2518
+     i2t_recall@5: 0.3020
+     t2i_recall@5: 0.2017
+     recall@10: 0.3217
+     i2t_recall@10: 0.3690
+     t2i_recall@10: 0.2743
+     mrr: 0.1995
+   Val R@1 I->T: 0.1753  T->I: 0.0923  MRR: 0.1995
+New best checkpoint (epoch 25, val R@1 avg=0.1338) saved to: saved_models/mimic_shards_hybrid_full_ori_vo10805_to128_lr1e-4_b128_ep150_dualbr_sy065_main_loss20_ortho15__branch_v1_scale10000_seed_17/export/checkpoint_best.pth
+   Best-so-far epoch: 26 (val R@1 avg=0.1338)
+
+Epoch 27/150
+Processed 3000 validation samples in batches
+
+Processed 3000 validation samples in batches
+Validation on 3000 samples
+
+Epoch 27 Results:
+   Total Loss:      0.300905
+   Synergy Loss:    0.147630
+   Main Loss:       0.754852
+   Orthogonal Loss: 0.359833
+   Difference Loss: 4.825887
+   Loss Ratio:      0.410
+   Validation:
+     recall@1: 0.1118
+     i2t_recall@1: 0.1320
+     t2i_recall@1: 0.0917
+     recall@5: 0.2633
+     i2t_recall@5: 0.3073
+     t2i_recall@5: 0.2193
+     recall@10: 0.3470
+     i2t_recall@10: 0.3983
+     t2i_recall@10: 0.2957
+     mrr: 0.1934
+   Val R@1 I->T: 0.1320  T->I: 0.0917  MRR: 0.1934
+Checkpoint saved (epoch 26) to: saved_models/mimic_shards_hybrid_full_ori_vo10805_to128_lr1e-4_b128_ep150_dualbr_sy065_main_loss20_ortho15__branch_v1_scale10000_seed_17/export/checkpoint_resume.pth (overwritten in place -- same file each time)
+
+Epoch 28/150
+Processed 3000 validation samples in batches
+
+Processed 3000 validation samples in batches
+Validation on 3000 samples
+
+Epoch 28 Results:
+   Total Loss:      0.297747
+   Synergy Loss:    0.143055
+   Main Loss:       0.749668
+   Orthogonal Loss: 0.365517
+   Difference Loss: 4.825858
+   Loss Ratio:      0.391
+   Validation:
+     recall@1: 0.1198
+     i2t_recall@1: 0.1393
+     t2i_recall@1: 0.1003
+     recall@5: 0.2485
+     i2t_recall@5: 0.2720
+     t2i_recall@5: 0.2250
+     recall@10: 0.3140
+     i2t_recall@10: 0.3343
+     t2i_recall@10: 0.2937
+     mrr: 0.1885
+   Val R@1 I->T: 0.1393  T->I: 0.1003  MRR: 0.1885
+
+Epoch 29/150
+Processed 3000 validation samples in batches
+
+Processed 3000 validation samples in batches
+Validation on 3000 samples
+
+Epoch 29 Results:
+   Total Loss:      0.266502
+   Synergy Loss:    0.120829
+   Main Loss:       0.706094
+   Orthogonal Loss: 0.311629
+   Difference Loss: 4.825826
+   Loss Ratio:      0.388
+   Validation:
+     recall@1: 0.0352
+     i2t_recall@1: 0.0327
+     t2i_recall@1: 0.0377
+     recall@5: 0.0918
+     i2t_recall@5: 0.0907
+     t2i_recall@5: 0.0930
+     recall@10: 0.1275
+     i2t_recall@10: 0.1200
+     t2i_recall@10: 0.1350
+     mrr: 0.0713
+   Val R@1 I->T: 0.0327  T->I: 0.0377  MRR: 0.0713
+
+Epoch 30/150
+Processed 3000 validation samples in batches
+
+Processed 3000 validation samples in batches
+Validation on 3000 samples
+
+Epoch 30 Results:
+   Total Loss:      0.252623
+   Synergy Loss:    0.106337
+   Main Loss:       0.672662
+   Orthogonal Loss: 0.326479
+   Difference Loss: 4.825811
+   Loss Ratio:      0.326
+   Validation:
+     recall@1: 0.0437
+     i2t_recall@1: 0.0427
+     t2i_recall@1: 0.0447
+     recall@5: 0.1080
+     i2t_recall@5: 0.1087
+     t2i_recall@5: 0.1073
+     recall@10: 0.1483
+     i2t_recall@10: 0.1467
+     t2i_recall@10: 0.1500
+     mrr: 0.0828
+   Val R@1 I->T: 0.0427  T->I: 0.0447  MRR: 0.0828
+Checkpoint saved (epoch 29) to: saved_models/mimic_shards_hybrid_full_ori_vo10805_to128_lr1e-4_b128_ep150_dualbr_sy065_main_loss20_ortho15__branch_v1_scale10000_seed_17/export/checkpoint_resume.pth (overwritten in place -- same file each time)
+
+Branch Specialization Check:
+  Synergy Branch Similarity: 0.9354
+  Difference Branch Similarity: 0.0491
+  Specialization Gap: 0.8863
+  Branches Specialized: YES
+
+Epoch 31/150
+Processed 3000 validation samples in batches
+
+Processed 3000 validation samples in batches
+Validation on 3000 samples
+
+Epoch 31 Results:
+   Total Loss:      0.241523
+   Synergy Loss:    0.101164
+   Main Loss:       0.659290
+   Orthogonal Loss: 0.292723
+   Difference Loss: 4.825806
+   Loss Ratio:      0.346
+   Validation:
+     recall@1: 0.0640
+     i2t_recall@1: 0.0633
+     t2i_recall@1: 0.0647
+     recall@5: 0.1577
+     i2t_recall@5: 0.1507
+     t2i_recall@5: 0.1647
+     recall@10: 0.2197
+     i2t_recall@10: 0.2047
+     t2i_recall@10: 0.2347
+     mrr: 0.1192
+   Val R@1 I->T: 0.0633  T->I: 0.0647  MRR: 0.1192
+
+Epoch 32/150
+Processed 3000 validation samples in batches
+
+Processed 3000 validation samples in batches
+Validation on 3000 samples
+
+Epoch 32 Results:
+   Total Loss:      0.237016
+   Synergy Loss:    0.096612
+   Main Loss:       0.643066
+   Orthogonal Loss: 0.304033
+   Difference Loss: 4.825796
+   Loss Ratio:      0.318
+   Validation:
+     recall@1: 0.0638
+     i2t_recall@1: 0.0573
+     t2i_recall@1: 0.0703
+     recall@5: 0.1485
+     i2t_recall@5: 0.1320
+     t2i_recall@5: 0.1650
+     recall@10: 0.2058
+     i2t_recall@10: 0.1860
+     t2i_recall@10: 0.2257
+     mrr: 0.1139
+   Val R@1 I->T: 0.0573  T->I: 0.0703  MRR: 0.1139
+
+Epoch 33/150
+Processed 3000 validation samples in batches
+
+Processed 3000 validation samples in batches
+Validation on 3000 samples
+
+Epoch 33 Results:
+   Total Loss:      0.230638
+   Synergy Loss:    0.092780
+   Main Loss:       0.630116
+   Orthogonal Loss: 0.295388
+   Difference Loss: 4.825785
+   Loss Ratio:      0.314
+   Validation:
+     recall@1: 0.0417
+     i2t_recall@1: 0.0347
+     t2i_recall@1: 0.0487
+     recall@5: 0.1040
+     i2t_recall@5: 0.0900
+     t2i_recall@5: 0.1180
+     recall@10: 0.1490
+     i2t_recall@10: 0.1350
+     t2i_recall@10: 0.1630
+     mrr: 0.0806
+   Val R@1 I->T: 0.0347  T->I: 0.0487  MRR: 0.0806
+Checkpoint saved (epoch 32) to: saved_models/mimic_shards_hybrid_full_ori_vo10805_to128_lr1e-4_b128_ep150_dualbr_sy065_main_loss20_ortho15__branch_v1_scale10000_seed_17/export/checkpoint_resume.pth (overwritten in place -- same file each time)
+
+Epoch 34/150
+Processed 3000 validation samples in batches
+
+Processed 3000 validation samples in batches
+Validation on 3000 samples
+
+Epoch 34 Results:
+   Total Loss:      0.226627
+   Synergy Loss:    0.089469
+   Main Loss:       0.620441
+   Orthogonal Loss: 0.295896
+   Difference Loss: 4.825780
+   Loss Ratio:      0.302
+   Validation:
+     recall@1: 0.0428
+     i2t_recall@1: 0.0437
+     t2i_recall@1: 0.0420
+     recall@5: 0.1062
+     i2t_recall@5: 0.1017
+     t2i_recall@5: 0.1107
+     recall@10: 0.1498
+     i2t_recall@10: 0.1450
+     t2i_recall@10: 0.1547
+     mrr: 0.0821
+   Val R@1 I->T: 0.0437  T->I: 0.0420  MRR: 0.0821
+
+Epoch 35/150
+Processed 3000 validation samples in batches
+
+Processed 3000 validation samples in batches
+Validation on 3000 samples
+
+Epoch 35 Results:
+   Total Loss:      0.232025
+   Synergy Loss:    0.091738
+   Main Loss:       0.627069
+   Orthogonal Loss: 0.313212
+   Difference Loss: 4.825779
+   Loss Ratio:      0.293
+   Validation:
+     recall@1: 0.0555
+     i2t_recall@1: 0.0530
+     t2i_recall@1: 0.0580
+     recall@5: 0.1313
+     i2t_recall@5: 0.1273
+     t2i_recall@5: 0.1353
+     recall@10: 0.1815
+     i2t_recall@10: 0.1780
+     t2i_recall@10: 0.1850
+     mrr: 0.1007
+   Val R@1 I->T: 0.0530  T->I: 0.0580  MRR: 0.1007
+
+Branch Specialization Check:
+  Synergy Branch Similarity: 0.9510
+  Difference Branch Similarity: 0.0518
+  Specialization Gap: 0.8992
+  Branches Specialized: YES
+
+Epoch 36/150
+Processed 3000 validation samples in batches
+
+Processed 3000 validation samples in batches
+Validation on 3000 samples
+
+Epoch 36 Results:
+   Total Loss:      0.227756
+   Synergy Loss:    0.089156
+   Main Loss:       0.619395
+   Orthogonal Loss: 0.306174
+   Difference Loss: 4.825778
+   Loss Ratio:      0.291
+   Validation:
+     recall@1: 0.0972
+     i2t_recall@1: 0.0913
+     t2i_recall@1: 0.1030
+     recall@5: 0.2247
+     i2t_recall@5: 0.2083
+     t2i_recall@5: 0.2410
+     recall@10: 0.3172
+     i2t_recall@10: 0.2927
+     t2i_recall@10: 0.3417
+     mrr: 0.1703
+   Val R@1 I->T: 0.0913  T->I: 0.1030  MRR: 0.1703
+Checkpoint saved (epoch 35) to: saved_models/mimic_shards_hybrid_full_ori_vo10805_to128_lr1e-4_b128_ep150_dualbr_sy065_main_loss20_ortho15__branch_v1_scale10000_seed_17/export/checkpoint_resume.pth (overwritten in place -- same file each time)
+
+Epoch 37/150
+Processed 3000 validation samples in batches
+
+Processed 3000 validation samples in batches
+Validation on 3000 samples
+
+Epoch 37 Results:
+   Total Loss:      0.222217
+   Synergy Loss:    0.087403
+   Main Loss:       0.612992
+   Orthogonal Loss: 0.285375
+   Difference Loss: 4.825779
+   Loss Ratio:      0.306
+   Validation:
+     recall@1: 0.0420
+     i2t_recall@1: 0.0367
+     t2i_recall@1: 0.0473
+     recall@5: 0.1172
+     i2t_recall@5: 0.0987
+     t2i_recall@5: 0.1357
+     recall@10: 0.1740
+     i2t_recall@10: 0.1507
+     t2i_recall@10: 0.1973
+     mrr: 0.0896
+   Val R@1 I->T: 0.0367  T->I: 0.0473  MRR: 0.0896
+
+Epoch 38/150
+Processed 3000 validation samples in batches
+
+Processed 3000 validation samples in batches
+Validation on 3000 samples
+
+Epoch 38 Results:
+   Total Loss:      0.220448
+   Synergy Loss:    0.085623
+   Main Loss:       0.604434
+   Orthogonal Loss: 0.292710
+   Difference Loss: 4.825778
+   Loss Ratio:      0.293
+   Validation:
+     recall@1: 0.0458
+     i2t_recall@1: 0.0383
+     t2i_recall@1: 0.0533
+     recall@5: 0.1272
+     i2t_recall@5: 0.1050
+     t2i_recall@5: 0.1493
+     recall@10: 0.1897
+     i2t_recall@10: 0.1553
+     t2i_recall@10: 0.2240
+     mrr: 0.0976
+   Val R@1 I->T: 0.0383  T->I: 0.0533  MRR: 0.0976
+
+Epoch 39/150
+Processed 3000 validation samples in batches
+
+Processed 3000 validation samples in batches
+Validation on 3000 samples
+
+Epoch 39 Results:
+   Total Loss:      0.209603
+   Synergy Loss:    0.076986
+   Main Loss:       0.581768
+   Orthogonal Loss: 0.288053
+   Difference Loss: 4.825762
+   Loss Ratio:      0.267
+   Validation:
+     recall@1: 0.0543
+     i2t_recall@1: 0.0433
+     t2i_recall@1: 0.0653
+     recall@5: 0.1458
+     i2t_recall@5: 0.1113
+     t2i_recall@5: 0.1803
+     recall@10: 0.2158
+     i2t_recall@10: 0.1673
+     t2i_recall@10: 0.2643
+     mrr: 0.1099
+   Val R@1 I->T: 0.0433  T->I: 0.0653  MRR: 0.1099
+Checkpoint saved (epoch 38) to: saved_models/mimic_shards_hybrid_full_ori_vo10805_to128_lr1e-4_b128_ep150_dualbr_sy065_main_loss20_ortho15__branch_v1_scale10000_seed_17/export/checkpoint_resume.pth (overwritten in place -- same file each time)
+
+Epoch 40/150
+Processed 3000 validation samples in batches
+
+Processed 3000 validation samples in batches
+Validation on 3000 samples
+
+Epoch 40 Results:
+   Total Loss:      0.200891
+   Synergy Loss:    0.071898
+   Main Loss:       0.562246
+   Orthogonal Loss: 0.278055
+   Difference Loss: 4.825744
+   Loss Ratio:      0.259
+   Validation:
+     recall@1: 0.0610
+     i2t_recall@1: 0.0487
+     t2i_recall@1: 0.0733
+     recall@5: 0.1532
+     i2t_recall@5: 0.1287
+     t2i_recall@5: 0.1777
+     recall@10: 0.2178
+     i2t_recall@10: 0.1870
+     t2i_recall@10: 0.2487
+     mrr: 0.1148
+   Val R@1 I->T: 0.0487  T->I: 0.0733  MRR: 0.1148
+
+Branch Specialization Check:
+  Synergy Branch Similarity: 0.9435
+  Difference Branch Similarity: 0.0567
+  Specialization Gap: 0.8869
+  Branches Specialized: YES
+
+Epoch 41/150
+Processed 3000 validation samples in batches
+
+Processed 3000 validation samples in batches
+Validation on 3000 samples
+
+Epoch 41 Results:
+   Total Loss:      0.199083
+   Synergy Loss:    0.067717
+   Main Loss:       0.550521
+   Orthogonal Loss: 0.299753
+   Difference Loss: 4.825742
+   Loss Ratio:      0.226
+   Validation:
+     recall@1: 0.0892
+     i2t_recall@1: 0.0753
+     t2i_recall@1: 0.1030
+     recall@5: 0.2113
+     i2t_recall@5: 0.1877
+     t2i_recall@5: 0.2350
+     recall@10: 0.2948
+     i2t_recall@10: 0.2637
+     t2i_recall@10: 0.3260
+     mrr: 0.1580
+   Val R@1 I->T: 0.0753  T->I: 0.1030  MRR: 0.1580
+
+Epoch 42/150
+Processed 3000 validation samples in batches
+
+Processed 3000 validation samples in batches
+Validation on 3000 samples
+
+Epoch 42 Results:
+   Total Loss:      0.195217
+   Synergy Loss:    0.066822
+   Main Loss:       0.545739
+   Orthogonal Loss: 0.284235
+   Difference Loss: 4.825746
+   Loss Ratio:      0.235
+   Validation:
+     recall@1: 0.0538
+     i2t_recall@1: 0.0437
+     t2i_recall@1: 0.0640
+     recall@5: 0.1523
+     i2t_recall@5: 0.1310
+     t2i_recall@5: 0.1737
+     recall@10: 0.2233
+     i2t_recall@10: 0.2013
+     t2i_recall@10: 0.2453
+     mrr: 0.1121
+   Val R@1 I->T: 0.0437  T->I: 0.0640  MRR: 0.1121
+Checkpoint saved (epoch 41) to: saved_models/mimic_shards_hybrid_full_ori_vo10805_to128_lr1e-4_b128_ep150_dualbr_sy065_main_loss20_ortho15__branch_v1_scale10000_seed_17/export/checkpoint_resume.pth (overwritten in place -- same file each time)
+
+Epoch 43/150
+Processed 3000 validation samples in batches
+
+Processed 3000 validation samples in batches
+Validation on 3000 samples
+
+Epoch 43 Results:
+   Total Loss:      0.190453
+   Synergy Loss:    0.065791
+   Main Loss:       0.538135
+   Orthogonal Loss: 0.267079
+   Difference Loss: 4.825743
+   Loss Ratio:      0.246
+   Validation:
+     recall@1: 0.0628
+     i2t_recall@1: 0.0587
+     t2i_recall@1: 0.0670
+     recall@5: 0.1545
+     i2t_recall@5: 0.1483
+     t2i_recall@5: 0.1607
+     recall@10: 0.2117
+     i2t_recall@10: 0.2057
+     t2i_recall@10: 0.2177
+     mrr: 0.1157
+   Val R@1 I->T: 0.0587  T->I: 0.0670  MRR: 0.1157
+
+Epoch 44/150
+Processed 3000 validation samples in batches
+
+Processed 3000 validation samples in batches
+Validation on 3000 samples
+
+Epoch 44 Results:
+   Total Loss:      0.188609
+   Synergy Loss:    0.064541
+   Main Loss:       0.529322
+   Orthogonal Loss: 0.271953
+   Difference Loss: 4.825740
+   Loss Ratio:      0.237
+   Validation:
+     recall@1: 0.0878
+     i2t_recall@1: 0.0633
+     t2i_recall@1: 0.1123
+     recall@5: 0.2297
+     i2t_recall@5: 0.1917
+     t2i_recall@5: 0.2677
+     recall@10: 0.3223
+     i2t_recall@10: 0.2763
+     t2i_recall@10: 0.3683
+     mrr: 0.1659
+   Val R@1 I->T: 0.0633  T->I: 0.1123  MRR: 0.1659
+
+Epoch 45/150
+Processed 3000 validation samples in batches
+
+Processed 3000 validation samples in batches
+Validation on 3000 samples
+
+Epoch 45 Results:
+   Total Loss:      0.189832
+   Synergy Loss:    0.063418
+   Main Loss:       0.527504
+   Orthogonal Loss: 0.287400
+   Difference Loss: 4.825746
+   Loss Ratio:      0.221
+   Validation:
+     recall@1: 0.0952
+     i2t_recall@1: 0.0727
+     t2i_recall@1: 0.1177
+     recall@5: 0.2475
+     i2t_recall@5: 0.1953
+     t2i_recall@5: 0.2997
+     recall@10: 0.3410
+     i2t_recall@10: 0.2663
+     t2i_recall@10: 0.4157
+     mrr: 0.1762
+   Val R@1 I->T: 0.0727  T->I: 0.1177  MRR: 0.1762
+Checkpoint saved (epoch 44) to: saved_models/mimic_shards_hybrid_full_ori_vo10805_to128_lr1e-4_b128_ep150_dualbr_sy065_main_loss20_ortho15__branch_v1_scale10000_seed_17/export/checkpoint_resume.pth (overwritten in place -- same file each time)
+
+Branch Specialization Check:
+  Synergy Branch Similarity: 0.9441
+  Difference Branch Similarity: 0.0599
+  Specialization Gap: 0.8842
+  Branches Specialized: YES
+
+Epoch 46/150
+Processed 3000 validation samples in batches
+
+Processed 3000 validation samples in batches
+Validation on 3000 samples
+
+Epoch 46 Results:
+   Total Loss:      0.181493
+   Synergy Loss:    0.062072
+   Main Loss:       0.517385
+   Orthogonal Loss: 0.251128
+   Difference Loss: 4.825742
+   Loss Ratio:      0.247
+   Validation:
+     recall@1: 0.0798
+     i2t_recall@1: 0.0540
+     t2i_recall@1: 0.1057
+     recall@5: 0.2217
+     i2t_recall@5: 0.1657
+     t2i_recall@5: 0.2777
+     recall@10: 0.3163
+     i2t_recall@10: 0.2453
+     t2i_recall@10: 0.3873
+     mrr: 0.1596
+   Val R@1 I->T: 0.0540  T->I: 0.1057  MRR: 0.1596
+
+Epoch 47/150
+Processed 3000 validation samples in batches
+
+Processed 3000 validation samples in batches
+Validation on 3000 samples
+
+Epoch 47 Results:
+   Total Loss:      0.184120
+   Synergy Loss:    0.061211
+   Main Loss:       0.511448
+   Orthogonal Loss: 0.280289
+   Difference Loss: 4.825738
+   Loss Ratio:      0.218
+   Validation:
+     recall@1: 0.1017
+     i2t_recall@1: 0.0893
+     t2i_recall@1: 0.1140
+     recall@5: 0.2542
+     i2t_recall@5: 0.2280
+     t2i_recall@5: 0.2803
+     recall@10: 0.3527
+     i2t_recall@10: 0.3267
+     t2i_recall@10: 0.3787
+     mrr: 0.1861
+   Val R@1 I->T: 0.0893  T->I: 0.1140  MRR: 0.1861
+
+Epoch 48/150
+Processed 3000 validation samples in batches
+
+Processed 3000 validation samples in batches
+Validation on 3000 samples
+
+Epoch 48 Results:
+   Total Loss:      0.182870
+   Synergy Loss:    0.061957
+   Main Loss:       0.510457
+   Orthogonal Loss: 0.270045
+   Difference Loss: 4.825737
+   Loss Ratio:      0.229
+   Validation:
+     recall@1: 0.0822
+     i2t_recall@1: 0.0477
+     t2i_recall@1: 0.1167
+     recall@5: 0.2122
+     i2t_recall@5: 0.1513
+     t2i_recall@5: 0.2730
+     recall@10: 0.3060
+     i2t_recall@10: 0.2387
+     t2i_recall@10: 0.3733
+     mrr: 0.1578
+   Val R@1 I->T: 0.0477  T->I: 0.1167  MRR: 0.1578
+Checkpoint saved (epoch 47) to: saved_models/mimic_shards_hybrid_full_ori_vo10805_to128_lr1e-4_b128_ep150_dualbr_sy065_main_loss20_ortho15__branch_v1_scale10000_seed_17/export/checkpoint_resume.pth (overwritten in place -- same file each time)
+
+Epoch 49/150
+Processed 3000 validation samples in batches
+
+Processed 3000 validation samples in batches
+Validation on 3000 samples
+
+Epoch 49 Results:
+   Total Loss:      0.181922
+   Synergy Loss:    0.060998
+   Main Loss:       0.505561
+   Orthogonal Loss: 0.274406
+   Difference Loss: 4.825742
+   Loss Ratio:      0.222
+   Validation:
+     recall@1: 0.0817
+     i2t_recall@1: 0.0713
+     t2i_recall@1: 0.0920
+     recall@5: 0.2032
+     i2t_recall@5: 0.1933
+     t2i_recall@5: 0.2130
+     recall@10: 0.2715
+     i2t_recall@10: 0.2507
+     t2i_recall@10: 0.2923
+     mrr: 0.1474
+   Val R@1 I->T: 0.0713  T->I: 0.0920  MRR: 0.1474
+
+Epoch 50/150
+Processed 3000 validation samples in batches
+
+Processed 3000 validation samples in batches
+Validation on 3000 samples
+
+Epoch 50 Results:
+   Total Loss:      0.181786
+   Synergy Loss:    0.061387
+   Main Loss:       0.503096
+   Orthogonal Loss: 0.275106
+   Difference Loss: 4.825743
+   Loss Ratio:      0.223
+   Validation:
+     recall@1: 0.0622
+     i2t_recall@1: 0.0447
+     t2i_recall@1: 0.0797
+     recall@5: 0.1763
+     i2t_recall@5: 0.1430
+     t2i_recall@5: 0.2097
+     recall@10: 0.2560
+     i2t_recall@10: 0.2170
+     t2i_recall@10: 0.2950
+     mrr: 0.1275
+   Val R@1 I->T: 0.0447  T->I: 0.0797  MRR: 0.1275
+
+Branch Specialization Check:
+  Synergy Branch Similarity: 0.9457
+  Difference Branch Similarity: 0.0637
+  Specialization Gap: 0.8820
+  Branches Specialized: YES
+
+Epoch 51/150
+Processed 3000 validation samples in batches
+
+Processed 3000 validation samples in batches
+Validation on 3000 samples
+
+Epoch 51 Results:
+   Total Loss:      0.177686
+   Synergy Loss:    0.059698
+   Main Loss:       0.495289
+   Orthogonal Loss: 0.265499
+   Difference Loss: 4.825742
+   Loss Ratio:      0.225
+   Validation:
+     recall@1: 0.0600
+     i2t_recall@1: 0.0580
+     t2i_recall@1: 0.0620
+     recall@5: 0.1565
+     i2t_recall@5: 0.1470
+     t2i_recall@5: 0.1660
+     recall@10: 0.2240
+     i2t_recall@10: 0.2120
+     t2i_recall@10: 0.2360
+     mrr: 0.1158
+   Val R@1 I->T: 0.0580  T->I: 0.0620  MRR: 0.1158
+Checkpoint saved (epoch 50) to: saved_models/mimic_shards_hybrid_full_ori_vo10805_to128_lr1e-4_b128_ep150_dualbr_sy065_main_loss20_ortho15__branch_v1_scale10000_seed_17/export/checkpoint_resume.pth (overwritten in place -- same file each time)
+
+Epoch 52/150
+Processed 3000 validation samples in batches
+
+Processed 3000 validation samples in batches
+Validation on 3000 samples
+
+Epoch 52 Results:
+   Total Loss:      0.176740
+   Synergy Loss:    0.060979
+   Main Loss:       0.495173
+   Orthogonal Loss: 0.253792
+   Difference Loss: 4.825747
+   Loss Ratio:      0.240
+   Validation:
+     recall@1: 0.1145
+     i2t_recall@1: 0.0690
+     t2i_recall@1: 0.1600
+     recall@5: 0.2783
+     i2t_recall@5: 0.1853
+     t2i_recall@5: 0.3713
+     recall@10: 0.3730
+     i2t_recall@10: 0.2563
+     t2i_recall@10: 0.4897
+     mrr: 0.1996
+   Val R@1 I->T: 0.0690  T->I: 0.1600  MRR: 0.1996
+
+Epoch 53/150
+Processed 3000 validation samples in batches
+
+Processed 3000 validation samples in batches
+Validation on 3000 samples
+
+Epoch 53 Results:
+   Total Loss:      0.171820
+   Synergy Loss:    0.059174
+   Main Loss:       0.487176
+   Orthogonal Loss: 0.239482
+   Difference Loss: 4.825738
+   Loss Ratio:      0.247
+   Validation:
+     recall@1: 0.0862
+     i2t_recall@1: 0.0650
+     t2i_recall@1: 0.1073
+     recall@5: 0.2040
+     i2t_recall@5: 0.1650
+     t2i_recall@5: 0.2430
+     recall@10: 0.2857
+     i2t_recall@10: 0.2373
+     t2i_recall@10: 0.3340
+     mrr: 0.1541
+   Val R@1 I->T: 0.0650  T->I: 0.1073  MRR: 0.1541
+
+Epoch 54/150
+Processed 3000 validation samples in batches
+
+Processed 3000 validation samples in batches
+Validation on 3000 samples
+
+Epoch 54 Results:
+   Total Loss:      0.176655
+   Synergy Loss:    0.059000
+   Main Loss:       0.484904
+   Orthogonal Loss: 0.275494
+   Difference Loss: 4.825738
+   Loss Ratio:      0.214
+   Validation:
+     recall@1: 0.1547
+     i2t_recall@1: 0.1180
+     t2i_recall@1: 0.1913
+     recall@5: 0.3482
+     i2t_recall@5: 0.2733
+     t2i_recall@5: 0.4230
+     recall@10: 0.4570
+     i2t_recall@10: 0.3650
+     t2i_recall@10: 0.5490
+     mrr: 0.2545
+   Val R@1 I->T: 0.1180  T->I: 0.1913  MRR: 0.2545
+Checkpoint saved (epoch 53) to: saved_models/mimic_shards_hybrid_full_ori_vo10805_to128_lr1e-4_b128_ep150_dualbr_sy065_main_loss20_ortho15__branch_v1_scale10000_seed_17/export/checkpoint_resume.pth (overwritten in place -- same file each time)
+New best checkpoint (epoch 53, val R@1 avg=0.1547) saved to: saved_models/mimic_shards_hybrid_full_ori_vo10805_to128_lr1e-4_b128_ep150_dualbr_sy065_main_loss20_ortho15__branch_v1_scale10000_seed_17/export/checkpoint_best.pth
+   Best-so-far epoch: 54 (val R@1 avg=0.1547)
+
+Epoch 55/150
+Processed 3000 validation samples in batches
+
+Processed 3000 validation samples in batches
+Validation on 3000 samples
+
+Epoch 55 Results:
+   Total Loss:      0.175008
+   Synergy Loss:    0.061237
+   Main Loss:       0.485411
+   Orthogonal Loss: 0.254150
+   Difference Loss: 4.825745
+   Loss Ratio:      0.241
+   Validation:
+     recall@1: 0.0683
+     i2t_recall@1: 0.0667
+     t2i_recall@1: 0.0700
+     recall@5: 0.1752
+     i2t_recall@5: 0.1663
+     t2i_recall@5: 0.1840
+     recall@10: 0.2477
+     i2t_recall@10: 0.2360
+     t2i_recall@10: 0.2593
+     mrr: 0.1302
+   Val R@1 I->T: 0.0667  T->I: 0.0700  MRR: 0.1302
+
+Branch Specialization Check:
+  Synergy Branch Similarity: 0.9398
+  Difference Branch Similarity: 0.0668
+  Specialization Gap: 0.8730
+  Branches Specialized: YES
+
+Epoch 56/150
+Processed 3000 validation samples in batches
+
+Processed 3000 validation samples in batches
+Validation on 3000 samples
+
+Epoch 56 Results:
+   Total Loss:      0.168929
+   Synergy Loss:    0.058175
+   Main Loss:       0.478218
+   Orthogonal Loss: 0.236478
+   Difference Loss: 4.825746
+   Loss Ratio:      0.246
+   Validation:
+     recall@1: 0.1195
+     i2t_recall@1: 0.0843
+     t2i_recall@1: 0.1547
+     recall@5: 0.2823
+     i2t_recall@5: 0.2243
+     t2i_recall@5: 0.3403
+     recall@10: 0.3827
+     i2t_recall@10: 0.3140
+     t2i_recall@10: 0.4513
+     mrr: 0.2078
+   Val R@1 I->T: 0.0843  T->I: 0.1547  MRR: 0.2078
+
+Epoch 57/150
+Processed 3000 validation samples in batches
+
+Processed 3000 validation samples in batches
+Validation on 3000 samples
+
+Epoch 57 Results:
+   Total Loss:      0.169171
+   Synergy Loss:    0.058229
+   Main Loss:       0.472685
+   Orthogonal Loss: 0.245234
+   Difference Loss: 4.825747
+   Loss Ratio:      0.237
+   Validation:
+     recall@1: 0.1345
+     i2t_recall@1: 0.1047
+     t2i_recall@1: 0.1643
+     recall@5: 0.3215
+     i2t_recall@5: 0.2743
+     t2i_recall@5: 0.3687
+     recall@10: 0.4315
+     i2t_recall@10: 0.3707
+     t2i_recall@10: 0.4923
+     mrr: 0.2329
+   Val R@1 I->T: 0.1047  T->I: 0.1643  MRR: 0.2329
+Checkpoint saved (epoch 56) to: saved_models/mimic_shards_hybrid_full_ori_vo10805_to128_lr1e-4_b128_ep150_dualbr_sy065_main_loss20_ortho15__branch_v1_scale10000_seed_17/export/checkpoint_resume.pth (overwritten in place -- same file each time)
+
+Epoch 58/150
+Processed 3000 validation samples in batches
+
+Processed 3000 validation samples in batches
+Validation on 3000 samples
+
+Epoch 58 Results:
+   Total Loss:      0.167257
+   Synergy Loss:    0.058077
+   Main Loss:       0.466876
+   Orthogonal Loss: 0.240881
+   Difference Loss: 4.825741
+   Loss Ratio:      0.241
+   Validation:
+     recall@1: 0.1332
+     i2t_recall@1: 0.1000
+     t2i_recall@1: 0.1663
+     recall@5: 0.3050
+     i2t_recall@5: 0.2333
+     t2i_recall@5: 0.3767
+     recall@10: 0.4188
+     i2t_recall@10: 0.3320
+     t2i_recall@10: 0.5057
+     mrr: 0.2259
+   Val R@1 I->T: 0.1000  T->I: 0.1663  MRR: 0.2259
+
+Epoch 59/150
+Processed 3000 validation samples in batches
+
+Processed 3000 validation samples in batches
+Validation on 3000 samples
+
+Epoch 59 Results:
+   Total Loss:      0.166602
+   Synergy Loss:    0.057441
+   Main Loss:       0.463988
+   Orthogonal Loss: 0.243116
+   Difference Loss: 4.825745
+   Loss Ratio:      0.236
+   Validation:
+     recall@1: 0.0972
+     i2t_recall@1: 0.0933
+     t2i_recall@1: 0.1010
+     recall@5: 0.2237
+     i2t_recall@5: 0.2167
+     t2i_recall@5: 0.2307
+     recall@10: 0.2977
+     i2t_recall@10: 0.2800
+     t2i_recall@10: 0.3153
+     mrr: 0.1662
+   Val R@1 I->T: 0.0933  T->I: 0.1010  MRR: 0.1662
+
+Epoch 60/150
+Processed 3000 validation samples in batches
+
+Processed 3000 validation samples in batches
+Validation on 3000 samples
+
+Epoch 60 Results:
+   Total Loss:      0.164888
+   Synergy Loss:    0.058096
+   Main Loss:       0.459736
+   Orthogonal Loss: 0.234525
+   Difference Loss: 4.825746
+   Loss Ratio:      0.248
+   Validation:
+     recall@1: 0.0688
+     i2t_recall@1: 0.0460
+     t2i_recall@1: 0.0917
+     recall@5: 0.1843
+     i2t_recall@5: 0.1500
+     t2i_recall@5: 0.2187
+     recall@10: 0.2678
+     i2t_recall@10: 0.2330
+     t2i_recall@10: 0.3027
+     mrr: 0.1370
+   Val R@1 I->T: 0.0460  T->I: 0.0917  MRR: 0.1370
+Checkpoint saved (epoch 59) to: saved_models/mimic_shards_hybrid_full_ori_vo10805_to128_lr1e-4_b128_ep150_dualbr_sy065_main_loss20_ortho15__branch_v1_scale10000_seed_17/export/checkpoint_resume.pth (overwritten in place -- same file each time)
+
+Branch Specialization Check:
+  Synergy Branch Similarity: 0.9345
+  Difference Branch Similarity: 0.0708
+  Specialization Gap: 0.8637
+  Branches Specialized: YES
+
+Epoch 61/150
+Processed 3000 validation samples in batches
+
+Processed 3000 validation samples in batches
+Validation on 3000 samples
+
+Epoch 61 Results:
+   Total Loss:      0.162502
+   Synergy Loss:    0.058224
+   Main Loss:       0.460201
+   Orthogonal Loss: 0.217437
+   Difference Loss: 4.825748
+   Loss Ratio:      0.268
+   Validation:
+     recall@1: 0.1210
+     i2t_recall@1: 0.0893
+     t2i_recall@1: 0.1527
+     recall@5: 0.3042
+     i2t_recall@5: 0.2617
+     t2i_recall@5: 0.3467
+     recall@10: 0.4187
+     i2t_recall@10: 0.3743
+     t2i_recall@10: 0.4630
+     mrr: 0.2190
+   Val R@1 I->T: 0.0893  T->I: 0.1527  MRR: 0.2190
+
+Epoch 62/150
+Processed 3000 validation samples in batches
+
+Processed 3000 validation samples in batches
+Validation on 3000 samples
+
+Epoch 62 Results:
+   Total Loss:      0.164366
+   Synergy Loss:    0.056835
+   Main Loss:       0.450530
+   Orthogonal Loss: 0.248781
+   Difference Loss: 4.825741
+   Loss Ratio:      0.228
+   Validation:
+     recall@1: 0.1467
+     i2t_recall@1: 0.1267
+     t2i_recall@1: 0.1667
+     recall@5: 0.2963
+     i2t_recall@5: 0.2547
+     t2i_recall@5: 0.3380
+     recall@10: 0.3807
+     i2t_recall@10: 0.3143
+     t2i_recall@10: 0.4470
+     mrr: 0.2265
+   Val R@1 I->T: 0.1267  T->I: 0.1667  MRR: 0.2265
+
+Epoch 63/150
+Processed 3000 validation samples in batches
+
+Processed 3000 validation samples in batches
+Validation on 3000 samples
+
+Epoch 63 Results:
+   Total Loss:      0.159805
+   Synergy Loss:    0.056503
+   Main Loss:       0.446086
+   Orthogonal Loss: 0.225743
+   Difference Loss: 4.825743
+   Loss Ratio:      0.250
+   Validation:
+     recall@1: 0.1165
+     i2t_recall@1: 0.0800
+     t2i_recall@1: 0.1530
+     recall@5: 0.2832
+     i2t_recall@5: 0.2153
+     t2i_recall@5: 0.3510
+     recall@10: 0.3772
+     i2t_recall@10: 0.2887
+     t2i_recall@10: 0.4657
+     mrr: 0.2039
+   Val R@1 I->T: 0.0800  T->I: 0.1530  MRR: 0.2039
+Checkpoint saved (epoch 62) to: saved_models/mimic_shards_hybrid_full_ori_vo10805_to128_lr1e-4_b128_ep150_dualbr_sy065_main_loss20_ortho15__branch_v1_scale10000_seed_17/export/checkpoint_resume.pth (overwritten in place -- same file each time)
+
+Epoch 64/150
+Processed 3000 validation samples in batches
+
+Processed 3000 validation samples in batches
+Validation on 3000 samples
+
+Epoch 64 Results:
+   Total Loss:      0.163287
+   Synergy Loss:    0.059220
+   Main Loss:       0.446919
+   Orthogonal Loss: 0.236071
+   Difference Loss: 4.825739
+   Loss Ratio:      0.251
+   Validation:
+     recall@1: 0.1580
+     i2t_recall@1: 0.1247
+     t2i_recall@1: 0.1913
+     recall@5: 0.3678
+     i2t_recall@5: 0.3157
+     t2i_recall@5: 0.4200
+     recall@10: 0.4827
+     i2t_recall@10: 0.4233
+     t2i_recall@10: 0.5420
+     mrr: 0.2650
+   Val R@1 I->T: 0.1247  T->I: 0.1913  MRR: 0.2650
+New best checkpoint (epoch 63, val R@1 avg=0.1580) saved to: saved_models/mimic_shards_hybrid_full_ori_vo10805_to128_lr1e-4_b128_ep150_dualbr_sy065_main_loss20_ortho15__branch_v1_scale10000_seed_17/export/checkpoint_best.pth
+   Best-so-far epoch: 64 (val R@1 avg=0.1580)
+
+Epoch 65/150
+Processed 3000 validation samples in batches
+
+Processed 3000 validation samples in batches
+Validation on 3000 samples
+
+Epoch 65 Results:
+   Total Loss:      0.159770
+   Synergy Loss:    0.058094
+   Main Loss:       0.439296
+   Orthogonal Loss: 0.227667
+   Difference Loss: 4.825738
+   Loss Ratio:      0.255
+   Validation:
+     recall@1: 0.1485
+     i2t_recall@1: 0.1110
+     t2i_recall@1: 0.1860
+     recall@5: 0.3460
+     i2t_recall@5: 0.2817
+     t2i_recall@5: 0.4103
+     recall@10: 0.4595
+     i2t_recall@10: 0.3770
+     t2i_recall@10: 0.5420
+     mrr: 0.2513
+   Val R@1 I->T: 0.1110  T->I: 0.1860  MRR: 0.2513
+
+Branch Specialization Check:
+  Synergy Branch Similarity: 0.9438
+  Difference Branch Similarity: 0.0741
+  Specialization Gap: 0.8697
+  Branches Specialized: YES
+
+Epoch 66/150
+Processed 3000 validation samples in batches
+
+Processed 3000 validation samples in batches
+Validation on 3000 samples
+
+Epoch 66 Results:
+   Total Loss:      0.157099
+   Synergy Loss:    0.055254
+   Main Loss:       0.433061
+   Orthogonal Loss: 0.230475
+   Difference Loss: 4.825744
+   Loss Ratio:      0.240
+   Validation:
+     recall@1: 0.0722
+     i2t_recall@1: 0.0650
+     t2i_recall@1: 0.0793
+     recall@5: 0.1757
+     i2t_recall@5: 0.1660
+     t2i_recall@5: 0.1853
+     recall@10: 0.2488
+     i2t_recall@10: 0.2317
+     t2i_recall@10: 0.2660
+     mrr: 0.1323
+   Val R@1 I->T: 0.0650  T->I: 0.0793  MRR: 0.1323
+Checkpoint saved (epoch 65) to: saved_models/mimic_shards_hybrid_full_ori_vo10805_to128_lr1e-4_b128_ep150_dualbr_sy065_main_loss20_ortho15__branch_v1_scale10000_seed_17/export/checkpoint_resume.pth (overwritten in place -- same file each time)
+
+Epoch 67/150
+Processed 3000 validation samples in batches
+
+Processed 3000 validation samples in batches
+Validation on 3000 samples
+
+Epoch 67 Results:
+   Total Loss:      0.156497
+   Synergy Loss:    0.056713
+   Main Loss:       0.431622
+   Orthogonal Loss: 0.222056
+   Difference Loss: 4.825747
+   Loss Ratio:      0.255
+   Validation:
+     recall@1: 0.1068
+     i2t_recall@1: 0.0763
+     t2i_recall@1: 0.1373
+     recall@5: 0.2532
+     i2t_recall@5: 0.1933
+     t2i_recall@5: 0.3130
+     recall@10: 0.3478
+     i2t_recall@10: 0.2763
+     t2i_recall@10: 0.4193
+     mrr: 0.1868
+   Val R@1 I->T: 0.0763  T->I: 0.1373  MRR: 0.1868
+
+Epoch 68/150
+Processed 3000 validation samples in batches
+
+Processed 3000 validation samples in batches
+Validation on 3000 samples
+
+Epoch 68 Results:
+   Total Loss:      0.155085
+   Synergy Loss:    0.053898
+   Main Loss:       0.423755
+   Orthogonal Loss: 0.235338
+   Difference Loss: 4.825746
+   Loss Ratio:      0.229
+   Validation:
+     recall@1: 0.1337
+     i2t_recall@1: 0.1170
+     t2i_recall@1: 0.1503
+     recall@5: 0.3013
+     i2t_recall@5: 0.2590
+     t2i_recall@5: 0.3437
+     recall@10: 0.3948
+     i2t_recall@10: 0.3330
+     t2i_recall@10: 0.4567
+     mrr: 0.2214
+   Val R@1 I->T: 0.1170  T->I: 0.1503  MRR: 0.2214
+
+Epoch 69/150
+Processed 3000 validation samples in batches
+
+Processed 3000 validation samples in batches
+Validation on 3000 samples
+
+Epoch 69 Results:
+   Total Loss:      0.149503
+   Synergy Loss:    0.051871
+   Main Loss:       0.413453
+   Orthogonal Loss: 0.220644
+   Difference Loss: 4.825746
+   Loss Ratio:      0.235
+   Validation:
+     recall@1: 0.1230
+     i2t_recall@1: 0.0873
+     t2i_recall@1: 0.1587
+     recall@5: 0.2925
+     i2t_recall@5: 0.2340
+     t2i_recall@5: 0.3510
+     recall@10: 0.3840
+     i2t_recall@10: 0.3090
+     t2i_recall@10: 0.4590
+     mrr: 0.2108
+   Val R@1 I->T: 0.0873  T->I: 0.1587  MRR: 0.2108
+Checkpoint saved (epoch 68) to: saved_models/mimic_shards_hybrid_full_ori_vo10805_to128_lr1e-4_b128_ep150_dualbr_sy065_main_loss20_ortho15__branch_v1_scale10000_seed_17/export/checkpoint_resume.pth (overwritten in place -- same file each time)
+
+Epoch 70/150
+Processed 3000 validation samples in batches
+
+Processed 3000 validation samples in batches
+Validation on 3000 samples
+
+Epoch 70 Results:
+   Total Loss:      0.145330
+   Synergy Loss:    0.050037
+   Main Loss:       0.403244
+   Orthogonal Loss: 0.214384
+   Difference Loss: 4.825739
+   Loss Ratio:      0.233
+   Validation:
+     recall@1: 0.1342
+     i2t_recall@1: 0.0943
+     t2i_recall@1: 0.1740
+     recall@5: 0.3105
+     i2t_recall@5: 0.2493
+     t2i_recall@5: 0.3717
+     recall@10: 0.4173
+     i2t_recall@10: 0.3477
+     t2i_recall@10: 0.4870
+     mrr: 0.2269
+   Val R@1 I->T: 0.0943  T->I: 0.1740  MRR: 0.2269
+
+Branch Specialization Check:
+  Synergy Branch Similarity: 0.9382
+  Difference Branch Similarity: 0.0785
+  Specialization Gap: 0.8597
+  Branches Specialized: YES
+
+Epoch 71/150
+Processed 3000 validation samples in batches
+
+Processed 3000 validation samples in batches
+Validation on 3000 samples
+
+Epoch 71 Results:
+   Total Loss:      0.141950
+   Synergy Loss:    0.045747
+   Main Loss:       0.388019
+   Orthogonal Loss: 0.230738
+   Difference Loss: 4.825735
+   Loss Ratio:      0.198
+   Validation:
+     recall@1: 0.1570
+     i2t_recall@1: 0.0943
+     t2i_recall@1: 0.2197
+     recall@5: 0.3655
+     i2t_recall@5: 0.2420
+     t2i_recall@5: 0.4890
+     recall@10: 0.4888
+     i2t_recall@10: 0.3477
+     t2i_recall@10: 0.6300
+     mrr: 0.2636
+   Val R@1 I->T: 0.0943  T->I: 0.2197  MRR: 0.2636
+
+Epoch 72/150
+Processed 3000 validation samples in batches
+
+Processed 3000 validation samples in batches
+Validation on 3000 samples
+
+Epoch 72 Results:
+   Total Loss:      0.142676
+   Synergy Loss:    0.048641
+   Main Loss:       0.393642
+   Orthogonal Loss: 0.215542
+   Difference Loss: 4.825736
+   Loss Ratio:      0.226
+   Validation:
+     recall@1: 0.1837
+     i2t_recall@1: 0.1387
+     t2i_recall@1: 0.2287
+     recall@5: 0.4110
+     i2t_recall@5: 0.3400
+     t2i_recall@5: 0.4820
+     recall@10: 0.5345
+     i2t_recall@10: 0.4487
+     t2i_recall@10: 0.6203
+     mrr: 0.2965
+   Val R@1 I->T: 0.1387  T->I: 0.2287  MRR: 0.2965
+Checkpoint saved (epoch 71) to: saved_models/mimic_shards_hybrid_full_ori_vo10805_to128_lr1e-4_b128_ep150_dualbr_sy065_main_loss20_ortho15__branch_v1_scale10000_seed_17/export/checkpoint_resume.pth (overwritten in place -- same file each time)
+New best checkpoint (epoch 71, val R@1 avg=0.1837) saved to: saved_models/mimic_shards_hybrid_full_ori_vo10805_to128_lr1e-4_b128_ep150_dualbr_sy065_main_loss20_ortho15__branch_v1_scale10000_seed_17/export/checkpoint_best.pth
+   Best-so-far epoch: 72 (val R@1 avg=0.1837)
+
+Epoch 73/150
+Processed 3000 validation samples in batches
+
+Processed 3000 validation samples in batches
+Validation on 3000 samples
+
+Epoch 73 Results:
+   Total Loss:      0.141384
+   Synergy Loss:    0.046378
+   Main Loss:       0.381630
+   Orthogonal Loss: 0.232754
+   Difference Loss: 4.825741
+   Loss Ratio:      0.199
+   Validation:
+     recall@1: 0.1937
+     i2t_recall@1: 0.1497
+     t2i_recall@1: 0.2377
+     recall@5: 0.3935
+     i2t_recall@5: 0.3190
+     t2i_recall@5: 0.4680
+     recall@10: 0.4933
+     i2t_recall@10: 0.4063
+     t2i_recall@10: 0.5803
+     mrr: 0.2934
+   Val R@1 I->T: 0.1497  T->I: 0.2377  MRR: 0.2934
+New best checkpoint (epoch 72, val R@1 avg=0.1937) saved to: saved_models/mimic_shards_hybrid_full_ori_vo10805_to128_lr1e-4_b128_ep150_dualbr_sy065_main_loss20_ortho15__branch_v1_scale10000_seed_17/export/checkpoint_best.pth
+   Best-so-far epoch: 73 (val R@1 avg=0.1937)
+
+Epoch 74/150
+Processed 3000 validation samples in batches
+
+Processed 3000 validation samples in batches
+Validation on 3000 samples
+
+Epoch 74 Results:
+   Total Loss:      0.140030
+   Synergy Loss:    0.046320
+   Main Loss:       0.380578
+   Orthogonal Loss: 0.225379
+   Difference Loss: 4.825740
+   Loss Ratio:      0.206
+   Validation:
+     recall@1: 0.3000
+     i2t_recall@1: 0.2403
+     t2i_recall@1: 0.3597
+     recall@5: 0.5597
+     i2t_recall@5: 0.4553
+     t2i_recall@5: 0.6640
+     recall@10: 0.6728
+     i2t_recall@10: 0.5570
+     t2i_recall@10: 0.7887
+     mrr: 0.4228
+   Val R@1 I->T: 0.2403  T->I: 0.3597  MRR: 0.4228
+New best checkpoint (epoch 73, val R@1 avg=0.3000) saved to: saved_models/mimic_shards_hybrid_full_ori_vo10805_to128_lr1e-4_b128_ep150_dualbr_sy065_main_loss20_ortho15__branch_v1_scale10000_seed_17/export/checkpoint_best.pth
+   Best-so-far epoch: 74 (val R@1 avg=0.3000)
+
+Epoch 75/150
+Processed 3000 validation samples in batches
+
+Processed 3000 validation samples in batches
+Validation on 3000 samples
+
+Epoch 75 Results:
+   Total Loss:      0.134883
+   Synergy Loss:    0.046010
+   Main Loss:       0.372110
+   Orthogonal Loss: 0.203691
+   Difference Loss: 4.825741
+   Loss Ratio:      0.226
+   Validation:
+     recall@1: 0.1865
+     i2t_recall@1: 0.1273
+     t2i_recall@1: 0.2457
+     recall@5: 0.4178
+     i2t_recall@5: 0.3113
+     t2i_recall@5: 0.5243
+     recall@10: 0.5370
+     i2t_recall@10: 0.4167
+     t2i_recall@10: 0.6573
+     mrr: 0.3005
+   Val R@1 I->T: 0.1273  T->I: 0.2457  MRR: 0.3005
+Checkpoint saved (epoch 74) to: saved_models/mimic_shards_hybrid_full_ori_vo10805_to128_lr1e-4_b128_ep150_dualbr_sy065_main_loss20_ortho15__branch_v1_scale10000_seed_17/export/checkpoint_resume.pth (overwritten in place -- same file each time)
+
+Branch Specialization Check:
+  Synergy Branch Similarity: 0.9414
+  Difference Branch Similarity: 0.0846
+  Specialization Gap: 0.8568
+  Branches Specialized: YES
+
+Epoch 76/150
+Processed 3000 validation samples in batches
+
+Processed 3000 validation samples in batches
+Validation on 3000 samples
+
+Epoch 76 Results:
+   Total Loss:      0.135256
+   Synergy Loss:    0.046247
+   Main Loss:       0.371030
+   Orthogonal Loss: 0.206599
+   Difference Loss: 4.825744
+   Loss Ratio:      0.224
+   Validation:
+     recall@1: 0.1818
+     i2t_recall@1: 0.1307
+     t2i_recall@1: 0.2330
+     recall@5: 0.3847
+     i2t_recall@5: 0.3007
+     t2i_recall@5: 0.4687
+     recall@10: 0.4902
+     i2t_recall@10: 0.3843
+     t2i_recall@10: 0.5960
+     mrr: 0.2843
+   Val R@1 I->T: 0.1307  T->I: 0.2330  MRR: 0.2843
+
+Epoch 77/150
+Processed 3000 validation samples in batches
+
+Processed 3000 validation samples in batches
+Validation on 3000 samples
+
+Epoch 77 Results:
+   Total Loss:      0.135197
+   Synergy Loss:    0.045786
+   Main Loss:       0.364615
+   Orthogonal Loss: 0.216756
+   Difference Loss: 4.825739
+   Loss Ratio:      0.211
+   Validation:
+     recall@1: 0.1887
+     i2t_recall@1: 0.1383
+     t2i_recall@1: 0.2390
+     recall@5: 0.4118
+     i2t_recall@5: 0.3313
+     t2i_recall@5: 0.4923
+     recall@10: 0.5365
+     i2t_recall@10: 0.4437
+     t2i_recall@10: 0.6293
+     mrr: 0.3012
+   Val R@1 I->T: 0.1383  T->I: 0.2390  MRR: 0.3012
+
+Epoch 78/150
+Processed 3000 validation samples in batches
+
+Processed 3000 validation samples in batches
+Validation on 3000 samples
+
+Epoch 78 Results:
+   Total Loss:      0.129454
+   Synergy Loss:    0.044585
+   Main Loss:       0.356978
+   Orthogonal Loss: 0.193854
+   Difference Loss: 4.825738
+   Loss Ratio:      0.230
+   Validation:
+     recall@1: 0.1817
+     i2t_recall@1: 0.1410
+     t2i_recall@1: 0.2223
+     recall@5: 0.3865
+     i2t_recall@5: 0.3040
+     t2i_recall@5: 0.4690
+     recall@10: 0.4977
+     i2t_recall@10: 0.4020
+     t2i_recall@10: 0.5933
+     mrr: 0.2863
+   Val R@1 I->T: 0.1410  T->I: 0.2223  MRR: 0.2863
+Checkpoint saved (epoch 77) to: saved_models/mimic_shards_hybrid_full_ori_vo10805_to128_lr1e-4_b128_ep150_dualbr_sy065_main_loss20_ortho15__branch_v1_scale10000_seed_17/export/checkpoint_resume.pth (overwritten in place -- same file each time)
+
+Epoch 79/150
+Processed 3000 validation samples in batches
+
+Processed 3000 validation samples in batches
+Validation on 3000 samples
+
+Epoch 79 Results:
+   Total Loss:      0.127102
+   Synergy Loss:    0.044243
+   Main Loss:       0.346977
+   Orthogonal Loss: 0.192993
+   Difference Loss: 4.825741
+   Loss Ratio:      0.229
+   Validation:
+     recall@1: 0.1867
+     i2t_recall@1: 0.1213
+     t2i_recall@1: 0.2520
+     recall@5: 0.4027
+     i2t_recall@5: 0.2973
+     t2i_recall@5: 0.5080
+     recall@10: 0.5152
+     i2t_recall@10: 0.3977
+     t2i_recall@10: 0.6327
+     mrr: 0.2956
+   Val R@1 I->T: 0.1213  T->I: 0.2520  MRR: 0.2956
+
+Epoch 80/150
+Processed 3000 validation samples in batches
+
+Processed 3000 validation samples in batches
+Validation on 3000 samples
+
+Epoch 80 Results:
+   Total Loss:      0.129118
+   Synergy Loss:    0.043848
+   Main Loss:       0.342903
+   Orthogonal Loss: 0.213573
+   Difference Loss: 4.825743
+   Loss Ratio:      0.205
+   Validation:
+     recall@1: 0.3003
+     i2t_recall@1: 0.2163
+     t2i_recall@1: 0.3843
+     recall@5: 0.5647
+     i2t_recall@5: 0.4450
+     t2i_recall@5: 0.6843
+     recall@10: 0.6837
+     i2t_recall@10: 0.5553
+     t2i_recall@10: 0.8120
+     mrr: 0.4263
+   Val R@1 I->T: 0.2163  T->I: 0.3843  MRR: 0.4263
+New best checkpoint (epoch 79, val R@1 avg=0.3003) saved to: saved_models/mimic_shards_hybrid_full_ori_vo10805_to128_lr1e-4_b128_ep150_dualbr_sy065_main_loss20_ortho15__branch_v1_scale10000_seed_17/export/checkpoint_best.pth
+   Best-so-far epoch: 80 (val R@1 avg=0.3003)
+
+Branch Specialization Check:
+  Synergy Branch Similarity: 0.9563
+  Difference Branch Similarity: 0.0922
+  Specialization Gap: 0.8641
+  Branches Specialized: YES
+
+Epoch 81/150
+Processed 3000 validation samples in batches
+
+Processed 3000 validation samples in batches
+Validation on 3000 samples
+
+Epoch 81 Results:
+   Total Loss:      0.130908
+   Synergy Loss:    0.045790
+   Main Loss:       0.345497
+   Orthogonal Loss: 0.213636
+   Difference Loss: 4.825737
+   Loss Ratio:      0.214
+   Validation:
+     recall@1: 0.2718
+     i2t_recall@1: 0.2197
+     t2i_recall@1: 0.3240
+     recall@5: 0.5415
+     i2t_recall@5: 0.4673
+     t2i_recall@5: 0.6157
+     recall@10: 0.6725
+     i2t_recall@10: 0.6000
+     t2i_recall@10: 0.7450
+     mrr: 0.4004
+   Val R@1 I->T: 0.2197  T->I: 0.3240  MRR: 0.4004
+Checkpoint saved (epoch 80) to: saved_models/mimic_shards_hybrid_full_ori_vo10805_to128_lr1e-4_b128_ep150_dualbr_sy065_main_loss20_ortho15__branch_v1_scale10000_seed_17/export/checkpoint_resume.pth (overwritten in place -- same file each time)
+
+Epoch 82/150
+Processed 3000 validation samples in batches
+
+Processed 3000 validation samples in batches
+Validation on 3000 samples
+
+Epoch 82 Results:
+   Total Loss:      0.129053
+   Synergy Loss:    0.044904
+   Main Loss:       0.338366
+   Orthogonal Loss: 0.214615
+   Difference Loss: 4.825739
+   Loss Ratio:      0.209
+   Validation:
+     recall@1: 0.2342
+     i2t_recall@1: 0.1963
+     t2i_recall@1: 0.2720
+     recall@5: 0.5083
+     i2t_recall@5: 0.4553
+     t2i_recall@5: 0.5613
+     recall@10: 0.6422
+     i2t_recall@10: 0.5913
+     t2i_recall@10: 0.6930
+     mrr: 0.3669
+   Val R@1 I->T: 0.1963  T->I: 0.2720  MRR: 0.3669
+
+Epoch 83/150
+Processed 3000 validation samples in batches
+
+Processed 3000 validation samples in batches
+Validation on 3000 samples
+
+Epoch 83 Results:
+   Total Loss:      0.124630
+   Synergy Loss:    0.044439
+   Main Loss:       0.329450
+   Orthogonal Loss: 0.199030
+   Difference Loss: 4.825741
+   Loss Ratio:      0.223
+   Validation:
+     recall@1: 0.1920
+     i2t_recall@1: 0.1137
+     t2i_recall@1: 0.2703
+     recall@5: 0.4178
+     i2t_recall@5: 0.2977
+     t2i_recall@5: 0.5380
+     recall@10: 0.5425
+     i2t_recall@10: 0.4133
+     t2i_recall@10: 0.6717
+     mrr: 0.3054
+   Val R@1 I->T: 0.1137  T->I: 0.2703  MRR: 0.3054
+
+Epoch 84/150
+Processed 3000 validation samples in batches
+
+Processed 3000 validation samples in batches
+Validation on 3000 samples
+
+Epoch 84 Results:
+   Total Loss:      0.124746
+   Synergy Loss:    0.045103
+   Main Loss:       0.325324
+   Orthogonal Loss: 0.202425
+   Difference Loss: 4.825741
+   Loss Ratio:      0.223
+   Validation:
+     recall@1: 0.1662
+     i2t_recall@1: 0.1183
+     t2i_recall@1: 0.2140
+     recall@5: 0.3870
+     i2t_recall@5: 0.2937
+     t2i_recall@5: 0.4803
+     recall@10: 0.5077
+     i2t_recall@10: 0.3967
+     t2i_recall@10: 0.6187
+     mrr: 0.2784
+   Val R@1 I->T: 0.1183  T->I: 0.2140  MRR: 0.2784
+Checkpoint saved (epoch 83) to: saved_models/mimic_shards_hybrid_full_ori_vo10805_to128_lr1e-4_b128_ep150_dualbr_sy065_main_loss20_ortho15__branch_v1_scale10000_seed_17/export/checkpoint_resume.pth (overwritten in place -- same file each time)
+
+Epoch 85/150
+Processed 3000 validation samples in batches
+
+Processed 3000 validation samples in batches
+Validation on 3000 samples
+
+Epoch 85 Results:
+   Total Loss:      0.120873
+   Synergy Loss:    0.045541
+   Main Loss:       0.321226
+   Orthogonal Loss: 0.180175
+   Difference Loss: 4.825744
+   Loss Ratio:      0.253
+   Validation:
+     recall@1: 0.1930
+     i2t_recall@1: 0.1690
+     t2i_recall@1: 0.2170
+     recall@5: 0.3940
+     i2t_recall@5: 0.3553
+     t2i_recall@5: 0.4327
+     recall@10: 0.5012
+     i2t_recall@10: 0.4560
+     t2i_recall@10: 0.5463
+     mrr: 0.2957
+   Val R@1 I->T: 0.1690  T->I: 0.2170  MRR: 0.2957
+
+Branch Specialization Check:
+  Synergy Branch Similarity: 0.9549
+  Difference Branch Similarity: 0.1030
+  Specialization Gap: 0.8519
+  Branches Specialized: YES
+
+Epoch 86/150
+Processed 3000 validation samples in batches
+
+Processed 3000 validation samples in batches
+Validation on 3000 samples
+
+Epoch 86 Results:
+   Total Loss:      0.120644
+   Synergy Loss:    0.044889
+   Main Loss:       0.313396
+   Orthogonal Loss: 0.191916
+   Difference Loss: 4.825739
+   Loss Ratio:      0.234
+   Validation:
+     recall@1: 0.3058
+     i2t_recall@1: 0.2457
+     t2i_recall@1: 0.3660
+     recall@5: 0.5680
+     i2t_recall@5: 0.4803
+     t2i_recall@5: 0.6557
+     recall@10: 0.6832
+     i2t_recall@10: 0.5937
+     t2i_recall@10: 0.7727
+     mrr: 0.4307
+   Val R@1 I->T: 0.2457  T->I: 0.3660  MRR: 0.4307
+New best checkpoint (epoch 85, val R@1 avg=0.3058) saved to: saved_models/mimic_shards_hybrid_full_ori_vo10805_to128_lr1e-4_b128_ep150_dualbr_sy065_main_loss20_ortho15__branch_v1_scale10000_seed_17/export/checkpoint_best.pth
+   Best-so-far epoch: 86 (val R@1 avg=0.3058)
+
+Epoch 87/150
+Processed 3000 validation samples in batches
+
+Processed 3000 validation samples in batches
+Validation on 3000 samples
+
+Epoch 87 Results:
+   Total Loss:      0.116910
+   Synergy Loss:    0.043639
+   Main Loss:       0.305275
+   Orthogonal Loss: 0.183268
+   Difference Loss: 4.825740
+   Loss Ratio:      0.238
+   Validation:
+     recall@1: 0.1758
+     i2t_recall@1: 0.1270
+     t2i_recall@1: 0.2247
+     recall@5: 0.3720
+     i2t_recall@5: 0.2777
+     t2i_recall@5: 0.4663
+     recall@10: 0.4755
+     i2t_recall@10: 0.3657
+     t2i_recall@10: 0.5853
+     mrr: 0.2757
+   Val R@1 I->T: 0.1270  T->I: 0.2247  MRR: 0.2757
+Checkpoint saved (epoch 86) to: saved_models/mimic_shards_hybrid_full_ori_vo10805_to128_lr1e-4_b128_ep150_dualbr_sy065_main_loss20_ortho15__branch_v1_scale10000_seed_17/export/checkpoint_resume.pth (overwritten in place -- same file each time)
+
+Epoch 88/150
+Processed 3000 validation samples in batches
+
+Processed 3000 validation samples in batches
+Validation on 3000 samples
+
+Epoch 88 Results:
+   Total Loss:      0.116691
+   Synergy Loss:    0.044185
+   Main Loss:       0.300065
+   Orthogonal Loss: 0.186387
+   Difference Loss: 4.825738
+   Loss Ratio:      0.237
+   Validation:
+     recall@1: 0.1005
+     i2t_recall@1: 0.0740
+     t2i_recall@1: 0.1270
+     recall@5: 0.2337
+     i2t_recall@5: 0.1843
+     t2i_recall@5: 0.2830
+     recall@10: 0.3157
+     i2t_recall@10: 0.2520
+     t2i_recall@10: 0.3793
+     mrr: 0.1737
+   Val R@1 I->T: 0.0740  T->I: 0.1270  MRR: 0.1737
+
+Epoch 89/150
+Processed 3000 validation samples in batches
+
+Processed 3000 validation samples in batches
+Validation on 3000 samples
+
+Epoch 89 Results:
+   Total Loss:      0.114161
+   Synergy Loss:    0.043526
+   Main Loss:       0.286041
+   Orthogonal Loss: 0.191068
+   Difference Loss: 4.825742
+   Loss Ratio:      0.228
+   Validation:
+     recall@1: 0.3812
+     i2t_recall@1: 0.3057
+     t2i_recall@1: 0.4567
+     recall@5: 0.6707
+     i2t_recall@5: 0.5637
+     t2i_recall@5: 0.7777
+     recall@10: 0.7822
+     i2t_recall@10: 0.6747
+     t2i_recall@10: 0.8897
+     mrr: 0.5150
+   Val R@1 I->T: 0.3057  T->I: 0.4567  MRR: 0.5150
+New best checkpoint (epoch 88, val R@1 avg=0.3812) saved to: saved_models/mimic_shards_hybrid_full_ori_vo10805_to128_lr1e-4_b128_ep150_dualbr_sy065_main_loss20_ortho15__branch_v1_scale10000_seed_17/export/checkpoint_best.pth
+   Best-so-far epoch: 89 (val R@1 avg=0.3812)
+
+Epoch 90/150
+Processed 3000 validation samples in batches
+
+Processed 3000 validation samples in batches
+Validation on 3000 samples
+
+Epoch 90 Results:
+   Total Loss:      0.109865
+   Synergy Loss:    0.043056
+   Main Loss:       0.276596
+   Orthogonal Loss: 0.177061
+   Difference Loss: 4.825739
+   Loss Ratio:      0.243
+   Validation:
+     recall@1: 0.4302
+     i2t_recall@1: 0.3733
+     t2i_recall@1: 0.4870
+     recall@5: 0.7378
+     i2t_recall@5: 0.6783
+     t2i_recall@5: 0.7973
+     recall@10: 0.8473
+     i2t_recall@10: 0.7987
+     t2i_recall@10: 0.8960
+     mrr: 0.5700
+   Val R@1 I->T: 0.3733  T->I: 0.4870  MRR: 0.5700
+Checkpoint saved (epoch 89) to: saved_models/mimic_shards_hybrid_full_ori_vo10805_to128_lr1e-4_b128_ep150_dualbr_sy065_main_loss20_ortho15__branch_v1_scale10000_seed_17/export/checkpoint_resume.pth (overwritten in place -- same file each time)
+New best checkpoint (epoch 89, val R@1 avg=0.4302) saved to: saved_models/mimic_shards_hybrid_full_ori_vo10805_to128_lr1e-4_b128_ep150_dualbr_sy065_main_loss20_ortho15__branch_v1_scale10000_seed_17/export/checkpoint_best.pth
+   Best-so-far epoch: 90 (val R@1 avg=0.4302)
+
+Branch Specialization Check:
+  Synergy Branch Similarity: 0.9646
+  Difference Branch Similarity: 0.1168
+  Specialization Gap: 0.8477
+  Branches Specialized: YES
+
+Epoch 91/150
+Processed 3000 validation samples in batches
+
+Processed 3000 validation samples in batches
+Validation on 3000 samples
+
+Epoch 91 Results:
+   Total Loss:      0.108683
+   Synergy Loss:    0.045408
+   Main Loss:       0.272947
+   Orthogonal Loss: 0.163860
+   Difference Loss: 4.825737
+   Loss Ratio:      0.277
+   Validation:
+     recall@1: 0.3060
+     i2t_recall@1: 0.2183
+     t2i_recall@1: 0.3937
+     recall@5: 0.5712
+     i2t_recall@5: 0.4447
+     t2i_recall@5: 0.6977
+     recall@10: 0.6875
+     i2t_recall@10: 0.5557
+     t2i_recall@10: 0.8193
+     mrr: 0.4308
+   Val R@1 I->T: 0.2183  T->I: 0.3937  MRR: 0.4308
+
+Epoch 92/150
+Processed 3000 validation samples in batches
+
+Processed 3000 validation samples in batches
+Validation on 3000 samples
+
+Epoch 92 Results:
+   Total Loss:      0.106107
+   Synergy Loss:    0.044247
+   Main Loss:       0.259505
+   Orthogonal Loss: 0.169636
+   Difference Loss: 4.825738
+   Loss Ratio:      0.261
+   Validation:
+     recall@1: 0.2373
+     i2t_recall@1: 0.1680
+     t2i_recall@1: 0.3067
+     recall@5: 0.4892
+     i2t_recall@5: 0.3547
+     t2i_recall@5: 0.6237
+     recall@10: 0.6113
+     i2t_recall@10: 0.4540
+     t2i_recall@10: 0.7687
+     mrr: 0.3585
+   Val R@1 I->T: 0.1680  T->I: 0.3067  MRR: 0.3585
+
+Epoch 93/150
+Processed 3000 validation samples in batches
+
+Processed 3000 validation samples in batches
+Validation on 3000 samples
+
+Epoch 93 Results:
+   Total Loss:      0.105306
+   Synergy Loss:    0.044275
+   Main Loss:       0.248309
+   Orthogonal Loss: 0.179100
+   Difference Loss: 4.825737
+   Loss Ratio:      0.247
+   Validation:
+     recall@1: 0.3563
+     i2t_recall@1: 0.3227
+     t2i_recall@1: 0.3900
+     recall@5: 0.6353
+     i2t_recall@5: 0.5730
+     t2i_recall@5: 0.6977
+     recall@10: 0.7482
+     i2t_recall@10: 0.6720
+     t2i_recall@10: 0.8243
+     mrr: 0.4869
+   Val R@1 I->T: 0.3227  T->I: 0.3900  MRR: 0.4869
+Checkpoint saved (epoch 92) to: saved_models/mimic_shards_hybrid_full_ori_vo10805_to128_lr1e-4_b128_ep150_dualbr_sy065_main_loss20_ortho15__branch_v1_scale10000_seed_17/export/checkpoint_resume.pth (overwritten in place -- same file each time)
+
+Epoch 94/150
+Processed 3000 validation samples in batches
+
+Processed 3000 validation samples in batches
+Validation on 3000 samples
+
+Epoch 94 Results:
+   Total Loss:      0.099704
+   Synergy Loss:    0.043500
+   Main Loss:       0.235593
+   Orthogonal Loss: 0.162072
+   Difference Loss: 4.825735
+   Loss Ratio:      0.268
+   Validation:
+     recall@1: 0.2400
+     i2t_recall@1: 0.1950
+     t2i_recall@1: 0.2850
+     recall@5: 0.5070
+     i2t_recall@5: 0.4370
+     t2i_recall@5: 0.5770
+     recall@10: 0.6332
+     i2t_recall@10: 0.5613
+     t2i_recall@10: 0.7050
+     mrr: 0.3693
+   Val R@1 I->T: 0.1950  T->I: 0.2850  MRR: 0.3693
+
+Epoch 95/150
+Processed 3000 validation samples in batches
+
+Processed 3000 validation samples in batches
+Validation on 3000 samples
+
+Epoch 95 Results:
+   Total Loss:      0.098606
+   Synergy Loss:    0.044279
+   Main Loss:       0.229350
+   Orthogonal Loss: 0.159698
+   Difference Loss: 4.825734
+   Loss Ratio:      0.277
+   Validation:
+     recall@1: 0.1512
+     i2t_recall@1: 0.0893
+     t2i_recall@1: 0.2130
+     recall@5: 0.3472
+     i2t_recall@5: 0.2457
+     t2i_recall@5: 0.4487
+     recall@10: 0.4697
+     i2t_recall@10: 0.3500
+     t2i_recall@10: 0.5893
+     mrr: 0.2541
+   Val R@1 I->T: 0.0893  T->I: 0.2130  MRR: 0.2541
+
+Branch Specialization Check:
+  Synergy Branch Similarity: 0.9415
+  Difference Branch Similarity: 0.1326
+  Specialization Gap: 0.8089
+  Branches Specialized: YES
+
+Epoch 96/150
+Processed 3000 validation samples in batches
+
+Processed 3000 validation samples in batches
+Validation on 3000 samples
+
+Epoch 96 Results:
+   Total Loss:      0.094708
+   Synergy Loss:    0.042947
+   Main Loss:       0.214580
+   Orthogonal Loss: 0.159178
+   Difference Loss: 4.825736
+   Loss Ratio:      0.270
+   Validation:
+     recall@1: 0.1505
+     i2t_recall@1: 0.1200
+     t2i_recall@1: 0.1810
+     recall@5: 0.3153
+     i2t_recall@5: 0.2437
+     t2i_recall@5: 0.3870
+     recall@10: 0.4103
+     i2t_recall@10: 0.3137
+     t2i_recall@10: 0.5070
+     mrr: 0.2379
+   Val R@1 I->T: 0.1200  T->I: 0.1810  MRR: 0.2379
+Checkpoint saved (epoch 95) to: saved_models/mimic_shards_hybrid_full_ori_vo10805_to128_lr1e-4_b128_ep150_dualbr_sy065_main_loss20_ortho15__branch_v1_scale10000_seed_17/export/checkpoint_resume.pth (overwritten in place -- same file each time)
+
+Epoch 97/150
+Processed 3000 validation samples in batches
+
+Processed 3000 validation samples in batches
+Validation on 3000 samples
+
+Epoch 97 Results:
+   Total Loss:      0.092437
+   Synergy Loss:    0.042632
+   Main Loss:       0.205526
+   Orthogonal Loss: 0.157474
+   Difference Loss: 4.825735
+   Loss Ratio:      0.271
+   Validation:
+     recall@1: 0.2382
+     i2t_recall@1: 0.1847
+     t2i_recall@1: 0.2917
+     recall@5: 0.4700
+     i2t_recall@5: 0.3670
+     t2i_recall@5: 0.5730
+     recall@10: 0.5762
+     i2t_recall@10: 0.4567
+     t2i_recall@10: 0.6957
+     mrr: 0.3516
+   Val R@1 I->T: 0.1847  T->I: 0.2917  MRR: 0.3516
+
+Epoch 98/150
+Processed 3000 validation samples in batches
+
+Processed 3000 validation samples in batches
+Validation on 3000 samples
+
+Epoch 98 Results:
+   Total Loss:      0.092158
+   Synergy Loss:    0.043079
+   Main Loss:       0.195082
+   Orthogonal Loss: 0.167599
+   Difference Loss: 4.825731
+   Loss Ratio:      0.257
+   Validation:
+     recall@1: 0.2365
+     i2t_recall@1: 0.1740
+     t2i_recall@1: 0.2990
+     recall@5: 0.4727
+     i2t_recall@5: 0.3767
+     t2i_recall@5: 0.5687
+     recall@10: 0.5917
+     i2t_recall@10: 0.4903
+     t2i_recall@10: 0.6930
+     mrr: 0.3520
+   Val R@1 I->T: 0.1740  T->I: 0.2990  MRR: 0.3520
+
+Epoch 99/150
+Processed 3000 validation samples in batches
+
+Processed 3000 validation samples in batches
+Validation on 3000 samples
+
+Epoch 99 Results:
+   Total Loss:      0.085283
+   Synergy Loss:    0.043275
+   Main Loss:       0.185720
+   Orthogonal Loss: 0.133403
+   Difference Loss: 4.825730
+   Loss Ratio:      0.324
+   Validation:
+     recall@1: 0.2208
+     i2t_recall@1: 0.1923
+     t2i_recall@1: 0.2493
+     recall@5: 0.4453
+     i2t_recall@5: 0.3890
+     t2i_recall@5: 0.5017
+     recall@10: 0.5720
+     i2t_recall@10: 0.5023
+     t2i_recall@10: 0.6417
+     mrr: 0.3342
+   Val R@1 I->T: 0.1923  T->I: 0.2493  MRR: 0.3342
+Checkpoint saved (epoch 98) to: saved_models/mimic_shards_hybrid_full_ori_vo10805_to128_lr1e-4_b128_ep150_dualbr_sy065_main_loss20_ortho15__branch_v1_scale10000_seed_17/export/checkpoint_resume.pth (overwritten in place -- same file each time)
+
+Epoch 100/150
+Processed 3000 validation samples in batches
+
+Processed 3000 validation samples in batches
+Validation on 3000 samples
+
+Epoch 100 Results:
+   Total Loss:      0.084807
+   Synergy Loss:    0.043011
+   Main Loss:       0.177251
+   Orthogonal Loss: 0.142660
+   Difference Loss: 4.825734
+   Loss Ratio:      0.301
+   Validation:
+     recall@1: 0.2625
+     i2t_recall@1: 0.1900
+     t2i_recall@1: 0.3350
+     recall@5: 0.5003
+     i2t_recall@5: 0.3960
+     t2i_recall@5: 0.6047
+     recall@10: 0.6127
+     i2t_recall@10: 0.4983
+     t2i_recall@10: 0.7270
+     mrr: 0.3781
+   Val R@1 I->T: 0.1900  T->I: 0.3350  MRR: 0.3781
+
+Branch Specialization Check:
+  Synergy Branch Similarity: 0.9576
+  Difference Branch Similarity: 0.1430
+  Specialization Gap: 0.8146
+  Branches Specialized: YES
+
+Epoch 101/150
+Processed 3000 validation samples in batches
+
+Processed 3000 validation samples in batches
+Validation on 3000 samples
+
+Epoch 101 Results:
+   Total Loss:      0.080952
+   Synergy Loss:    0.043011
+   Main Loss:       0.166840
+   Orthogonal Loss: 0.130842
+   Difference Loss: 4.825730
+   Loss Ratio:      0.329
+   Validation:
+     recall@1: 0.2637
+     i2t_recall@1: 0.2107
+     t2i_recall@1: 0.3167
+     recall@5: 0.5072
+     i2t_recall@5: 0.4310
+     t2i_recall@5: 0.5833
+     recall@10: 0.6283
+     i2t_recall@10: 0.5520
+     t2i_recall@10: 0.7047
+     mrr: 0.3833
+   Val R@1 I->T: 0.2107  T->I: 0.3167  MRR: 0.3833
+
+Epoch 102/150
+Processed 3000 validation samples in batches
+
+Processed 3000 validation samples in batches
+Validation on 3000 samples
+
+Epoch 102 Results:
+   Total Loss:      0.077798
+   Synergy Loss:    0.041292
+   Main Loss:       0.155532
+   Orthogonal Loss: 0.132345
+   Difference Loss: 4.825730
+   Loss Ratio:      0.312
+   Validation:
+     recall@1: 0.2262
+     i2t_recall@1: 0.1693
+     t2i_recall@1: 0.2830
+     recall@5: 0.4473
+     i2t_recall@5: 0.3527
+     t2i_recall@5: 0.5420
+     recall@10: 0.5692
+     i2t_recall@10: 0.4670
+     t2i_recall@10: 0.6713
+     mrr: 0.3375
+   Val R@1 I->T: 0.1693  T->I: 0.2830  MRR: 0.3375
+Checkpoint saved (epoch 101) to: saved_models/mimic_shards_hybrid_full_ori_vo10805_to128_lr1e-4_b128_ep150_dualbr_sy065_main_loss20_ortho15__branch_v1_scale10000_seed_17/export/checkpoint_resume.pth (overwritten in place -- same file each time)
+
+Epoch 103/150
+Processed 3000 validation samples in batches
+
+Processed 3000 validation samples in batches
+Validation on 3000 samples
+
+Epoch 103 Results:
+   Total Loss:      0.079706
+   Synergy Loss:    0.043923
+   Main Loss:       0.153009
+   Orthogonal Loss: 0.137027
+   Difference Loss: 4.825727
+   Loss Ratio:      0.321
+   Validation:
+     recall@1: 0.4022
+     i2t_recall@1: 0.3587
+     t2i_recall@1: 0.4457
+     recall@5: 0.6912
+     i2t_recall@5: 0.6213
+     t2i_recall@5: 0.7610
+     recall@10: 0.7955
+     i2t_recall@10: 0.7157
+     t2i_recall@10: 0.8753
+     mrr: 0.5345
+   Val R@1 I->T: 0.3587  T->I: 0.4457  MRR: 0.5345
+
+Epoch 104/150
+Processed 3000 validation samples in batches
+
+Processed 3000 validation samples in batches
+Validation on 3000 samples
+
+Epoch 104 Results:
+   Total Loss:      0.075735
+   Synergy Loss:    0.042210
+   Main Loss:       0.142841
+   Orthogonal Loss: 0.131538
+   Difference Loss: 4.825727
+   Loss Ratio:      0.321
+   Validation:
+     recall@1: 0.4027
+     i2t_recall@1: 0.3257
+     t2i_recall@1: 0.4797
+     recall@5: 0.6875
+     i2t_recall@5: 0.5960
+     t2i_recall@5: 0.7790
+     recall@10: 0.7957
+     i2t_recall@10: 0.7053
+     t2i_recall@10: 0.8860
+     mrr: 0.5329
+   Val R@1 I->T: 0.3257  T->I: 0.4797  MRR: 0.5329
+
+Epoch 105/150
+Processed 3000 validation samples in batches
+
+Processed 3000 validation samples in batches
+Validation on 3000 samples
+
+Epoch 105 Results:
+   Total Loss:      0.071871
+   Synergy Loss:    0.042630
+   Main Loss:       0.136454
+   Orthogonal Loss: 0.112476
+   Difference Loss: 4.825726
+   Loss Ratio:      0.379
+   Validation:
+     recall@1: 0.2975
+     i2t_recall@1: 0.2240
+     t2i_recall@1: 0.3710
+     recall@5: 0.5537
+     i2t_recall@5: 0.4457
+     t2i_recall@5: 0.6617
+     recall@10: 0.6590
+     i2t_recall@10: 0.5547
+     t2i_recall@10: 0.7633
+     mrr: 0.4188
+   Val R@1 I->T: 0.2240  T->I: 0.3710  MRR: 0.4188
+Checkpoint saved (epoch 104) to: saved_models/mimic_shards_hybrid_full_ori_vo10805_to128_lr1e-4_b128_ep150_dualbr_sy065_main_loss20_ortho15__branch_v1_scale10000_seed_17/export/checkpoint_resume.pth (overwritten in place -- same file each time)
+
+Branch Specialization Check:
+  Synergy Branch Similarity: 0.9606
+  Difference Branch Similarity: 0.1469
+  Specialization Gap: 0.8136
+  Branches Specialized: YES
+
+Epoch 106/150
+Processed 3000 validation samples in batches
+
+Processed 3000 validation samples in batches
+Validation on 3000 samples
+
+Epoch 106 Results:
+   Total Loss:      0.070784
+   Synergy Loss:    0.044155
+   Main Loss:       0.134038
+   Orthogonal Loss: 0.101840
+   Difference Loss: 4.825725
+   Loss Ratio:      0.434
+   Validation:
+     recall@1: 0.2978
+     i2t_recall@1: 0.2763
+     t2i_recall@1: 0.3193
+     recall@5: 0.5613
+     i2t_recall@5: 0.5253
+     t2i_recall@5: 0.5973
+     recall@10: 0.6725
+     i2t_recall@10: 0.6360
+     t2i_recall@10: 0.7090
+     mrr: 0.4230
+   Val R@1 I->T: 0.2763  T->I: 0.3193  MRR: 0.4230
+
+Epoch 107/150
+Processed 3000 validation samples in batches
+
+Processed 3000 validation samples in batches
+Validation on 3000 samples
+
+Epoch 107 Results:
+   Total Loss:      0.071369
+   Synergy Loss:    0.044457
+   Main Loss:       0.127600
+   Orthogonal Loss: 0.113010
+   Difference Loss: 4.825726
+   Loss Ratio:      0.393
+   Validation:
+     recall@1: 0.2833
+     i2t_recall@1: 0.2223
+     t2i_recall@1: 0.3443
+     recall@5: 0.5358
+     i2t_recall@5: 0.4417
+     t2i_recall@5: 0.6300
+     recall@10: 0.6517
+     i2t_recall@10: 0.5540
+     t2i_recall@10: 0.7493
+     mrr: 0.4036
+   Val R@1 I->T: 0.2223  T->I: 0.3443  MRR: 0.4036
+
+Epoch 108/150
+Processed 3000 validation samples in batches
+
+Processed 3000 validation samples in batches
+Validation on 3000 samples
+
+Epoch 108 Results:
+   Total Loss:      0.066992
+   Synergy Loss:    0.042610
+   Main Loss:       0.117845
+   Orthogonal Loss: 0.104845
+   Difference Loss: 4.825729
+   Loss Ratio:      0.406
+   Validation:
+     recall@1: 0.3947
+     i2t_recall@1: 0.2803
+     t2i_recall@1: 0.5090
+     recall@5: 0.6528
+     i2t_recall@5: 0.5150
+     t2i_recall@5: 0.7907
+     recall@10: 0.7572
+     i2t_recall@10: 0.6340
+     t2i_recall@10: 0.8803
+     mrr: 0.5157
+   Val R@1 I->T: 0.2803  T->I: 0.5090  MRR: 0.5157
+Checkpoint saved (epoch 107) to: saved_models/mimic_shards_hybrid_full_ori_vo10805_to128_lr1e-4_b128_ep150_dualbr_sy065_main_loss20_ortho15__branch_v1_scale10000_seed_17/export/checkpoint_resume.pth (overwritten in place -- same file each time)
+
+Epoch 109/150
+Processed 3000 validation samples in batches
+
+Processed 3000 validation samples in batches
+Validation on 3000 samples
+
+Epoch 109 Results:
+   Total Loss:      0.065911
+   Synergy Loss:    0.043676
+   Main Loss:       0.115480
+   Orthogonal Loss: 0.096171
+   Difference Loss: 4.825730
+   Loss Ratio:      0.454
+   Validation:
+     recall@1: 0.3722
+     i2t_recall@1: 0.3250
+     t2i_recall@1: 0.4193
+     recall@5: 0.6702
+     i2t_recall@5: 0.6160
+     t2i_recall@5: 0.7243
+     recall@10: 0.7845
+     i2t_recall@10: 0.7313
+     t2i_recall@10: 0.8377
+     mrr: 0.5080
+   Val R@1 I->T: 0.3250  T->I: 0.4193  MRR: 0.5080
+
+Epoch 110/150
+Processed 3000 validation samples in batches
+
+Processed 3000 validation samples in batches
+Validation on 3000 samples
+
+Epoch 110 Results:
+   Total Loss:      0.063428
+   Synergy Loss:    0.042143
+   Main Loss:       0.107170
+   Orthogonal Loss: 0.097336
+   Difference Loss: 4.825728
+   Loss Ratio:      0.433
+   Validation:
+     recall@1: 0.2680
+     i2t_recall@1: 0.2560
+     t2i_recall@1: 0.2800
+     recall@5: 0.5278
+     i2t_recall@5: 0.4763
+     t2i_recall@5: 0.5793
+     recall@10: 0.6577
+     i2t_recall@10: 0.5947
+     t2i_recall@10: 0.7207
+     mrr: 0.3949
+   Val R@1 I->T: 0.2560  T->I: 0.2800  MRR: 0.3949
+
+Branch Specialization Check:
+  Synergy Branch Similarity: 0.9681
+  Difference Branch Similarity: 0.1462
+  Specialization Gap: 0.8219
+  Branches Specialized: YES
+
+Epoch 111/150
+Processed 3000 validation samples in batches
+
+Processed 3000 validation samples in batches
+Validation on 3000 samples
+
+Epoch 111 Results:
+   Total Loss:      0.062357
+   Synergy Loss:    0.042348
+   Main Loss:       0.103882
+   Orthogonal Loss: 0.093700
+   Difference Loss: 4.825728
+   Loss Ratio:      0.452
+   Validation:
+     recall@1: 0.1735
+     i2t_recall@1: 0.1527
+     t2i_recall@1: 0.1943
+     recall@5: 0.3612
+     i2t_recall@5: 0.3017
+     t2i_recall@5: 0.4207
+     recall@10: 0.4650
+     i2t_recall@10: 0.3897
+     t2i_recall@10: 0.5403
+     mrr: 0.2708
+   Val R@1 I->T: 0.1527  T->I: 0.1943  MRR: 0.2708
+Checkpoint saved (epoch 110) to: saved_models/mimic_shards_hybrid_full_ori_vo10805_to128_lr1e-4_b128_ep150_dualbr_sy065_main_loss20_ortho15__branch_v1_scale10000_seed_17/export/checkpoint_resume.pth (overwritten in place -- same file each time)
+
+Epoch 112/150
+Processed 3000 validation samples in batches
+
+Processed 3000 validation samples in batches
+Validation on 3000 samples
+
+Epoch 112 Results:
+   Total Loss:      0.061999
+   Synergy Loss:    0.042803
+   Main Loss:       0.100558
+   Orthogonal Loss: 0.093766
+   Difference Loss: 4.825726
+   Loss Ratio:      0.456
+   Validation:
+     recall@1: 0.2880
+     i2t_recall@1: 0.2363
+     t2i_recall@1: 0.3397
+     recall@5: 0.5287
+     i2t_recall@5: 0.4400
+     t2i_recall@5: 0.6173
+     recall@10: 0.6435
+     i2t_recall@10: 0.5527
+     t2i_recall@10: 0.7343
+     mrr: 0.4048
+   Val R@1 I->T: 0.2363  T->I: 0.3397  MRR: 0.4048
+
+Epoch 113/150
+Processed 3000 validation samples in batches
+
+Processed 3000 validation samples in batches
+Validation on 3000 samples
+
+Epoch 113 Results:
+   Total Loss:      0.059747
+   Synergy Loss:    0.042228
+   Main Loss:       0.095359
+   Orthogonal Loss: 0.088180
+   Difference Loss: 4.825729
+   Loss Ratio:      0.479
+   Validation:
+     recall@1: 0.2312
+     i2t_recall@1: 0.1843
+     t2i_recall@1: 0.2780
+     recall@5: 0.4492
+     i2t_recall@5: 0.3597
+     t2i_recall@5: 0.5387
+     recall@10: 0.5668
+     i2t_recall@10: 0.4650
+     t2i_recall@10: 0.6687
+     mrr: 0.3403
+   Val R@1 I->T: 0.1843  T->I: 0.2780  MRR: 0.3403
+
+Epoch 114/150
+Processed 3000 validation samples in batches
+
+Processed 3000 validation samples in batches
+Validation on 3000 samples
+
+Epoch 114 Results:
+   Total Loss:      0.059320
+   Synergy Loss:    0.042239
+   Main Loss:       0.092751
+   Orthogonal Loss: 0.088763
+   Difference Loss: 4.825729
+   Loss Ratio:      0.476
+   Validation:
+     recall@1: 0.1812
+     i2t_recall@1: 0.1273
+     t2i_recall@1: 0.2350
+     recall@5: 0.3960
+     i2t_recall@5: 0.2947
+     t2i_recall@5: 0.4973
+     recall@10: 0.5150
+     i2t_recall@10: 0.3903
+     t2i_recall@10: 0.6397
+     mrr: 0.2895
+   Val R@1 I->T: 0.1273  T->I: 0.2350  MRR: 0.2895
+Checkpoint saved (epoch 113) to: saved_models/mimic_shards_hybrid_full_ori_vo10805_to128_lr1e-4_b128_ep150_dualbr_sy065_main_loss20_ortho15__branch_v1_scale10000_seed_17/export/checkpoint_resume.pth (overwritten in place -- same file each time)
+
+Epoch 115/150
+Processed 3000 validation samples in batches
+
+Processed 3000 validation samples in batches
+Validation on 3000 samples
+
+Epoch 115 Results:
+   Total Loss:      0.060099
+   Synergy Loss:    0.043153
+   Main Loss:       0.091206
+   Orthogonal Loss: 0.092054
+   Difference Loss: 4.825735
+   Loss Ratio:      0.469
+   Validation:
+     recall@1: 0.4355
+     i2t_recall@1: 0.3440
+     t2i_recall@1: 0.5270
+     recall@5: 0.7127
+     i2t_recall@5: 0.5833
+     t2i_recall@5: 0.8420
+     recall@10: 0.8152
+     i2t_recall@10: 0.6967
+     t2i_recall@10: 0.9337
+     mrr: 0.5616
+   Val R@1 I->T: 0.3440  T->I: 0.5270  MRR: 0.5616
+New best checkpoint (epoch 114, val R@1 avg=0.4355) saved to: saved_models/mimic_shards_hybrid_full_ori_vo10805_to128_lr1e-4_b128_ep150_dualbr_sy065_main_loss20_ortho15__branch_v1_scale10000_seed_17/export/checkpoint_best.pth
+   Best-so-far epoch: 115 (val R@1 avg=0.4355)
+
+Branch Specialization Check:
+  Synergy Branch Similarity: 0.9615
+  Difference Branch Similarity: 0.1414
+  Specialization Gap: 0.8201
+  Branches Specialized: YES
+
+Epoch 116/150
+Processed 3000 validation samples in batches
+
+Processed 3000 validation samples in batches
+Validation on 3000 samples
+
+Epoch 116 Results:
+   Total Loss:      0.057585
+   Synergy Loss:    0.042825
+   Main Loss:       0.087722
+   Orthogonal Loss: 0.081362
+   Difference Loss: 4.825730
+   Loss Ratio:      0.526
+   Validation:
+     recall@1: 0.3268
+     i2t_recall@1: 0.3210
+     t2i_recall@1: 0.3327
+     recall@5: 0.6615
+     i2t_recall@5: 0.6617
+     t2i_recall@5: 0.6613
+     recall@10: 0.8087
+     i2t_recall@10: 0.8277
+     t2i_recall@10: 0.7897
+     mrr: 0.4790
+   Val R@1 I->T: 0.3210  T->I: 0.3327  MRR: 0.4790
+
+Epoch 117/150
+Processed 3000 validation samples in batches
+
+Processed 3000 validation samples in batches
+Validation on 3000 samples
+
+Epoch 117 Results:
+   Total Loss:      0.058424
+   Synergy Loss:    0.043491
+   Main Loss:       0.086216
+   Orthogonal Loss: 0.086077
+   Difference Loss: 4.825733
+   Loss Ratio:      0.505
+   Validation:
+     recall@1: 0.2575
+     i2t_recall@1: 0.1953
+     t2i_recall@1: 0.3197
+     recall@5: 0.4950
+     i2t_recall@5: 0.3943
+     t2i_recall@5: 0.5957
+     recall@10: 0.6202
+     i2t_recall@10: 0.5123
+     t2i_recall@10: 0.7280
+     mrr: 0.3755
+   Val R@1 I->T: 0.1953  T->I: 0.3197  MRR: 0.3755
+Checkpoint saved (epoch 116) to: saved_models/mimic_shards_hybrid_full_ori_vo10805_to128_lr1e-4_b128_ep150_dualbr_sy065_main_loss20_ortho15__branch_v1_scale10000_seed_17/export/checkpoint_resume.pth (overwritten in place -- same file each time)
+
+Epoch 118/150
+Processed 3000 validation samples in batches
+
+Processed 3000 validation samples in batches
+Validation on 3000 samples
+
+Epoch 118 Results:
+   Total Loss:      0.054951
+   Synergy Loss:    0.041507
+   Main Loss:       0.080991
+   Orthogonal Loss: 0.078485
+   Difference Loss: 4.825731
+   Loss Ratio:      0.529
+   Validation:
+     recall@1: 0.3255
+     i2t_recall@1: 0.2640
+     t2i_recall@1: 0.3870
+     recall@5: 0.6133
+     i2t_recall@5: 0.4993
+     t2i_recall@5: 0.7273
+     recall@10: 0.7293
+     i2t_recall@10: 0.6150
+     t2i_recall@10: 0.8437
+     mrr: 0.4596
+   Val R@1 I->T: 0.2640  T->I: 0.3870  MRR: 0.4596
+
+Epoch 119/150
+Processed 3000 validation samples in batches
+
+Processed 3000 validation samples in batches
+Validation on 3000 samples
+
+Epoch 119 Results:
+   Total Loss:      0.053806
+   Synergy Loss:    0.041378
+   Main Loss:       0.078497
+   Orthogonal Loss: 0.074738
+   Difference Loss: 4.825735
+   Loss Ratio:      0.554
+   Validation:
+     recall@1: 0.2923
+     i2t_recall@1: 0.2387
+     t2i_recall@1: 0.3460
+     recall@5: 0.5928
+     i2t_recall@5: 0.4927
+     t2i_recall@5: 0.6930
+     recall@10: 0.7273
+     i2t_recall@10: 0.6237
+     t2i_recall@10: 0.8310
+     mrr: 0.4332
+   Val R@1 I->T: 0.2387  T->I: 0.3460  MRR: 0.4332
+
+Epoch 120/150
+Processed 3000 validation samples in batches
+
+Processed 3000 validation samples in batches
+Validation on 3000 samples
+
+Epoch 120 Results:
+   Total Loss:      0.055734
+   Synergy Loss:    0.043205
+   Main Loss:       0.079719
+   Orthogonal Loss: 0.078049
+   Difference Loss: 4.825729
+   Loss Ratio:      0.554
+   Validation:
+     recall@1: 0.3855
+     i2t_recall@1: 0.3287
+     t2i_recall@1: 0.4423
+     recall@5: 0.6765
+     i2t_recall@5: 0.5990
+     t2i_recall@5: 0.7540
+     recall@10: 0.7895
+     i2t_recall@10: 0.7140
+     t2i_recall@10: 0.8650
+     mrr: 0.5179
+   Val R@1 I->T: 0.3287  T->I: 0.4423  MRR: 0.5179
+Checkpoint saved (epoch 119) to: saved_models/mimic_shards_hybrid_full_ori_vo10805_to128_lr1e-4_b128_ep150_dualbr_sy065_main_loss20_ortho15__branch_v1_scale10000_seed_17/export/checkpoint_resume.pth (overwritten in place -- same file each time)
+
+Branch Specialization Check:
+  Synergy Branch Similarity: 0.9636
+  Difference Branch Similarity: 0.1358
+  Specialization Gap: 0.8278
+  Branches Specialized: YES
+
+Epoch 121/150
+Processed 3000 validation samples in batches
+
+Processed 3000 validation samples in batches
+Validation on 3000 samples
+
+Epoch 121 Results:
+   Total Loss:      0.052976
+   Synergy Loss:    0.040061
+   Main Loss:       0.073182
+   Orthogonal Loss: 0.082000
+   Difference Loss: 4.825729
+   Loss Ratio:      0.489
+   Validation:
+     recall@1: 0.5630
+     i2t_recall@1: 0.4937
+     t2i_recall@1: 0.6323
+     recall@5: 0.8673
+     i2t_recall@5: 0.8080
+     t2i_recall@5: 0.9267
+     recall@10: 0.9405
+     i2t_recall@10: 0.9047
+     t2i_recall@10: 0.9763
+     mrr: 0.6955
+   Val R@1 I->T: 0.4937  T->I: 0.6323  MRR: 0.6955
+New best checkpoint (epoch 120, val R@1 avg=0.5630) saved to: saved_models/mimic_shards_hybrid_full_ori_vo10805_to128_lr1e-4_b128_ep150_dualbr_sy065_main_loss20_ortho15__branch_v1_scale10000_seed_17/export/checkpoint_best.pth
+   Best-so-far epoch: 121 (val R@1 avg=0.5630)
+
+Epoch 122/150
+Processed 3000 validation samples in batches
+
+Processed 3000 validation samples in batches
+Validation on 3000 samples
+
+Epoch 122 Results:
+   Total Loss:      0.052835
+   Synergy Loss:    0.040935
+   Main Loss:       0.072893
+   Orthogonal Loss: 0.077654
+   Difference Loss: 4.825729
+   Loss Ratio:      0.527
+   Validation:
+     recall@1: 0.2473
+     i2t_recall@1: 0.2180
+     t2i_recall@1: 0.2767
+     recall@5: 0.5200
+     i2t_recall@5: 0.4640
+     t2i_recall@5: 0.5760
+     recall@10: 0.6497
+     i2t_recall@10: 0.5843
+     t2i_recall@10: 0.7150
+     mrr: 0.3785
+   Val R@1 I->T: 0.2180  T->I: 0.2767  MRR: 0.3785
+
+Epoch 123/150
+Processed 3000 validation samples in batches
+
+Processed 3000 validation samples in batches
+Validation on 3000 samples
+
+Epoch 123 Results:
+   Total Loss:      0.053008
+   Synergy Loss:    0.041785
+   Main Loss:       0.071864
+   Orthogonal Loss: 0.076502
+   Difference Loss: 4.825730
+   Loss Ratio:      0.546
+   Validation:
+     recall@1: 0.4252
+     i2t_recall@1: 0.3603
+     t2i_recall@1: 0.4900
+     recall@5: 0.7370
+     i2t_recall@5: 0.6517
+     t2i_recall@5: 0.8223
+     recall@10: 0.8458
+     i2t_recall@10: 0.7733
+     t2i_recall@10: 0.9183
+     mrr: 0.5642
+   Val R@1 I->T: 0.3603  T->I: 0.4900  MRR: 0.5642
+Checkpoint saved (epoch 122) to: saved_models/mimic_shards_hybrid_full_ori_vo10805_to128_lr1e-4_b128_ep150_dualbr_sy065_main_loss20_ortho15__branch_v1_scale10000_seed_17/export/checkpoint_resume.pth (overwritten in place -- same file each time)
+
+Epoch 124/150
+Processed 3000 validation samples in batches
+
+Processed 3000 validation samples in batches
+Validation on 3000 samples
+
+Epoch 124 Results:
+   Total Loss:      0.052236
+   Synergy Loss:    0.042049
+   Main Loss:       0.071155
+   Orthogonal Loss: 0.071157
+   Difference Loss: 4.825728
+   Loss Ratio:      0.591
+   Validation:
+     recall@1: 0.2767
+     i2t_recall@1: 0.2407
+     t2i_recall@1: 0.3127
+     recall@5: 0.5292
+     i2t_recall@5: 0.4800
+     t2i_recall@5: 0.5783
+     recall@10: 0.6448
+     i2t_recall@10: 0.5913
+     t2i_recall@10: 0.6983
+     mrr: 0.3985
+   Val R@1 I->T: 0.2407  T->I: 0.3127  MRR: 0.3985
+
+Epoch 125/150
+Processed 3000 validation samples in batches
+
+Processed 3000 validation samples in batches
+Validation on 3000 samples
+
+Epoch 125 Results:
+   Total Loss:      0.050437
+   Synergy Loss:    0.041273
+   Main Loss:       0.068465
+   Orthogonal Loss: 0.066108
+   Difference Loss: 4.825729
+   Loss Ratio:      0.624
+   Validation:
+     recall@1: 0.4293
+     i2t_recall@1: 0.3540
+     t2i_recall@1: 0.5047
+     recall@5: 0.7390
+     i2t_recall@5: 0.6360
+     t2i_recall@5: 0.8420
+     recall@10: 0.8525
+     i2t_recall@10: 0.7640
+     t2i_recall@10: 0.9410
+     mrr: 0.5695
+   Val R@1 I->T: 0.3540  T->I: 0.5047  MRR: 0.5695
+
+Branch Specialization Check:
+  Synergy Branch Similarity: 0.9670
+  Difference Branch Similarity: 0.1291
+  Specialization Gap: 0.8379
+  Branches Specialized: YES
+
+Epoch 126/150
+Processed 3000 validation samples in batches
+
+Processed 3000 validation samples in batches
+Validation on 3000 samples
+
+Epoch 126 Results:
+   Total Loss:      0.049515
+   Synergy Loss:    0.041097
+   Main Loss:       0.067021
+   Orthogonal Loss: 0.062651
+   Difference Loss: 4.825737
+   Loss Ratio:      0.656
+   Validation:
+     recall@1: 0.2715
+     i2t_recall@1: 0.2300
+     t2i_recall@1: 0.3130
+     recall@5: 0.5252
+     i2t_recall@5: 0.4450
+     t2i_recall@5: 0.6053
+     recall@10: 0.6388
+     i2t_recall@10: 0.5370
+     t2i_recall@10: 0.7407
+     mrr: 0.3933
+   Val R@1 I->T: 0.2300  T->I: 0.3130  MRR: 0.3933
+Checkpoint saved (epoch 125) to: saved_models/mimic_shards_hybrid_full_ori_vo10805_to128_lr1e-4_b128_ep150_dualbr_sy065_main_loss20_ortho15__branch_v1_scale10000_seed_17/export/checkpoint_resume.pth (overwritten in place -- same file each time)
+
+Epoch 127/150
+Processed 3000 validation samples in batches
+
+Processed 3000 validation samples in batches
+Validation on 3000 samples
+
+Epoch 127 Results:
+   Total Loss:      0.049965
+   Synergy Loss:    0.040658
+   Main Loss:       0.065410
+   Orthogonal Loss: 0.069700
+   Difference Loss: 4.825740
+   Loss Ratio:      0.583
+   Validation:
+     recall@1: 0.3235
+     i2t_recall@1: 0.3163
+     t2i_recall@1: 0.3307
+     recall@5: 0.6105
+     i2t_recall@5: 0.5807
+     t2i_recall@5: 0.6403
+     recall@10: 0.7388
+     i2t_recall@10: 0.6990
+     t2i_recall@10: 0.7787
+     mrr: 0.4568
+   Val R@1 I->T: 0.3163  T->I: 0.3307  MRR: 0.4568
+
+Epoch 128/150
+Processed 3000 validation samples in batches
+
+Processed 3000 validation samples in batches
+Validation on 3000 samples
+
+Epoch 128 Results:
+   Total Loss:      0.047270
+   Synergy Loss:    0.038809
+   Main Loss:       0.061952
+   Orthogonal Loss: 0.064360
+   Difference Loss: 4.825737
+   Loss Ratio:      0.603
+   Validation:
+     recall@1: 0.4335
+     i2t_recall@1: 0.3830
+     t2i_recall@1: 0.4840
+     recall@5: 0.7205
+     i2t_recall@5: 0.6553
+     t2i_recall@5: 0.7857
+     recall@10: 0.8327
+     i2t_recall@10: 0.7713
+     t2i_recall@10: 0.8940
+     mrr: 0.5645
+   Val R@1 I->T: 0.3830  T->I: 0.4840  MRR: 0.5645
+
+Epoch 129/150
+Processed 3000 validation samples in batches
+
+Processed 3000 validation samples in batches
+Validation on 3000 samples
+
+Epoch 129 Results:
+   Total Loss:      0.048264
+   Synergy Loss:    0.040429
+   Main Loss:       0.062802
+   Orthogonal Loss: 0.062834
+   Difference Loss: 4.825736
+   Loss Ratio:      0.643
+   Validation:
+     recall@1: 0.4005
+     i2t_recall@1: 0.3510
+     t2i_recall@1: 0.4500
+     recall@5: 0.6893
+     i2t_recall@5: 0.6143
+     t2i_recall@5: 0.7643
+     recall@10: 0.8010
+     i2t_recall@10: 0.7180
+     t2i_recall@10: 0.8840
+     mrr: 0.5321
+   Val R@1 I->T: 0.3510  T->I: 0.4500  MRR: 0.5321
+Checkpoint saved (epoch 128) to: saved_models/mimic_shards_hybrid_full_ori_vo10805_to128_lr1e-4_b128_ep150_dualbr_sy065_main_loss20_ortho15__branch_v1_scale10000_seed_17/export/checkpoint_resume.pth (overwritten in place -- same file each time)
+
+Epoch 130/150
+Processed 3000 validation samples in batches
+
+Processed 3000 validation samples in batches
+Validation on 3000 samples
+
+Epoch 130 Results:
+   Total Loss:      0.048920
+   Synergy Loss:    0.041470
+   Main Loss:       0.063191
+   Orthogonal Loss: 0.062174
+   Difference Loss: 4.825736
+   Loss Ratio:      0.667
+   Validation:
+     recall@1: 0.3240
+     i2t_recall@1: 0.3273
+     t2i_recall@1: 0.3207
+     recall@5: 0.6080
+     i2t_recall@5: 0.6060
+     t2i_recall@5: 0.6100
+     recall@10: 0.7288
+     i2t_recall@10: 0.7310
+     t2i_recall@10: 0.7267
+     mrr: 0.4558
+   Val R@1 I->T: 0.3273  T->I: 0.3207  MRR: 0.4558
+
+Branch Specialization Check:
+  Synergy Branch Similarity: 0.9565
+  Difference Branch Similarity: 0.1225
+  Specialization Gap: 0.8341
+  Branches Specialized: YES
+
+Epoch 131/150
+Processed 3000 validation samples in batches
+
+Processed 3000 validation samples in batches
+Validation on 3000 samples
+
+Epoch 131 Results:
+   Total Loss:      0.048697
+   Synergy Loss:    0.041139
+   Main Loss:       0.061699
+   Orthogonal Loss: 0.064111
+   Difference Loss: 4.825735
+   Loss Ratio:      0.642
+   Validation:
+     recall@1: 0.3845
+     i2t_recall@1: 0.3307
+     t2i_recall@1: 0.4383
+     recall@5: 0.6490
+     i2t_recall@5: 0.5690
+     t2i_recall@5: 0.7290
+     recall@10: 0.7577
+     i2t_recall@10: 0.6730
+     t2i_recall@10: 0.8423
+     mrr: 0.5068
+   Val R@1 I->T: 0.3307  T->I: 0.4383  MRR: 0.5068
+
+Epoch 132/150
+Processed 3000 validation samples in batches
+
+Processed 3000 validation samples in batches
+Validation on 3000 samples
+
+Epoch 132 Results:
+   Total Loss:      0.046672
+   Synergy Loss:    0.039078
+   Main Loss:       0.058643
+   Orthogonal Loss: 0.063614
+   Difference Loss: 4.825739
+   Loss Ratio:      0.614
+   Validation:
+     recall@1: 0.2393
+     i2t_recall@1: 0.2473
+     t2i_recall@1: 0.2313
+     recall@5: 0.4683
+     i2t_recall@5: 0.4607
+     t2i_recall@5: 0.4760
+     recall@10: 0.6010
+     i2t_recall@10: 0.5803
+     t2i_recall@10: 0.6217
+     mrr: 0.3554
+   Val R@1 I->T: 0.2473  T->I: 0.2313  MRR: 0.3554
+Checkpoint saved (epoch 131) to: saved_models/mimic_shards_hybrid_full_ori_vo10805_to128_lr1e-4_b128_ep150_dualbr_sy065_main_loss20_ortho15__branch_v1_scale10000_seed_17/export/checkpoint_resume.pth (overwritten in place -- same file each time)
+
+Epoch 133/150
+Processed 3000 validation samples in batches
+
+Processed 3000 validation samples in batches
+Validation on 3000 samples
+
+Epoch 133 Results:
+   Total Loss:      0.046157
+   Synergy Loss:    0.039986
+   Main Loss:       0.058818
+   Orthogonal Loss: 0.056016
+   Difference Loss: 4.825745
+   Loss Ratio:      0.714
+   Validation:
+     recall@1: 0.5732
+     i2t_recall@1: 0.5170
+     t2i_recall@1: 0.6293
+     recall@5: 0.8575
+     i2t_recall@5: 0.7983
+     t2i_recall@5: 0.9167
+     recall@10: 0.9383
+     i2t_recall@10: 0.8983
+     t2i_recall@10: 0.9783
+     mrr: 0.6980
+   Val R@1 I->T: 0.5170  T->I: 0.6293  MRR: 0.6980
+New best checkpoint (epoch 132, val R@1 avg=0.5732) saved to: saved_models/mimic_shards_hybrid_full_ori_vo10805_to128_lr1e-4_b128_ep150_dualbr_sy065_main_loss20_ortho15__branch_v1_scale10000_seed_17/export/checkpoint_best.pth
+   Best-so-far epoch: 133 (val R@1 avg=0.5732)
+
+Epoch 134/150
+Processed 3000 validation samples in batches
+
+Processed 3000 validation samples in batches
+Validation on 3000 samples
+
+Epoch 134 Results:
+   Total Loss:      0.045876
+   Synergy Loss:    0.040338
+   Main Loss:       0.058383
+   Orthogonal Loss: 0.053199
+   Difference Loss: 4.825750
+   Loss Ratio:      0.758
+   Validation:
+     recall@1: 0.3398
+     i2t_recall@1: 0.3560
+     t2i_recall@1: 0.3237
+     recall@5: 0.6070
+     i2t_recall@5: 0.6133
+     t2i_recall@5: 0.6007
+     recall@10: 0.7312
+     i2t_recall@10: 0.7350
+     t2i_recall@10: 0.7273
+     mrr: 0.4673
+   Val R@1 I->T: 0.3560  T->I: 0.3237  MRR: 0.4673
+
+Epoch 135/150
+Processed 3000 validation samples in batches
+
+Processed 3000 validation samples in batches
+Validation on 3000 samples
+
+Epoch 135 Results:
+   Total Loss:      0.045817
+   Synergy Loss:    0.039945
+   Main Loss:       0.057327
+   Orthogonal Loss: 0.055919
+   Difference Loss: 4.825753
+   Loss Ratio:      0.714
+   Validation:
+     recall@1: 0.2475
+     i2t_recall@1: 0.2230
+     t2i_recall@1: 0.2720
+     recall@5: 0.4713
+     i2t_recall@5: 0.4200
+     t2i_recall@5: 0.5227
+     recall@10: 0.5820
+     i2t_recall@10: 0.5253
+     t2i_recall@10: 0.6387
+     mrr: 0.3580
+   Val R@1 I->T: 0.2230  T->I: 0.2720  MRR: 0.3580
+Checkpoint saved (epoch 134) to: saved_models/mimic_shards_hybrid_full_ori_vo10805_to128_lr1e-4_b128_ep150_dualbr_sy065_main_loss20_ortho15__branch_v1_scale10000_seed_17/export/checkpoint_resume.pth (overwritten in place -- same file each time)
+
+Branch Specialization Check:
+  Synergy Branch Similarity: 0.9584
+  Difference Branch Similarity: 0.1171
+  Specialization Gap: 0.8413
+  Branches Specialized: YES
+
+Epoch 136/150
+Processed 3000 validation samples in batches
+
+Processed 3000 validation samples in batches
+Validation on 3000 samples
+
+Epoch 136 Results:
+   Total Loss:      0.045973
+   Synergy Loss:    0.040388
+   Main Loss:       0.057049
+   Orthogonal Loss: 0.055408
+   Difference Loss: 4.825755
+   Loss Ratio:      0.729
+   Validation:
+     recall@1: 0.4613
+     i2t_recall@1: 0.4367
+     t2i_recall@1: 0.4860
+     recall@5: 0.7988
+     i2t_recall@5: 0.7660
+     t2i_recall@5: 0.8317
+     recall@10: 0.9022
+     i2t_recall@10: 0.8787
+     t2i_recall@10: 0.9257
+     mrr: 0.6088
+   Val R@1 I->T: 0.4367  T->I: 0.4860  MRR: 0.6088
+
+Epoch 137/150
+Processed 3000 validation samples in batches
+
+Processed 3000 validation samples in batches
+Validation on 3000 samples
+
+Epoch 137 Results:
+   Total Loss:      0.045404
+   Synergy Loss:    0.039679
+   Main Loss:       0.055535
+   Orthogonal Loss: 0.056702
+   Difference Loss: 4.825756
+   Loss Ratio:      0.700
+   Validation:
+     recall@1: 0.5570
+     i2t_recall@1: 0.5320
+     t2i_recall@1: 0.5820
+     recall@5: 0.8417
+     i2t_recall@5: 0.8170
+     t2i_recall@5: 0.8663
+     recall@10: 0.9290
+     i2t_recall@10: 0.9107
+     t2i_recall@10: 0.9473
+     mrr: 0.6833
+   Val R@1 I->T: 0.5320  T->I: 0.5820  MRR: 0.6833
+
+Epoch 138/150
+Processed 3000 validation samples in batches
+
+Processed 3000 validation samples in batches
+Validation on 3000 samples
+
+Epoch 138 Results:
+   Total Loss:      0.044747
+   Synergy Loss:    0.039680
+   Main Loss:       0.054950
+   Orthogonal Loss: 0.053102
+   Difference Loss: 4.825766
+   Loss Ratio:      0.747
+   Validation:
+     recall@1: 0.5405
+     i2t_recall@1: 0.5190
+     t2i_recall@1: 0.5620
+     recall@5: 0.8420
+     i2t_recall@5: 0.8200
+     t2i_recall@5: 0.8640
+     recall@10: 0.9263
+     i2t_recall@10: 0.9053
+     t2i_recall@10: 0.9473
+     mrr: 0.6736
+   Val R@1 I->T: 0.5190  T->I: 0.5620  MRR: 0.6736
+Checkpoint saved (epoch 137) to: saved_models/mimic_shards_hybrid_full_ori_vo10805_to128_lr1e-4_b128_ep150_dualbr_sy065_main_loss20_ortho15__branch_v1_scale10000_seed_17/export/checkpoint_resume.pth (overwritten in place -- same file each time)
+
+Epoch 139/150
+Processed 3000 validation samples in batches
+
+Processed 3000 validation samples in batches
+Validation on 3000 samples
+
+Epoch 139 Results:
+   Total Loss:      0.044458
+   Synergy Loss:    0.039361
+   Main Loss:       0.053820
+   Orthogonal Loss: 0.054063
+   Difference Loss: 4.825763
+   Loss Ratio:      0.728
+   Validation:
+     recall@1: 0.3888
+     i2t_recall@1: 0.3300
+     t2i_recall@1: 0.4477
+     recall@5: 0.6487
+     i2t_recall@5: 0.5647
+     t2i_recall@5: 0.7327
+     recall@10: 0.7463
+     i2t_recall@10: 0.6670
+     t2i_recall@10: 0.8257
+     mrr: 0.5099
+   Val R@1 I->T: 0.3300  T->I: 0.4477  MRR: 0.5099
+
+Epoch 140/150
+Processed 3000 validation samples in batches
+
+Processed 3000 validation samples in batches
+Validation on 3000 samples
+
+Epoch 140 Results:
+   Total Loss:      0.044075
+   Synergy Loss:    0.039642
+   Main Loss:       0.053888
+   Orthogonal Loss: 0.050202
+   Difference Loss: 4.825770
+   Loss Ratio:      0.790
+   Validation:
+     recall@1: 0.1867
+     i2t_recall@1: 0.1690
+     t2i_recall@1: 0.2043
+     recall@5: 0.3528
+     i2t_recall@5: 0.3217
+     t2i_recall@5: 0.3840
+     recall@10: 0.4410
+     i2t_recall@10: 0.4010
+     t2i_recall@10: 0.4810
+     mrr: 0.2728
+   Val R@1 I->T: 0.1690  T->I: 0.2043  MRR: 0.2728
+
+Branch Specialization Check:
+  Synergy Branch Similarity: 0.9488
+  Difference Branch Similarity: 0.1120
+  Specialization Gap: 0.8369
+  Branches Specialized: YES
+
+Epoch 141/150
+Processed 3000 validation samples in batches
+
+Processed 3000 validation samples in batches
+Validation on 3000 samples
+
+Epoch 141 Results:
+   Total Loss:      0.043721
+   Synergy Loss:    0.039940
+   Main Loss:       0.053878
+   Orthogonal Loss: 0.046566
+   Difference Loss: 4.825772
+   Loss Ratio:      0.858
+   Validation:
+     recall@1: 0.3620
+     i2t_recall@1: 0.3427
+     t2i_recall@1: 0.3813
+     recall@5: 0.6275
+     i2t_recall@5: 0.6007
+     t2i_recall@5: 0.6543
+     recall@10: 0.7380
+     i2t_recall@10: 0.7180
+     t2i_recall@10: 0.7580
+     mrr: 0.4870
+   Val R@1 I->T: 0.3427  T->I: 0.3813  MRR: 0.4870
+Checkpoint saved (epoch 140) to: saved_models/mimic_shards_hybrid_full_ori_vo10805_to128_lr1e-4_b128_ep150_dualbr_sy065_main_loss20_ortho15__branch_v1_scale10000_seed_17/export/checkpoint_resume.pth (overwritten in place -- same file each time)
+
+Epoch 142/150
+Processed 3000 validation samples in batches
+
+Processed 3000 validation samples in batches
+Validation on 3000 samples
+
+Epoch 142 Results:
+   Total Loss:      0.042750
+   Synergy Loss:    0.037703
+   Main Loss:       0.050544
+   Orthogonal Loss: 0.054232
+   Difference Loss: 4.825769
+   Loss Ratio:      0.695
+   Validation:
+     recall@1: 0.3795
+     i2t_recall@1: 0.3390
+     t2i_recall@1: 0.4200
+     recall@5: 0.6752
+     i2t_recall@5: 0.6287
+     t2i_recall@5: 0.7217
+     recall@10: 0.8000
+     i2t_recall@10: 0.7637
+     t2i_recall@10: 0.8363
+     mrr: 0.5153
+   Val R@1 I->T: 0.3390  T->I: 0.4200  MRR: 0.5153
+
+Epoch 143/150
+Processed 3000 validation samples in batches
+
+Processed 3000 validation samples in batches
+Validation on 3000 samples
+
+Epoch 143 Results:
+   Total Loss:      0.042886
+   Synergy Loss:    0.038569
+   Main Loss:       0.051123
+   Orthogonal Loss: 0.050613
+   Difference Loss: 4.825780
+   Loss Ratio:      0.762
+   Validation:
+     recall@1: 0.6070
+     i2t_recall@1: 0.5677
+     t2i_recall@1: 0.6463
+     recall@5: 0.8778
+     i2t_recall@5: 0.8407
+     t2i_recall@5: 0.9150
+     recall@10: 0.9482
+     i2t_recall@10: 0.9240
+     t2i_recall@10: 0.9723
+     mrr: 0.7244
+   Val R@1 I->T: 0.5677  T->I: 0.6463  MRR: 0.7244
+New best checkpoint (epoch 142, val R@1 avg=0.6070) saved to: saved_models/mimic_shards_hybrid_full_ori_vo10805_to128_lr1e-4_b128_ep150_dualbr_sy065_main_loss20_ortho15__branch_v1_scale10000_seed_17/export/checkpoint_best.pth
+   Best-so-far epoch: 143 (val R@1 avg=0.6070)
+
+Epoch 144/150
+Processed 3000 validation samples in batches
+
+Processed 3000 validation samples in batches
+Validation on 3000 samples
+
+Epoch 144 Results:
+   Total Loss:      0.042433
+   Synergy Loss:    0.038674
+   Main Loss:       0.050924
+   Orthogonal Loss: 0.047401
+   Difference Loss: 4.825786
+   Loss Ratio:      0.816
+   Validation:
+     recall@1: 0.4603
+     i2t_recall@1: 0.4473
+     t2i_recall@1: 0.4733
+     recall@5: 0.7690
+     i2t_recall@5: 0.7567
+     t2i_recall@5: 0.7813
+     recall@10: 0.8738
+     i2t_recall@10: 0.8583
+     t2i_recall@10: 0.8893
+     mrr: 0.5984
+   Val R@1 I->T: 0.4473  T->I: 0.4733  MRR: 0.5984
+Checkpoint saved (epoch 143) to: saved_models/mimic_shards_hybrid_full_ori_vo10805_to128_lr1e-4_b128_ep150_dualbr_sy065_main_loss20_ortho15__branch_v1_scale10000_seed_17/export/checkpoint_resume.pth (overwritten in place -- same file each time)
+
+Epoch 145/150
+Processed 3000 validation samples in batches
+
+Processed 3000 validation samples in batches
+Validation on 3000 samples
+
+Epoch 145 Results:
+   Total Loss:      0.041544
+   Synergy Loss:    0.037976
+   Main Loss:       0.049494
+   Orthogonal Loss: 0.046410
+   Difference Loss: 4.825785
+   Loss Ratio:      0.818
+   Validation:
+     recall@1: 0.4348
+     i2t_recall@1: 0.3943
+     t2i_recall@1: 0.4753
+     recall@5: 0.7452
+     i2t_recall@5: 0.6993
+     t2i_recall@5: 0.7910
+     recall@10: 0.8598
+     i2t_recall@10: 0.8320
+     t2i_recall@10: 0.8877
+     mrr: 0.5760
+   Val R@1 I->T: 0.3943  T->I: 0.4753  MRR: 0.5760
+
+Branch Specialization Check:
+  Synergy Branch Similarity: 0.9664
+  Difference Branch Similarity: 0.1094
+  Specialization Gap: 0.8571
+  Branches Specialized: YES
+
+Epoch 146/150
+Processed 3000 validation samples in batches
+
+Processed 3000 validation samples in batches
+Validation on 3000 samples
+
+Epoch 146 Results:
+   Total Loss:      0.042397
+   Synergy Loss:    0.039321
+   Main Loss:       0.050596
+   Orthogonal Loss: 0.044796
+   Difference Loss: 4.825784
+   Loss Ratio:      0.878
+   Validation:
+     recall@1: 0.5762
+     i2t_recall@1: 0.5377
+     t2i_recall@1: 0.6147
+     recall@5: 0.8465
+     i2t_recall@5: 0.8067
+     t2i_recall@5: 0.8863
+     recall@10: 0.9288
+     i2t_recall@10: 0.9020
+     t2i_recall@10: 0.9557
+     mrr: 0.6961
+   Val R@1 I->T: 0.5377  T->I: 0.6147  MRR: 0.6961
+
+Epoch 147/150
+Processed 3000 validation samples in batches
+
+Processed 3000 validation samples in batches
+Validation on 3000 samples
+
+Epoch 147 Results:
+   Total Loss:      0.040734
+   Synergy Loss:    0.037298
+   Main Loss:       0.048167
+   Orthogonal Loss: 0.045711
+   Difference Loss: 4.825785
+   Loss Ratio:      0.816
+   Validation:
+     recall@1: 0.2048
+     i2t_recall@1: 0.2337
+     t2i_recall@1: 0.1760
+     recall@5: 0.4645
+     i2t_recall@5: 0.4940
+     t2i_recall@5: 0.4350
+     recall@10: 0.6092
+     i2t_recall@10: 0.6327
+     t2i_recall@10: 0.5857
+     mrr: 0.3324
+   Val R@1 I->T: 0.2337  T->I: 0.1760  MRR: 0.3324
+Checkpoint saved (epoch 146) to: saved_models/mimic_shards_hybrid_full_ori_vo10805_to128_lr1e-4_b128_ep150_dualbr_sy065_main_loss20_ortho15__branch_v1_scale10000_seed_17/export/checkpoint_resume.pth (overwritten in place -- same file each time)
+
+Epoch 148/150
+Processed 3000 validation samples in batches
+
+Processed 3000 validation samples in batches
+Validation on 3000 samples
+
+Epoch 148 Results:
+   Total Loss:      0.040425
+   Synergy Loss:    0.037149
+   Main Loss:       0.047440
+   Orthogonal Loss: 0.045270
+   Difference Loss: 4.825790
+   Loss Ratio:      0.821
+   Validation:
+     recall@1: 0.6338
+     i2t_recall@1: 0.5693
+     t2i_recall@1: 0.6983
+     recall@5: 0.9032
+     i2t_recall@5: 0.8640
+     t2i_recall@5: 0.9423
+     recall@10: 0.9692
+     i2t_recall@10: 0.9513
+     t2i_recall@10: 0.9870
+     mrr: 0.7524
+   Val R@1 I->T: 0.5693  T->I: 0.6983  MRR: 0.7524
+New best checkpoint (epoch 147, val R@1 avg=0.6338) saved to: saved_models/mimic_shards_hybrid_full_ori_vo10805_to128_lr1e-4_b128_ep150_dualbr_sy065_main_loss20_ortho15__branch_v1_scale10000_seed_17/export/checkpoint_best.pth
+   Best-so-far epoch: 148 (val R@1 avg=0.6338)
+
+Epoch 149/150
+Processed 3000 validation samples in batches
+
+Processed 3000 validation samples in batches
+Validation on 3000 samples
+
+Epoch 149 Results:
+   Total Loss:      0.040816
+   Synergy Loss:    0.038004
+   Main Loss:       0.048143
+   Orthogonal Loss: 0.043231
+   Difference Loss: 4.825793
+   Loss Ratio:      0.879
+   Validation:
+     recall@1: 0.5208
+     i2t_recall@1: 0.4800
+     t2i_recall@1: 0.5617
+     recall@5: 0.8273
+     i2t_recall@5: 0.7767
+     t2i_recall@5: 0.8780
+     recall@10: 0.9162
+     i2t_recall@10: 0.8860
+     t2i_recall@10: 0.9463
+     mrr: 0.6559
+   Val R@1 I->T: 0.4800  T->I: 0.5617  MRR: 0.6559
+
+Epoch 150/150
+Processed 3000 validation samples in batches
+
+Processed 3000 validation samples in batches
+Validation on 3000 samples
+
+Epoch 150 Results:
+   Total Loss:      0.041757
+   Synergy Loss:    0.039124
+   Main Loss:       0.049039
+   Orthogonal Loss: 0.043457
+   Difference Loss: 4.825796
+   Loss Ratio:      0.900
+   Validation:
+     recall@1: 0.5760
+     i2t_recall@1: 0.5480
+     t2i_recall@1: 0.6040
+     recall@5: 0.8960
+     i2t_recall@5: 0.8817
+     t2i_recall@5: 0.9103
+     recall@10: 0.9640
+     i2t_recall@10: 0.9520
+     t2i_recall@10: 0.9760
+     mrr: 0.7117
+   Val R@1 I->T: 0.5480  T->I: 0.6040  MRR: 0.7117
+Checkpoint saved (epoch 149) to: saved_models/mimic_shards_hybrid_full_ori_vo10805_to128_lr1e-4_b128_ep150_dualbr_sy065_main_loss20_ortho15__branch_v1_scale10000_seed_17/export/checkpoint_resume.pth (overwritten in place -- same file each time)
+
+Branch Specialization Check:
+  Synergy Branch Similarity: 0.9751
+  Difference Branch Similarity: 0.1067
+  Specialization Gap: 0.8684
+  Branches Specialized: YES
+
+FINAL COMPREHENSIVE VALIDATION ON ALL DATA...
+============================================================
+Processed 3000 validation samples in batches
+
+FINAL VALIDATION RESULTS:
+   Final recall@1: 0.5760
+   Final i2t_recall@1: 0.5480
+   Final t2i_recall@1: 0.6040
+   Final recall@5: 0.8960
+   Final i2t_recall@5: 0.8817
+   Final t2i_recall@5: 0.9103
+   Final recall@10: 0.9640
+   Final i2t_recall@10: 0.9520
+   Final t2i_recall@10: 0.9760
+   Final mrr: 0.7117
+============================================================
+
+TRAINING SUMMARY
+============================================================
+Final Losses:
+   Total: 0.041757
+   Synergy: 0.039124
+   Orthogonal: 0.043457
+
+Dual Branch Verification:
+   Synergy learning: YES
+   Orthogonal learning: YES
+Model saved to: saved_models/mimic_shards_hybrid_full_ori_vo10805_to128_lr1e-4_b128_ep150_dualbr_sy065_main_loss20_ortho15__branch_v1_scale10000_seed_17/export/model.pth
+Model weights saved to: saved_models/mimic_shards_hybrid_full_ori_vo10805_to128_lr1e-4_b128_ep150_dualbr_sy065_main_loss20_ortho15__branch_v1_scale10000_seed_17/export/model_weights.pth
+Model weights also saved to (backup): saved_models/mimic_shards_hybrid_full_ori_vo10805_to128_lr1e-4_b128_ep150_dualbr_sy065_main_loss20_ortho15__branch_v1_scale10000_seed_17/model_mimic_shards_hybrid_full_ori_vo10805_to128_lr1e-4_b128_ep150_dualbr_sy065_main_loss20_ortho15__branch_v1_scale10000_seed_17.pth
+
+Model file sizes:
+  Complete model: 206.67 MB
+  Weights file (export): 68.90 MB
+  Weights file (backup): 68.95 MB
+
+Branch verification:
+   Synergy branch: YES
+   Difference branch: YES
+
+✅ Successfully verified saved model can be loaded
+✅ Training history saved
+
+Model saved successfully!
+
+Generating training visualizations...
+Training progress saved to: outputs/train_visualizations_mimic_shards_hybrid_full_ori_vo10805_to128_lr1e-4_b128_ep150_dualbr_sy065_main_loss20_ortho15__branch_v1_scale10000_seed_17/training_progress_20260919_195323.png
+
+Generating dual branch loss visualizations...
+Dual branch losses saved to: outputs/train_visualizations_mimic_shards_hybrid_full_ori_vo10805_to128_lr1e-4_b128_ep150_dualbr_sy065_main_loss20_ortho15__branch_v1_scale10000_seed_17/dual_branch_losses_20260919_195324.png
+
+Generating comprehensive analysis...
+Creating comprehensive analysis for epoch 150...
+Processing 100 samples for similarity matrix...
+Similarity matrix shape: torch.Size([100, 100])
+Similarity matrix range: [0.2458, 0.9329]
+Similarity matrix saved to: outputs/train_visualizations_mimic_shards_hybrid_full_ori_vo10805_to128_lr1e-4_b128_ep150_dualbr_sy065_main_loss20_ortho15__branch_v1_scale10000_seed_17/similarity_matrix_20260919_195325.png
+
+DUAL BRANCH TRAINING COMPLETED!
+Training completed!
+End: Sat Sep 19 07:53:28 PM CEST 2026
