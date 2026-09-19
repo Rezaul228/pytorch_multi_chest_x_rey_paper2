@@ -115,9 +115,10 @@ class SimpleTokenizer:
         return len(self.word2idx)
 
 class IndianaDataset(Dataset):
-    def __init__(self, shard_paths, max_samples=None, split_name=None):
+    def __init__(self, shard_paths, max_samples=None, split_name=None, keep_ids=None):
         self.shard_paths = shard_paths
         self.max_samples = max_samples
+        self.keep_ids = keep_ids  # NEW (scale ablation): optional frozenset of str study_ids; None = no filter
         self.samples = []
 
         # NEW (paper2): load section boundaries ONCE per dataset instantiation
@@ -152,6 +153,21 @@ class IndianaDataset(Dataset):
             for i in range(shard_size):
                 if self.max_samples and samples_loaded >= self.max_samples:
                     break
+
+                # NEW (scale ablation): optional study_id filter. Skipped entirely when
+                # keep_ids is None, so the original path below runs unchanged. Kept samples
+                # are COPIED: shard_data['images'][i] is a view, and holding a view would
+                # pin the whole shard array in memory for every shard with >=1 kept id.
+                if self.keep_ids is not None:
+                    if str(shard_data['study_ids'][i]) not in self.keep_ids:
+                        continue
+                    self.samples.append({
+                        'images': np.array(shard_data['images'][i], copy=True),
+                        'captions': np.array(shard_data['captions'][i], copy=True),
+                        'study_ids': shard_data['study_ids'][i]
+                    })
+                    samples_loaded += 1
+                    continue
                     
                 self.samples.append({
                     'images': shard_data['images'][i],
@@ -429,7 +445,7 @@ class IndianaDataLoader:
         print("Caption preprocessing already completed in IndianaDatasetLoader")
         return
     
-    def get_data(self, max_samples=None):
+    def get_data(self, max_samples=None, keep_ids=None):
         train_dir = paths.get_train_shards_dir(self.shard_subfolder)
         train_shards = sorted(glob.glob(os.path.join(train_dir, '*.pkl')))
         
@@ -439,7 +455,7 @@ class IndianaDataLoader:
         print(f"Creating PyTorch Dataset from {len(train_shards)} shards")
         print(f"   Max samples: {max_samples if max_samples else 'ALL'}")
         
-        dataset = IndianaDataset(train_shards, max_samples, split_name='train')
+        dataset = IndianaDataset(train_shards, max_samples, split_name='train', keep_ids=keep_ids)
         total_samples = len(dataset)
         self.dataset_size = total_samples
         
@@ -478,7 +494,7 @@ class IndianaDataLoader:
     def _estimate_memory_usage(self):
         return 50.0
     
-    def get_validation_data(self, num_samples=None):
+    def get_validation_data(self, num_samples=None, keep_ids=None):
         val_dir = paths.get_val_shards_dir(self.shard_subfolder)
         val_shards = sorted(glob.glob(os.path.join(val_dir, '*.pkl')))
         
@@ -488,7 +504,7 @@ class IndianaDataLoader:
         print(f"Creating PyTorch Validation Dataset from {len(val_shards)} shards")
         print(f"   Max samples: {num_samples if num_samples else 'ALL'}")
         
-        val_dataset = IndianaDataset(val_shards, num_samples, split_name='val')
+        val_dataset = IndianaDataset(val_shards, num_samples, split_name='val', keep_ids=keep_ids)
         total_val_samples = len(val_dataset)
         
         print(f"PyTorch Validation Dataset created with {total_val_samples} samples")

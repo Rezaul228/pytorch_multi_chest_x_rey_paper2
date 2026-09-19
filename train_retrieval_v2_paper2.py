@@ -900,6 +900,10 @@ def main():
                            '(see load_checkpoint_if_exists) so this flag does not gate anything')
     parser.add_argument('--save_best', action='store_true',
                       help='Track and save a separate best-val-R@1-average checkpoint (default: off)')
+    parser.add_argument('--train_ids', type=str, default=None,
+                      help='CSV with a study_id column: train ONLY on these studies (default: no filter)')
+    parser.add_argument('--val_ids', type=str, default=None,
+                      help='CSV with a study_id column: validate ONLY on these studies (default: no filter)')
     parser.add_argument('--grad_clip', type=float, default=None,
                       help='Gradient clipping max-norm; None = no clipping (default: None, old behavior)')
     args = parser.parse_args()
@@ -968,8 +972,20 @@ def main():
     # Load the data and get PyTorch datasets
     # Note: max_samples=None means use all samples
     data_loader.load_data(max_samples=train_samples, skip_processing=True)
-    train_dataset = data_loader.get_data(max_samples=train_samples)
-    val_dataset = data_loader.get_validation_data(num_samples=val_samples)
+    if args.train_ids is None and args.val_ids is None:
+        train_dataset = data_loader.get_data(max_samples=train_samples)
+        val_dataset = data_loader.get_validation_data(num_samples=val_samples)
+    else:
+        # NEW (scale ablation): optional study_id filters; see id_filter.py
+        from id_filter import load_id_filter, assert_filter_satisfied
+        train_keep = load_id_filter(args.train_ids) if args.train_ids else None
+        val_keep = load_id_filter(args.val_ids) if args.val_ids else None
+        print(f"ID FILTER: train_ids={args.train_ids} ({len(train_keep) if train_keep else 'off'})  "
+              f"val_ids={args.val_ids} ({len(val_keep) if val_keep else 'off'})")
+        train_dataset = data_loader.get_data(max_samples=train_samples, keep_ids=train_keep)
+        val_dataset = data_loader.get_validation_data(num_samples=val_samples, keep_ids=val_keep)
+        assert_filter_satisfied(len(train_dataset), train_keep, 'train')
+        assert_filter_satisfied(len(val_dataset), val_keep, 'val')
     
     # Create PyTorch DataLoaders
     train_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True, num_workers=0)

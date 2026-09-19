@@ -57,3 +57,5 @@ per_query_i2t_metrics_*.csv
 impression_top10_*.csv
 # Open-I per-query caches (study_id-keyed; same caution as MIMIC/ReXGradient)
 per_query_metrics_*.csv
+# MIMIC data-scale ablation id lists (study_id-keyed, DUA)
+mimic/data/scale_ablation/
