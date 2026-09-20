@@ -1,0 +1,25 @@
+size,arm,seed,checkpoint_policy,ndcg10,prec5
+2553,MG-G2L,17,best-val,0.4144,0.6608
+2553,MG-G2L,42,best-val,0.3911,0.6149
+2553,MG-G2L,123,best-val,0.3939,0.6178
+2553,Paper 1,17,best-val,0.3977,0.6309
+2553,Paper 1,42,best-val,0.3838,0.6155
+2553,Paper 1,123,best-val,0.2912,0.5701
+10000,MG-G2L,17,best-val,0.3867,0.6134
+10000,MG-G2L,42,best-val,0.4140,0.6579
+10000,MG-G2L,123,best-val,0.3829,0.5933
+10000,Paper 1,17,best-val,0.3913,0.6201
+10000,Paper 1,42,best-val,0.2979,0.5654
+10000,Paper 1,123,best-val,0.4105,0.6506
+155745,MG-G2L,17,final-epoch,0.4146,0.6539
+155745,MG-G2L,42,final-epoch,0.4048,0.6447
+155745,MG-G2L,123,final-epoch,0.4096,0.6452
+155745,MG-G2L,1337,final-epoch,0.4047,0.6316
+155745,MG-G2L,2021,final-epoch,0.4052,0.6445
+155745,MG-G2L,3407,final-epoch,0.3988,0.6230
+155745,Paper 1,17,final-epoch,0.3926,0.6276
+155745,Paper 1,42,final-epoch,0.3997,0.6334
+155745,Paper 1,123,final-epoch,0.3953,0.6245
+155745,Paper 1,1337,final-epoch,0.3955,0.6183
+155745,Paper 1,2021,final-epoch,0.3742,0.5907
+155745,Paper 1,3407,final-epoch,0.3864,0.6072
