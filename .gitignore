@@ -59,3 +59,5 @@ impression_top10_*.csv
 per_query_metrics_*.csv
 # MIMIC data-scale ablation id lists (study_id-keyed, DUA)
 mimic/data/scale_ablation/
+# Scale-ablation per-query caches (study_id-keyed, MIMIC DUA)
+per_query_attempt2_*.csv
