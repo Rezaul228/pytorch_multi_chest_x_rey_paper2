@@ -61,3 +61,6 @@ per_query_metrics_*.csv
 mimic/data/scale_ablation/
 # Scale-ablation per-query caches (study_id-keyed, MIMIC DUA)
 per_query_attempt2_*.csv
+
+# Claude Code local session state (runtime lock, machine-specific)
+.claude/
