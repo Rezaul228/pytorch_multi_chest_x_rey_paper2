@@ -1,0 +1,117 @@
+arm,seed,metric,value,n_test,rule,checkpoint_policy,provenance
+Paper 1,17,i2t_recall@1,0.990989,12429,strict,final-epoch,mimic/results/multi_seed_evaluation_12429_4seeds_results/all_results.json
+Paper 1,17,i2t_recall@5,0.999759,12429,strict,final-epoch,mimic/results/multi_seed_evaluation_12429_4seeds_results/all_results.json
+Paper 1,17,i2t_recall@10,1.000000,12429,strict,final-epoch,mimic/results/multi_seed_evaluation_12429_4seeds_results/all_results.json
+Paper 1,17,i2t_mrr,0.994982,12429,strict,final-epoch,mimic/results/multi_seed_evaluation_12429_4seeds_results/all_results.json
+Paper 1,17,t2i_recall@1,0.994207,12429,strict,final-epoch,mimic/results/multi_seed_evaluation_12429_4seeds_results/all_results.json
+Paper 1,17,t2i_recall@5,1.000000,12429,strict,final-epoch,mimic/results/multi_seed_evaluation_12429_4seeds_results/all_results.json
+Paper 1,17,t2i_recall@10,1.000000,12429,strict,final-epoch,mimic/results/multi_seed_evaluation_12429_4seeds_results/all_results.json
+Paper 1,17,t2i_mrr,0.997015,12429,strict,final-epoch,mimic/results/multi_seed_evaluation_12429_4seeds_results/all_results.json
+Paper 1,42,i2t_recall@1,0.992759,12429,strict,final-epoch,mimic/results/multi_seed_evaluation_12429_4seeds_results/all_results.json
+Paper 1,42,i2t_recall@5,0.998713,12429,strict,final-epoch,mimic/results/multi_seed_evaluation_12429_4seeds_results/all_results.json
+Paper 1,42,i2t_recall@10,0.999517,12429,strict,final-epoch,mimic/results/multi_seed_evaluation_12429_4seeds_results/all_results.json
+Paper 1,42,i2t_mrr,0.995500,12429,strict,final-epoch,mimic/results/multi_seed_evaluation_12429_4seeds_results/all_results.json
+Paper 1,42,t2i_recall@1,1.000000,12429,strict,final-epoch,mimic/results/multi_seed_evaluation_12429_4seeds_results/all_results.json
+Paper 1,42,t2i_recall@5,1.000000,12429,strict,final-epoch,mimic/results/multi_seed_evaluation_12429_4seeds_results/all_results.json
+Paper 1,42,t2i_recall@10,1.000000,12429,strict,final-epoch,mimic/results/multi_seed_evaluation_12429_4seeds_results/all_results.json
+Paper 1,42,t2i_mrr,1.000000,12429,strict,final-epoch,mimic/results/multi_seed_evaluation_12429_4seeds_results/all_results.json
+Paper 1,123,i2t_recall@1,0.971920,12429,strict,final-epoch,mimic/results/multi_seed_evaluation_12429_4seeds_results/all_results.json
+Paper 1,123,i2t_recall@5,0.995655,12429,strict,final-epoch,mimic/results/multi_seed_evaluation_12429_4seeds_results/all_results.json
+Paper 1,123,i2t_recall@10,0.997747,12429,strict,final-epoch,mimic/results/multi_seed_evaluation_12429_4seeds_results/all_results.json
+Paper 1,123,i2t_mrr,0.982671,12429,strict,final-epoch,mimic/results/multi_seed_evaluation_12429_4seeds_results/all_results.json
+Paper 1,123,t2i_recall@1,0.999115,12429,strict,final-epoch,mimic/results/multi_seed_evaluation_12429_4seeds_results/all_results.json
+Paper 1,123,t2i_recall@5,1.000000,12429,strict,final-epoch,mimic/results/multi_seed_evaluation_12429_4seeds_results/all_results.json
+Paper 1,123,t2i_recall@10,1.000000,12429,strict,final-epoch,mimic/results/multi_seed_evaluation_12429_4seeds_results/all_results.json
+Paper 1,123,t2i_mrr,0.999557,12429,strict,final-epoch,mimic/results/multi_seed_evaluation_12429_4seeds_results/all_results.json
+Paper 1,1337,i2t_recall@1,0.999517,12429,strict,final-epoch,mimic/results/new_seeds_2021_1337_full_results_paper2.json (paper1_rk)
+Paper 1,1337,i2t_recall@5,0.999920,12429,strict,final-epoch,mimic/results/new_seeds_2021_1337_full_results_paper2.json (paper1_rk)
+Paper 1,1337,i2t_recall@10,0.999920,12429,strict,final-epoch,mimic/results/new_seeds_2021_1337_full_results_paper2.json (paper1_rk)
+Paper 1,1337,i2t_mrr,0.999710,12429,strict,final-epoch,mimic/results/new_seeds_2021_1337_full_results_paper2.json (paper1_rk)
+Paper 1,1337,t2i_recall@1,1.000000,12429,strict,final-epoch,mimic/results/new_seeds_2021_1337_full_results_paper2.json (paper1_rk)
+Paper 1,1337,t2i_recall@5,1.000000,12429,strict,final-epoch,mimic/results/new_seeds_2021_1337_full_results_paper2.json (paper1_rk)
+Paper 1,1337,t2i_recall@10,1.000000,12429,strict,final-epoch,mimic/results/new_seeds_2021_1337_full_results_paper2.json (paper1_rk)
+Paper 1,1337,t2i_mrr,1.000000,12429,strict,final-epoch,mimic/results/new_seeds_2021_1337_full_results_paper2.json (paper1_rk)
+Paper 1,2021,i2t_recall@1,0.989460,12429,strict,final-epoch,mimic/results/new_seeds_2021_1337_full_results_paper2.json (paper1_rk; v1_seed_2021_rerun)
+Paper 1,2021,i2t_recall@5,0.999195,12429,strict,final-epoch,mimic/results/new_seeds_2021_1337_full_results_paper2.json (paper1_rk; v1_seed_2021_rerun)
+Paper 1,2021,i2t_recall@10,0.999839,12429,strict,final-epoch,mimic/results/new_seeds_2021_1337_full_results_paper2.json (paper1_rk; v1_seed_2021_rerun)
+Paper 1,2021,i2t_mrr,0.993974,12429,strict,final-epoch,mimic/results/new_seeds_2021_1337_full_results_paper2.json (paper1_rk; v1_seed_2021_rerun)
+Paper 1,2021,t2i_recall@1,0.987931,12429,strict,final-epoch,mimic/results/new_seeds_2021_1337_full_results_paper2.json (paper1_rk; v1_seed_2021_rerun)
+Paper 1,2021,t2i_recall@5,1.000000,12429,strict,final-epoch,mimic/results/new_seeds_2021_1337_full_results_paper2.json (paper1_rk; v1_seed_2021_rerun)
+Paper 1,2021,t2i_recall@10,1.000000,12429,strict,final-epoch,mimic/results/new_seeds_2021_1337_full_results_paper2.json (paper1_rk; v1_seed_2021_rerun)
+Paper 1,2021,t2i_mrr,0.993608,12429,strict,final-epoch,mimic/results/new_seeds_2021_1337_full_results_paper2.json (paper1_rk; v1_seed_2021_rerun)
+Paper 1,3407,i2t_recall@1,0.993900,12429,strict,final-epoch,logs/eval_seed3407_full_113795.out
+Paper 1,3407,i2t_recall@5,0.998600,12429,strict,final-epoch,logs/eval_seed3407_full_113795.out
+Paper 1,3407,i2t_recall@10,0.999300,12429,strict,final-epoch,logs/eval_seed3407_full_113795.out
+Paper 1,3407,i2t_mrr,0.996000,12429,strict,final-epoch,logs/eval_seed3407_full_113795.out
+Paper 1,3407,t2i_recall@1,1.000000,12429,strict,final-epoch,logs/eval_seed3407_full_113795.out
+Paper 1,3407,t2i_recall@5,1.000000,12429,strict,final-epoch,logs/eval_seed3407_full_113795.out
+Paper 1,3407,t2i_recall@10,1.000000,12429,strict,final-epoch,logs/eval_seed3407_full_113795.out
+Paper 1,3407,t2i_mrr,1.000000,12429,strict,final-epoch,logs/eval_seed3407_full_113795.out
+MG-G2L,17,i2t_recall@1,0.998713,12429,strict,final-epoch,mimic/results/mgg2l_multiseed_streaming_results.json
+MG-G2L,17,i2t_recall@5,0.999759,12429,strict,final-epoch,mimic/results/mgg2l_multiseed_streaming_results.json
+MG-G2L,17,i2t_recall@10,1.000000,12429,strict,final-epoch,mimic/results/mgg2l_multiseed_streaming_results.json
+MG-G2L,17,i2t_mrr,0.999247,12429,strict,final-epoch,mimic/results/mgg2l_multiseed_streaming_results.json
+MG-G2L,17,t2i_recall@1,1.000000,12429,strict,final-epoch,mimic/results/mgg2l_multiseed_streaming_results.json
+MG-G2L,17,t2i_recall@5,1.000000,12429,strict,final-epoch,mimic/results/mgg2l_multiseed_streaming_results.json
+MG-G2L,17,t2i_recall@10,1.000000,12429,strict,final-epoch,mimic/results/mgg2l_multiseed_streaming_results.json
+MG-G2L,17,t2i_mrr,1.000000,12429,strict,final-epoch,mimic/results/mgg2l_multiseed_streaming_results.json
+MG-G2L,42,i2t_recall@1,0.999400,12429,strict,final-epoch,logs/compare_seed42_rerun_113756.out
+MG-G2L,42,i2t_recall@5,1.000000,12429,strict,final-epoch,logs/compare_seed42_rerun_113756.out
+MG-G2L,42,i2t_recall@10,1.000000,12429,strict,final-epoch,logs/compare_seed42_rerun_113756.out
+MG-G2L,42,i2t_mrr,0.999600,12429,strict,final-epoch,logs/compare_seed42_rerun_113756.out
+MG-G2L,42,t2i_recall@1,1.000000,12429,strict,final-epoch,logs/compare_seed42_rerun_113756.out
+MG-G2L,42,t2i_recall@5,1.000000,12429,strict,final-epoch,logs/compare_seed42_rerun_113756.out
+MG-G2L,42,t2i_recall@10,1.000000,12429,strict,final-epoch,logs/compare_seed42_rerun_113756.out
+MG-G2L,42,t2i_mrr,1.000000,12429,strict,final-epoch,logs/compare_seed42_rerun_113756.out
+MG-G2L,123,i2t_recall@1,0.999920,12429,strict,final-epoch,mimic/results/mgg2l_multiseed_streaming_results.json
+MG-G2L,123,i2t_recall@5,1.000000,12429,strict,final-epoch,mimic/results/mgg2l_multiseed_streaming_results.json
+MG-G2L,123,i2t_recall@10,1.000000,12429,strict,final-epoch,mimic/results/mgg2l_multiseed_streaming_results.json
+MG-G2L,123,i2t_mrr,0.999946,12429,strict,final-epoch,mimic/results/mgg2l_multiseed_streaming_results.json
+MG-G2L,123,t2i_recall@1,1.000000,12429,strict,final-epoch,mimic/results/mgg2l_multiseed_streaming_results.json
+MG-G2L,123,t2i_recall@5,1.000000,12429,strict,final-epoch,mimic/results/mgg2l_multiseed_streaming_results.json
+MG-G2L,123,t2i_recall@10,1.000000,12429,strict,final-epoch,mimic/results/mgg2l_multiseed_streaming_results.json
+MG-G2L,123,t2i_mrr,1.000000,12429,strict,final-epoch,mimic/results/mgg2l_multiseed_streaming_results.json
+MG-G2L,1337,i2t_recall@1,0.999920,12429,strict,final-epoch,mimic/results/new_seeds_2021_1337_full_results_paper2.json (mgg2l_rk)
+MG-G2L,1337,i2t_recall@5,1.000000,12429,strict,final-epoch,mimic/results/new_seeds_2021_1337_full_results_paper2.json (mgg2l_rk)
+MG-G2L,1337,i2t_recall@10,1.000000,12429,strict,final-epoch,mimic/results/new_seeds_2021_1337_full_results_paper2.json (mgg2l_rk)
+MG-G2L,1337,i2t_mrr,0.999960,12429,strict,final-epoch,mimic/results/new_seeds_2021_1337_full_results_paper2.json (mgg2l_rk)
+MG-G2L,1337,t2i_recall@1,1.000000,12429,strict,final-epoch,mimic/results/new_seeds_2021_1337_full_results_paper2.json (mgg2l_rk)
+MG-G2L,1337,t2i_recall@5,1.000000,12429,strict,final-epoch,mimic/results/new_seeds_2021_1337_full_results_paper2.json (mgg2l_rk)
+MG-G2L,1337,t2i_recall@10,1.000000,12429,strict,final-epoch,mimic/results/new_seeds_2021_1337_full_results_paper2.json (mgg2l_rk)
+MG-G2L,1337,t2i_mrr,1.000000,12429,strict,final-epoch,mimic/results/new_seeds_2021_1337_full_results_paper2.json (mgg2l_rk)
+MG-G2L,2021,i2t_recall@1,0.998391,12429,strict,final-epoch,mimic/results/new_seeds_2021_1337_full_results_paper2.json (mgg2l_rk)
+MG-G2L,2021,i2t_recall@5,0.999839,12429,strict,final-epoch,mimic/results/new_seeds_2021_1337_full_results_paper2.json (mgg2l_rk)
+MG-G2L,2021,i2t_recall@10,0.999839,12429,strict,final-epoch,mimic/results/new_seeds_2021_1337_full_results_paper2.json (mgg2l_rk)
+MG-G2L,2021,i2t_mrr,0.999089,12429,strict,final-epoch,mimic/results/new_seeds_2021_1337_full_results_paper2.json (mgg2l_rk)
+MG-G2L,2021,t2i_recall@1,1.000000,12429,strict,final-epoch,mimic/results/new_seeds_2021_1337_full_results_paper2.json (mgg2l_rk)
+MG-G2L,2021,t2i_recall@5,1.000000,12429,strict,final-epoch,mimic/results/new_seeds_2021_1337_full_results_paper2.json (mgg2l_rk)
+MG-G2L,2021,t2i_recall@10,1.000000,12429,strict,final-epoch,mimic/results/new_seeds_2021_1337_full_results_paper2.json (mgg2l_rk)
+MG-G2L,2021,t2i_mrr,1.000000,12429,strict,final-epoch,mimic/results/new_seeds_2021_1337_full_results_paper2.json (mgg2l_rk)
+MG-G2L,3407,i2t_recall@1,0.999759,12429,strict,final-epoch,mimic/results/mgg2l_multiseed_streaming_results.json
+MG-G2L,3407,i2t_recall@5,0.999920,12429,strict,final-epoch,mimic/results/mgg2l_multiseed_streaming_results.json
+MG-G2L,3407,i2t_recall@10,0.999920,12429,strict,final-epoch,mimic/results/mgg2l_multiseed_streaming_results.json
+MG-G2L,3407,i2t_mrr,0.999818,12429,strict,final-epoch,mimic/results/mgg2l_multiseed_streaming_results.json
+MG-G2L,3407,t2i_recall@1,1.000000,12429,strict,final-epoch,mimic/results/mgg2l_multiseed_streaming_results.json
+MG-G2L,3407,t2i_recall@5,1.000000,12429,strict,final-epoch,mimic/results/mgg2l_multiseed_streaming_results.json
+MG-G2L,3407,t2i_recall@10,1.000000,12429,strict,final-epoch,mimic/results/mgg2l_multiseed_streaming_results.json
+MG-G2L,3407,t2i_mrr,1.000000,12429,strict,final-epoch,mimic/results/mgg2l_multiseed_streaming_results.json
+
+# mean +/- sd over the 6 seeds (ddof=1)
+arm,metric,mean,sd
+Paper 1,i2t_recall@1,0.989758,0.009393
+Paper 1,i2t_recall@5,0.998640,0.001556
+Paper 1,i2t_recall@10,0.999387,0.000846
+Paper 1,i2t_mrr,0.993806,0.005795
+Paper 1,t2i_recall@1,0.996876,0.004928
+Paper 1,t2i_recall@5,1.000000,0.000000
+Paper 1,t2i_recall@10,1.000000,0.000000
+Paper 1,t2i_mrr,0.998363,0.002604
+MG-G2L,i2t_recall@1,0.999350,0.000655
+MG-G2L,i2t_recall@5,0.999920,0.000102
+MG-G2L,i2t_recall@10,0.999960,0.000067
+MG-G2L,i2t_mrr,0.999610,0.000369
+MG-G2L,t2i_recall@1,1.000000,0.000000
+MG-G2L,t2i_recall@5,1.000000,0.000000
+MG-G2L,t2i_recall@10,1.000000,0.000000
+MG-G2L,t2i_mrr,1.000000,0.000000
+# seed 2021 uses v1_seed_2021_rerun; the byte-duplicate 2021 row in the 4-seed file (sha == seed 123) is excluded
