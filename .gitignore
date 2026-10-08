@@ -64,3 +64,5 @@ per_query_attempt2_*.csv
 
 # Claude Code local session state (runtime lock, machine-specific)
 .claude/
+# Cached per-query retrieval rankings keyed by MIMIC study_id (PhysioNet DUA: local-only)
+mimic/results/rankings/

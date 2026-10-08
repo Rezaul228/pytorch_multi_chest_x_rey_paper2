@@ -1,0 +1,17 @@
+labeler,direction,metric,oracle_value,restricted_n
+CheXbert,Image->Text,nDCG@5,1.0,10343
+CheXbert,Text->Image,nDCG@5,1.0,10343
+CheXbert,Image->Text,nDCG@10,1.0,10343
+CheXbert,Text->Image,nDCG@10,1.0,10343
+CheXbert,Image->Text,mAP@10,1.0,10343
+CheXbert,Text->Image,mAP@10,1.0,10343
+CheXbert,Image->Text,Precision@5,1.0,10343
+CheXbert,Text->Image,Precision@5,1.0,10343
+CheXpert,Image->Text,nDCG@5,1.0,8968
+CheXpert,Text->Image,nDCG@5,1.0,8968
+CheXpert,Image->Text,nDCG@10,1.0,8968
+CheXpert,Text->Image,nDCG@10,1.0,8968
+CheXpert,Image->Text,mAP@10,1.0,8968
+CheXpert,Text->Image,mAP@10,1.0,8968
+CheXpert,Image->Text,Precision@5,1.0,8968
+CheXpert,Text->Image,Precision@5,1.0,8968
